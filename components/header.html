@@ -3,15 +3,13 @@
     <div class="px-6 py-4 flex items-center justify-between">
         <!-- Left side -->
         <div class="flex items-center gap-x-4">
-            <button id="sidebar-toggle" 
-                    class="lg:hidden text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            <button id="sidebar-toggle" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                 <i class="fas fa-bars text-xl"></i>
             </button>
             
-            <!-- Admin Panel Name -->
             <div class="flex items-center gap-x-3">
                 <div class="w-10 h-10 bg-blue-600 rounded-3xl flex items-center justify-center text-white font-bold text-xl">MF</div>
-                <span class="font-semibold text-2xl tracking-tight text-gray-800 dark:text-white">My Fanel</span>
+                <span id="logo-text" class="font-semibold text-2xl tracking-tight text-gray-800 dark:text-white transition-all">My Fanel</span>
             </div>
         </div>
 
@@ -24,14 +22,11 @@
                 </div>
             </div>
 
-
             <!-- Notification -->
             <div class="relative">
-                <button id="notification-btn" 
-                        class="relative text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <button id="notification-btn" class="relative text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                     <i class="fas fa-bell text-xl"></i>
-                    <span id="notif-count" 
-                        class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-medium min-w-[18px] h-[18px] flex items-center justify-center rounded-full">5</span>
+                    <span id="notif-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-medium min-w-[18px] h-[18px] flex items-center justify-center rounded-full">5</span>
                 </button>
 
                 <!-- Notification Dropdown -->
@@ -87,8 +82,7 @@
                         Keamanan
                     </a>
                     <div class="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-                    <a href="#" id="logout-btn" 
-                    class="dropdown-item flex items-center gap-x-3 px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <a href="#" id="logout-btn" class="dropdown-item flex items-center gap-x-3 px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-800">
                         <i class="fas fa-sign-out-alt w-5"></i>
                         Keluar
                     </a>

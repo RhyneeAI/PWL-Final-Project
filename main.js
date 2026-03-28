@@ -1,12 +1,20 @@
+let isCollapsed = false;
 $(document).ready(function() {
-    // Load Sidebar dengan callback
+
+    // Load Sidebar
     $('#sidebar-container').load('components/sidebar.html', function() {
         initSidebarMenu();
     });
 
     // Load Header
     $('#header-container').load('components/header.html', function() {
-        initDropdowns();
+        initHeaderDropdowns();
+
+        // Event tombol burger
+        $('#sidebar-toggle').on('click', function() {
+            isCollapsed = !isCollapsed;
+            toggleSidebar();
+        });
     });
 
     // Load Footer
@@ -14,7 +22,33 @@ $(document).ready(function() {
 
     // Load Default content
     loadContent('dashboard');
+
 });
+
+// ====================== FUNGSI COLLAPSE SIDEBAR ======================
+function toggleSidebar() {
+    const sidebar = $('#sidebar');
+
+    if (isCollapsed) {
+        // === COLLAPSED MODE ===
+        sidebar.addClass('lg:w-20');
+        $('.menu-text').addClass('hidden');
+        $('#logo-text').addClass('hidden');
+        $('#sidebar-logo-text').addClass('hidden');
+        $('#sidebar-version').addClass('hidden');
+
+        $('#sidebar-toggle i').removeClass('fa-bars').addClass('fa-chevron-right');
+    } else {
+        // === NORMAL MODE ===
+        sidebar.removeClass('lg:w-20');
+        $('.menu-text').removeClass('hidden');
+        $('#logo-text').removeClass('hidden');
+        $('#sidebar-logo-text').removeClass('hidden');
+        $('#sidebar-version').removeClass('hidden');
+
+        $('#sidebar-toggle i').removeClass('fa-chevron-right').addClass('fa-bars');
+    }
+}
 
 // ====================== FUNGSI MENU SIDEBAR ======================
 function initSidebarMenu() {
@@ -24,18 +58,15 @@ function initSidebarMenu() {
         const page = $(this).data('page');
         if (!page) return;
 
-        // Hapus active dari semua menu
         $('.admin-menu-item').removeClass('active bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400');
 
-        // Tambahkan class active ke menu yang diklik
         $(this).addClass('active bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400');
 
-        // Load konten
         loadContent(page);
     });
 }
 
-// Load Content 
+// ====================== LOAD CONTENT ======================
 function loadContent(page) {
     $('#content-wrapper').load(`components/content-${page}.html`, function(response, status) {
         if (status === "error") {
@@ -47,15 +78,14 @@ function loadContent(page) {
         }
     });
 
-    // Set active menu 
     setTimeout(() => {
         $('.admin-menu-item').removeClass('active bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400');
         $(`.admin-menu-item[data-page="${page}"]`).addClass('active bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400');
     }, 100);
 }
 
-// ====================== FUNGSI DROPDOWN HEADER ======================
-function initDropdowns() {
+// ====================== DROPDOWN HEADER ======================
+function initHeaderDropdowns() {
     $('#notification-btn').off('click').on('click', function(e) {
         e.stopImmediatePropagation();
         $('#notification-dropdown').toggleClass('hidden');
