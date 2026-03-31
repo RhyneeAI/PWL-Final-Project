@@ -14,7 +14,7 @@
 
     <!-- Search -->
     <div class="bg-white dark:bg-gray-900 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-        <input type="text" placeholder="Cari produk..."
+        <input type="text" id="search-produk" placeholder="Cari produk..."
             class="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
     </div>
 
@@ -37,7 +37,7 @@
                 <!-- Body -->
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700 text-white">
 
-    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+    <tr class="product-row hover:bg-gray-50 dark:hover:bg-gray-800">
         <td class="px-6 py-5">Laptop ASUS</td>
         <td class="px-6 py-5">Rp 12.000.000</td>
         <td class="px-6 py-5">10</td>
@@ -48,7 +48,7 @@
         </td>
     </tr>
 
-    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+    <tr class="product-row hover:bg-gray-50 dark:hover:bg-gray-800">
         <td class="px-6 py-5">Mouse Logitech</td>
         <td class="px-6 py-5">Rp 250.000</td>
         <td class="px-6 py-5">50</td>
@@ -59,8 +59,7 @@
         </td>
     </tr>
 
-    <!-- Tambahan Produk -->
-    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+    <tr class="product-row hover:bg-gray-50 dark:hover:bg-gray-800">
         <td class="px-6 py-5">Wireless Headphone</td>
         <td class="px-6 py-5">Rp 1.250.070</td>
         <td class="px-6 py-5">30</td>
@@ -71,7 +70,7 @@
         </td>
     </tr>
 
-    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+    <tr class="product-row hover:bg-gray-50 dark:hover:bg-gray-800">
         <td class="px-6 py-5">Smart Watch Series 8</td>
         <td class="px-6 py-5">Rp 790.060</td>
         <td class="px-6 py-5">20</td>
@@ -82,7 +81,7 @@
         </td>
     </tr>
 
-    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+    <tr class="product-row hover:bg-gray-50 dark:hover:bg-gray-800">
         <td class="px-6 py-5">Mechanical Keyboard</td>
         <td class="px-6 py-5">Rp 80.270</td>
         <td class="px-6 py-5">40</td>
@@ -93,7 +92,7 @@
         </td>
     </tr>
 
-    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+    <tr class="product-row hover:bg-gray-50 dark:hover:bg-gray-800">
         <td class="px-6 py-5">Monitor Xiaomi G24i 144Hz</td>
         <td class="px-6 py-5">Rp 1.619.900</td>
         <td class="px-6 py-5">15</td>
@@ -110,3 +109,14 @@
     </div>
 
 </div>
+
+<!-- SCRIPT SEARCH -->
+<script>
+$('#search-produk').on('keyup', function() {
+    let value = $(this).val().toLowerCase();
+
+    $('.product-row').filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+});
+</script>
