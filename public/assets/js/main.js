@@ -1,27 +1,16 @@
 let isCollapsed = false;
 $(document).ready(function() {
-
     // Load Sidebar
-    $('#sidebar-container').load('components/sidebar.html', function() {
-        initSidebarMenu();
-    });
+    initSidebarMenu();
 
     // Load Header
-    $('#header-container').load('components/header.html', function() {
-        initHeaderDropdowns();
+    initHeaderDropdowns();
 
-        // Event tombol burger
-        $('#sidebar-toggle').on('click', function() {
-            isCollapsed = !isCollapsed;
-            toggleSidebar();
-        });
+    // Event tombol burger
+    $('#sidebar-toggle').on('click', function() {
+        isCollapsed = !isCollapsed;
+        toggleSidebar();
     });
-
-    // Load Footer
-    $('#footer-container').load('components/footer.html');
-
-    // Load Default content
-    loadContent('dashboard');
 
 });
 
@@ -31,7 +20,7 @@ function toggleSidebar() {
 
     if (isCollapsed) {
         // === COLLAPSED MODE ===
-        sidebar.addClass('lg:w-20');
+        sidebar.addClass('w-16').removeClass('w-64');
         $('.menu-text').addClass('hidden');
         $('#logo-text').addClass('hidden');
         $('#sidebar-logo-text').addClass('hidden');
@@ -40,7 +29,7 @@ function toggleSidebar() {
         $('#sidebar-toggle i').removeClass('fa-bars').addClass('fa-chevron-right');
     } else {
         // === NORMAL MODE ===
-        sidebar.removeClass('lg:w-20');
+        sidebar.removeClass('w-16').addClass('w-64');
         $('.menu-text').removeClass('hidden');
         $('#logo-text').removeClass('hidden');
         $('#sidebar-logo-text').removeClass('hidden');
@@ -52,36 +41,15 @@ function toggleSidebar() {
 
 // ====================== FUNGSI MENU SIDEBAR ======================
 function initSidebarMenu() {
-    $('.admin-menu-item').off('click').on('click', function(e) {
-        e.preventDefault();
-
-        const page = $(this).data('page');
-        if (!page) return;
-
+    $('.admin-menu-item').off('click').on('click', function() {
+        const $this = $(this);
+        
+        // Update active state
         $('.admin-menu-item').removeClass('active bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400');
-
-        $(this).addClass('active bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400');
-
-        loadContent(page);
+        $this.addClass('active bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400');
+        
+        // Let href do the navigation
     });
-}
-
-// ====================== LOAD CONTENT ======================
-function loadContent(page) {
-    $('#content-wrapper').load(`components/content-${page}.html`, function(response, status) {
-        if (status === "error") {
-            $('#content-wrapper').html(`
-                <div class="p-10 text-center text-gray-400">
-                    <p>Halaman <strong>${page}</strong> belum dibuat.</p>
-                </div>
-            `);
-        }
-    });
-
-    setTimeout(() => {
-        $('.admin-menu-item').removeClass('active bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400');
-        $(`.admin-menu-item[data-page="${page}"]`).addClass('active bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400');
-    }, 100);
 }
 
 // ====================== DROPDOWN HEADER ======================
