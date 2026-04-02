@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==================== CUSTOM SCROLLBAR ==================== */
+/* Standard scrollbar (Firefox) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(55, 65, 81) rgb(17, 24, 39);
+}
+
+/* WebKit Scrollbar (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(17, 24, 39);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(55, 65, 81);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(75, 85, 99);
+}
+
+/* ==================== SIDEBAR MENU ITEMS ==================== */
+.admin-menu-item {
+  @apply flex items-center gap-x-3 px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors;
+}
+
+.admin-menu-item i {
+  @apply text-lg flex-shrink-0;
+}
+
+.admin-menu-item span {
+  @apply flex-1 transition-all;
+}
+
+.admin-menu-item.active {
+  @apply bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400;
+}
