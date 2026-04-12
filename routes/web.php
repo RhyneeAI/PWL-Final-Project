@@ -28,6 +28,10 @@ Route::get('/branch', function () {
     return view('master-data.branch.index');
 })->name('branch');
 
+Route::get('/stock-in', function () {
+    return view('transaksi.stock-in.index');
+})->name('stock-in');
+
 // Route::middleware(['auth'])->group(function () {
 //     Route::get('dashboard', function () {
 //         return Inertia::render('dashboard');

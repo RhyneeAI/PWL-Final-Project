@@ -46,7 +46,7 @@
                 <i class="fas fa-shopping-cart"></i>
                 <span class="menu-text">Penjualan</span>
             </a>
-            <a href="#" data-page="stock-in" class="admin-menu-item">
+            <a href="{{ route('stock-in') }}" data-page="stock-in" class="admin-menu-item">
                 <i class="fas fa-truck-loading"></i>
                 <span class="menu-text">Stok Masuk</span>
             </a>
