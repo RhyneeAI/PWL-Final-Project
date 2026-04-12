@@ -35,9 +35,9 @@
                 <i class="fas fa-tags"></i>
                 <span class="menu-text">Kategori</span>
             </a>
-            <a href="#" data-page="users" class="admin-menu-item">
-                <i class="fas fa-users"></i>
-                <span class="menu-text">Pengguna</span>
+            <a href="{{ route('user') }}" data-page="users" class="admin-menu-item">
+            <i class="fas fa-users"></i>
+            <span class="menu-text">Pengguna</span>
             </a>
 
             <!-- Transaksi -->

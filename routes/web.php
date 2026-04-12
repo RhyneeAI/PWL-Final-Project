@@ -20,6 +20,9 @@ Route::get('/test', function () {
     return view('test');
 })->name('test');
 
+Route::get('/user', function () {
+    return view('master-data.user.index');
+})->name('user');
 
 // Route::middleware(['auth'])->group(function () {
 //     Route::get('dashboard', function () {
