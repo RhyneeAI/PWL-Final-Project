@@ -24,6 +24,10 @@ Route::get('/user', function () {
     return view('master-data.user.index');
 })->name('user');
 
+Route::get('/branch', function () {
+    return view('master-data.branch.index');
+})->name('branch');
+
 // Route::middleware(['auth'])->group(function () {
 //     Route::get('dashboard', function () {
 //         return Inertia::render('dashboard');

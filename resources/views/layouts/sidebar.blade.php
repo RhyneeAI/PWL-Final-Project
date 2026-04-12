@@ -23,7 +23,7 @@
 
             <!-- Master Data -->
             <div class="text-xs font-semibold text-gray-400 uppercase mt-4 mb-2">Master Data</div>
-            <a href="#" data-page="branches" class="admin-menu-item">
+            <a href="{{ route('branch') }}" data-page="branches" class="admin-menu-item">
                 <i class="fas fa-store"></i>
                 <span class="menu-text">Cabang Toko</span>
             </a>
