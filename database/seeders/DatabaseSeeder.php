@@ -2,27 +2,88 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
+use App\Models\Branch;
+use App\Models\BranchSetting;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
-use Faker\Factory as Faker;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        $this->call([
-            UsersSeeder::class,
-            BookshelvesSeeder::class,
-            CategoriesSeeder::class,
-            BooksSeeder::class,
-            LoansSeeder::class,
-            LoanDetailsSeeder::class,
-            ReturnsSeeder::class,
-        ]);
+        // ── Owner (Pak Jayusman) ──────────────────────────────────────────
+        $owner = User::firstOrCreate(
+            ['email' => 'owner@myfanel.com'],
+            [
+                'name'      => 'Pak Jayusman',
+                'password'  => Hash::make('password'),
+                'role'      => UserRole::Owner,
+                'is_active' => true,
+            ]
+        );
+
+        // ── Contoh 2 Cabang ──────────────────────────────────────────────
+        $branches = [
+            [
+                'code'    => 'BR-001',
+                'name'    => 'MyFanel Bandung',
+                'city'    => 'Bandung',
+                'address' => 'Jl. Asia Afrika No. 1, Bandung',
+                'phone'   => '022-1234567',
+            ],
+            [
+                'code'    => 'BR-002',
+                'name'    => 'MyFanel Jakarta',
+                'city'    => 'Jakarta',
+                'address' => 'Jl. Sudirman No. 10, Jakarta Pusat',
+                'phone'   => '021-9876543',
+            ],
+        ];
+
+        foreach ($branches as $branchData) {
+            $branch = Branch::firstOrCreate(
+                ['code' => $branchData['code']],
+                $branchData
+            );
+
+            // Default settings untuk tiap cabang
+            BranchSetting::firstOrCreate(
+                ['branch_id' => $branch->id],
+                [
+                    'product_prefix'     => 'PRD',
+                    'transaction_prefix' => 'TRX',
+                    'tax_enabled'        => false,
+                    'tax_rate'           => 0,
+                    'discount_enabled'   => true,
+                    'currency_symbol'    => 'Rp',
+                ]
+            );
+        }
+
+        // ── Contoh Admin untuk BR-001 ────────────────────────────────────
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@myfanel.com'],
+            [
+                'name'      => 'Admin Bandung',
+                'password'  => Hash::make('password'),
+                'role'      => UserRole::Admin,
+                'is_active' => true,
+            ]
+        );
+        $admin->branches()->syncWithoutDetaching([Branch::where('code', 'BR-001')->first()->id]);
+
+        // ── Contoh Kasir untuk BR-001 ────────────────────────────────────
+        $cashier = User::firstOrCreate(
+            ['email' => 'kasir@myfanel.com'],
+            [
+                'name'      => 'Kasir Bandung',
+                'password'  => Hash::make('password'),
+                'role'      => UserRole::Cashier,
+                'is_active' => true,
+            ]
+        );
+        $cashier->branches()->syncWithoutDetaching([Branch::where('code', 'BR-001')->first()->id]);
     }
 }
