@@ -23,19 +23,19 @@
 
             <!-- Master Data -->
             <div class="text-xs font-semibold text-gray-400 uppercase mt-4 mb-2">Master Data</div>
-            <a href="{{ route('branch') }}" data-page="branches" class="admin-menu-item">
+            <a href="{{ route('branch.index') }}" data-page="branches" class="admin-menu-item">
                 <i class="fas fa-store"></i>
                 <span class="menu-text">Cabang Toko</span>
             </a>
-            <a href="{{ route('product') }}" data-page="products" class="admin-menu-item">
+            <a href="{{ route('product.index') }}" data-page="products" class="admin-menu-item">
                 <i class="fas fa-boxes"></i>
                 <span class="menu-text">Produk</span>
             </a>
-            <a href="{{ route('category') }}" data-page="categories" class="admin-menu-item">
+            <a href="{{ route('category.index') }}" data-page="categories" class="admin-menu-item">
                 <i class="fas fa-tags"></i>
                 <span class="menu-text">Kategori</span>
             </a>
-            <a href="{{ route('user') }}" data-page="users" class="admin-menu-item">
+            <a href="{{ route('user.index') }}" data-page="users" class="admin-menu-item">
             <i class="fas fa-users"></i>
             <span class="menu-text">Pengguna</span>
             </a>
@@ -46,7 +46,7 @@
                 <i class="fas fa-shopping-cart"></i>
                 <span class="menu-text">Penjualan</span>
             </a>
-            <a href="{{ route('stock-in') }}" data-page="stock-in" class="admin-menu-item">
+            <a href="{{ route('stock-mutation.index') }}" data-page="stock-in" class="admin-menu-item">
                 <i class="fas fa-truck-loading"></i>
                 <span class="menu-text">Stok Masuk</span>
             </a>
