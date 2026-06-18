@@ -32,8 +32,8 @@ it('owner dapat akses semua route yang dilindungi role', function () {
 
 // ─── Manajer Toko ─────────────────────────────────────────────────────────────
 
-it('manajer toko tidak dapat akses cabang tapi dapat akses master data lain', function () {
-    $user = makeRoleUser(UserRole::Admin);
+it('manager tidak dapat akses cabang tapi dapat akses master data lain', function () {
+    $user = makeRoleUser(UserRole::Manager);
 
     $this->actingAs($user)
         ->get(route('branch.index'))->assertForbidden()

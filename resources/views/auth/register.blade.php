@@ -62,8 +62,33 @@
                 </div>
 
                 <div class="mb-6">
+                    <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Username
+                    </label>
+                    <div class="relative">
+                        <i class="fas fa-at absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 text-sm"></i>
+                        <input
+                            id="username"
+                            type="text"
+                            name="username"
+                            value="{{ old('username') }}"
+                            placeholder="username"
+                            autocomplete="username"
+                            class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700
+                                   bg-white dark:bg-gray-900 text-gray-900 dark:text-white
+                                   placeholder:text-gray-400 dark:placeholder:text-gray-600
+                                   focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                   transition-all duration-200"
+                        >
+                    </div>
+                    @error('username')
+                        <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="mb-6">
                     <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Email
+                        Email <span class="text-gray-400 font-normal">(untuk profil)</span>
                     </label>
                     <div class="relative">
                         <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 text-sm"></i>

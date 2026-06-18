@@ -15,9 +15,10 @@ class DatabaseSeeder extends Seeder
     {
         // ── Owner (Pak Jayusman) ──────────────────────────────────────────
         User::firstOrCreate(
-            ['email' => 'owner@myfanel.com'],
+            ['username' => 'owner'],
             [
                 'name'      => 'Pak Jayusman',
+                'email'     => 'owner@myfanel.com',
                 'password'  => Hash::make('password'),
                 'role'      => UserRole::Owner,
                 'is_active' => true,
@@ -62,41 +63,80 @@ class DatabaseSeeder extends Seeder
         }
 
         $branchBandung = Branch::where('code', 'BR-001')->first();
+        $branchJakarta = Branch::where('code', 'BR-002')->first();
 
-        // ── Manajer Toko BR-001 ──────────────────────────────────────────
-        $admin = User::firstOrCreate(
-            ['email' => 'admin@myfanel.com'],
+        // ── Cabang 1: Bandung ────────────────────────────────────────────
+        $managerBandung = User::firstOrCreate(
+            ['username' => 'manager'],
             [
-                'name'      => 'Manajer Bandung',
+                'name'      => 'Manager Bandung',
+                'email'     => 'manager@myfanel.com',
                 'password'  => Hash::make('password'),
-                'role'      => UserRole::Admin,
+                'role'      => UserRole::Manager,
                 'is_active' => true,
             ]
         );
-        $admin->branches()->syncWithoutDetaching([$branchBandung->id]);
+        $managerBandung->branches()->syncWithoutDetaching([$branchBandung->id]);
 
-        // ── Kasir BR-001 ─────────────────────────────────────────────────
-        $cashier = User::firstOrCreate(
-            ['email' => 'kasir@myfanel.com'],
+        $kasirBandung = User::firstOrCreate(
+            ['username' => 'kasir'],
             [
                 'name'      => 'Kasir Bandung',
+                'email'     => 'kasir@myfanel.com',
                 'password'  => Hash::make('password'),
                 'role'      => UserRole::Cashier,
                 'is_active' => true,
             ]
         );
-        $cashier->branches()->syncWithoutDetaching([$branchBandung->id]);
+        $kasirBandung->branches()->syncWithoutDetaching([$branchBandung->id]);
 
-        // ── Pegawai Gudang BR-001 ────────────────────────────────────────
-        $warehouse = User::firstOrCreate(
-            ['email' => 'gudang@myfanel.com'],
+        $gudangBandung = User::firstOrCreate(
+            ['username' => 'gudang'],
             [
                 'name'      => 'Gudang Bandung',
+                'email'     => 'gudang@myfanel.com',
                 'password'  => Hash::make('password'),
                 'role'      => UserRole::Warehouse,
                 'is_active' => true,
             ]
         );
-        $warehouse->branches()->syncWithoutDetaching([$branchBandung->id]);
+        $gudangBandung->branches()->syncWithoutDetaching([$branchBandung->id]);
+
+        // ── Cabang 2: Jakarta ──────────────────────────────────────────────
+        $managerJakarta = User::firstOrCreate(
+            ['username' => 'manager-jkt'],
+            [
+                'name'      => 'Manager Jakarta',
+                'email'     => 'managerJ@myfanel.com',
+                'password'  => Hash::make('password'),
+                'role'      => UserRole::Manager,
+                'is_active' => true,
+            ]
+        );
+        $managerJakarta->branches()->syncWithoutDetaching([$branchJakarta->id]);
+
+        $kasirJakarta = User::firstOrCreate(
+            ['username' => 'kasir-jkt'],
+            [
+                'name'      => 'Kasir Jakarta',
+                'email'     => 'kasirJ@myfanel.com',
+                'password'  => Hash::make('password'),
+                'role'      => UserRole::Cashier,
+                'is_active' => true,
+            ]
+        );
+        $kasirJakarta->branches()->syncWithoutDetaching([$branchJakarta->id]);
+
+        $gudangJakarta = User::firstOrCreate(
+            ['username' => 'gudang-jkt'],
+            [
+                'name'      => 'Gudang Jakarta',
+                'email'     => 'gudangJ@myfanel.com',
+                'password'  => Hash::make('password'),
+                'role'      => UserRole::Warehouse,
+                'is_active' => true,
+            ]
+        );
+        $gudangJakarta->branches()->syncWithoutDetaching([$branchJakarta->id]);
     }
 }

@@ -29,7 +29,7 @@ Route::middleware(['auth', 'active'])->group(function () {
     });
 
     // Owner + Manajer Toko
-    Route::middleware('role:owner,admin')->group(function () {
+    Route::middleware('role:owner,manager')->group(function () {
         Route::get('/users', function () {
             return view('master-data.user.index');
         })->name('user.index');
@@ -52,14 +52,14 @@ Route::middleware(['auth', 'active'])->group(function () {
     });
 
     // Owner + Manajer Toko + Pegawai Gudang — stok
-    Route::middleware('role:owner,admin,warehouse')->group(function () {
+    Route::middleware('role:owner,manager,warehouse')->group(function () {
         Route::get('/stock-mutations', function () {
             return view('transaksi.stock-in.index');
         })->name('stock-mutation.index');
     });
 
     // Owner + Manajer Toko + Kasir — transaksi
-    Route::middleware('role:owner,admin,cashier')->group(function () {
+    Route::middleware('role:owner,manager,cashier')->group(function () {
         Route::get('/transactions', function () {
             return view('transaksi.transaction.index');
         })->name('transaction.index');

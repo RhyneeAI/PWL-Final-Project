@@ -19,7 +19,7 @@
 
             <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent mb-2">Sign In</h1>
             <p class="mb-8 text-gray-600 dark:text-gray-400 font-normal text-lg">
-                Enter your email and password to sign in
+                Masukkan username dan password untuk sign in
             </p>
 
             {{-- Flash success --}}
@@ -38,19 +38,20 @@
 
             <form action="{{ route('login') }}" method="POST" class="mx-auto max-w-md text-left">
                 @csrf
-                <!-- Email Field -->
+                <!-- Username Field -->
                 <div class="mb-6">
-                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Your Email
+                    <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Username
                     </label>
                     <div class="relative">
-                        <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 text-sm"></i>
+                        <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 text-sm"></i>
                         <input
-                            id="email"
-                            type="email"
-                            name="email"
-                            value="{{ old('email') }}"
-                            placeholder="name@mail.com"
+                            id="username"
+                            type="text"
+                            name="username"
+                            value="{{ old('username') }}"
+                            placeholder="username"
+                            autocomplete="username"
                             class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 
                                    bg-white dark:bg-gray-900 text-gray-900 dark:text-white
                                    placeholder:text-gray-400 dark:placeholder:text-gray-600
@@ -58,7 +59,7 @@
                                    transition-all duration-200"
                         >
                     </div>
-                    @error('email')
+                    @error('username')
                         <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
                     @enderror
                 </div>

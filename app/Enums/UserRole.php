@@ -5,7 +5,7 @@ namespace App\Enums;
 enum UserRole: string
 {
     case Owner     = 'owner';
-    case Admin     = 'admin';
+    case Manager   = 'manager';
     case Cashier   = 'cashier';
     case Warehouse = 'warehouse';
 
@@ -13,7 +13,7 @@ enum UserRole: string
     {
         return match ($this) {
             self::Owner     => 'Owner',
-            self::Admin     => 'Manajer Toko',
+            self::Manager   => 'Manager',
             self::Cashier   => 'Kasir',
             self::Warehouse => 'Pegawai Gudang',
         };
@@ -31,41 +31,41 @@ enum UserRole: string
 
     public function canManageUsers(): bool
     {
-        return in_array($this, [self::Owner, self::Admin]);
+        return in_array($this, [self::Owner, self::Manager]);
     }
 
     public function canManageCategories(): bool
     {
-        return in_array($this, [self::Owner, self::Admin]);
+        return in_array($this, [self::Owner, self::Manager]);
     }
 
     public function canManageProducts(): bool
     {
-        return in_array($this, [self::Owner, self::Admin]);
+        return in_array($this, [self::Owner, self::Manager]);
     }
 
     public function canManageTransactions(): bool
     {
-        return in_array($this, [self::Owner, self::Admin, self::Cashier]);
+        return in_array($this, [self::Owner, self::Manager, self::Cashier]);
     }
 
     public function canViewTransactions(): bool
     {
-        return in_array($this, [self::Owner, self::Admin, self::Cashier]);
+        return in_array($this, [self::Owner, self::Manager, self::Cashier]);
     }
 
     public function canManageStock(): bool
     {
-        return in_array($this, [self::Owner, self::Admin, self::Warehouse]);
+        return in_array($this, [self::Owner, self::Manager, self::Warehouse]);
     }
 
     public function canPrintReport(): bool
     {
-        return in_array($this, [self::Owner, self::Admin]);
+        return in_array($this, [self::Owner, self::Manager]);
     }
 
     public function canManageSettings(): bool
     {
-        return in_array($this, [self::Owner, self::Admin]);
+        return in_array($this, [self::Owner, self::Manager]);
     }
 }
