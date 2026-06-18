@@ -1,4 +1,6 @@
 <!-- components/header.html -->
+@php($user = auth()->user())
+
 <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 shadow-sm">
     <div class="px-6 py-4 flex items-center justify-between">
         <!-- Left side -->
@@ -22,6 +24,11 @@
                 </div>
             </div>
 
+            <!-- Theme Toggle -->
+            <button id="theme-toggle" type="button" title="Ganti tema" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <i id="theme-toggle-icon" class="fas fa-sun text-xl"></i>
+            </button>
+
             <!-- Notification -->
             <div class="relative">
                 <button id="notification-btn" class="relative text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
@@ -35,7 +42,6 @@
                         <p class="font-semibold text-gray-800 dark:text-white">Notifikasi</p>
                     </div>
                     <div class="max-h-80 overflow-y-auto">
-                        <!-- Contoh notifikasi -->
                         <div class="px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
                             <p class="text-sm text-gray-700 dark:text-gray-300">Order #ORD-7842 telah selesai</p>
                             <p class="text-xs text-gray-500 mt-1">2 menit yang lalu</p>
@@ -56,36 +62,37 @@
                 <div id="user-menu-btn" 
                     class="flex items-center gap-x-3 cursor-pointer group">
                     <div class="text-right hidden sm:block">
-                        <p class="text-sm font-medium text-gray-700 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">Luhung Lugina</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Super Admin</p>
+                        <p class="text-sm font-medium text-gray-700 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">{{ $user->name }}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $user->role->label() }}</p>
                     </div>
-                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-semibold ring-2 ring-white dark:ring-gray-800">LL</div>
+                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-semibold ring-2 ring-white dark:ring-gray-800">{{ $user->initials() }}</div>
                 </div>
 
                 <!-- Dropdown User Menu -->
                 <div id="user-dropdown" 
                     class="hidden absolute right-0 mt-2 w-56 bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700 py-2 z-50">
                     <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-                        <p class="font-medium text-gray-800 dark:text-white">Luhung Lugina</p>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">luhung@adminpanel.com</p>
+                        <p class="font-medium text-gray-800 dark:text-white">{{ $user->name }}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $user->email }}</p>
                     </div>
                     <a href="#" class="dropdown-item flex items-center gap-x-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
                         <i class="fas fa-user w-5"></i>
                         Profil Saya
                     </a>
-                    <a href="#" class="dropdown-item flex items-center gap-x-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-                        <i class="fas fa-cog w-5"></i>
-                        Pengaturan
-                    </a>
-                    <a href="#" class="dropdown-item flex items-center gap-x-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-                        <i class="fas fa-shield-alt w-5"></i>
-                        Keamanan
-                    </a>
+                    @if ($user->role->canManageSettings())
+                        <a href="{{ route('settings.index') }}" class="dropdown-item flex items-center gap-x-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                            <i class="fas fa-cog w-5"></i>
+                            Pengaturan
+                        </a>
+                    @endif
                     <div class="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-                    <a href="#" id="logout-btn" class="dropdown-item flex items-center gap-x-3 px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-800">
-                        <i class="fas fa-sign-out-alt w-5"></i>
-                        Keluar
-                    </a>
+                    <form action="{{ route('logout') }}" method="POST" id="logout-form">
+                        @csrf
+                        <button type="submit" id="logout-btn" class="dropdown-item flex items-center gap-x-3 w-full px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-800">
+                            <i class="fas fa-sign-out-alt w-5"></i>
+                            Keluar
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

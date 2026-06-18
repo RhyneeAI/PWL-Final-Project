@@ -25,6 +25,7 @@ it('redirect ke dashboard jika sudah login saat akses register', function () {
 it('user baru dapat mendaftar dengan data valid', function () {
     $response = $this->post(route('register'), [
         'name'                  => 'Kasir Baru',
+        'username'              => 'kasirbaru',
         'email'                 => 'kasirbaru@test.com',
         'password'              => 'password123',
         'password_confirmation' => 'password123',
@@ -34,6 +35,7 @@ it('user baru dapat mendaftar dengan data valid', function () {
 
     $this->assertDatabaseHas('users', [
         'name'      => 'Kasir Baru',
+        'username'  => 'kasirbaru',
         'email'     => 'kasirbaru@test.com',
         'role'      => UserRole::Cashier->value,
         'is_active' => true,
@@ -45,22 +47,38 @@ it('user baru dapat mendaftar dengan data valid', function () {
 it('user langsung login setelah register berhasil', function () {
     $this->post(route('register'), [
         'name'                  => 'Kasir Baru',
+        'username'              => 'kasirbaru',
         'email'                 => 'kasirbaru@test.com',
         'password'              => 'password123',
         'password_confirmation' => 'password123',
     ]);
 
-    $user = User::where('email', 'kasirbaru@test.com')->first();
+    $user = User::where('username', 'kasirbaru')->first();
     $this->assertAuthenticatedAs($user);
 });
 
 // ─── Register failure ─────────────────────────────────────────────────────────
+
+it('gagal register jika username sudah digunakan', function () {
+    User::factory()->create(['username' => 'ada']);
+
+    $this->post(route('register'), [
+        'name'                  => 'User Baru',
+        'username'              => 'ada',
+        'email'                 => 'baru@test.com',
+        'password'              => 'password123',
+        'password_confirmation' => 'password123',
+    ])->assertSessionHasErrors('username');
+
+    $this->assertGuest();
+});
 
 it('gagal register jika email sudah terdaftar', function () {
     User::factory()->create(['email' => 'ada@test.com']);
 
     $this->post(route('register'), [
         'name'                  => 'User Baru',
+        'username'              => 'userbaru',
         'email'                 => 'ada@test.com',
         'password'              => 'password123',
         'password_confirmation' => 'password123',
@@ -72,6 +90,7 @@ it('gagal register jika email sudah terdaftar', function () {
 it('gagal register jika konfirmasi password tidak cocok', function () {
     $this->post(route('register'), [
         'name'                  => 'User Baru',
+        'username'              => 'userbaru',
         'email'                 => 'baru@test.com',
         'password'              => 'password123',
         'password_confirmation' => 'beda-password',
@@ -85,15 +104,27 @@ it('gagal register jika konfirmasi password tidak cocok', function () {
 it('validasi register: nama wajib diisi', function () {
     $this->post(route('register'), [
         'name'                  => '',
+        'username'              => 'userbaru',
         'email'                 => 'baru@test.com',
         'password'              => 'password123',
         'password_confirmation' => 'password123',
     ])->assertSessionHasErrors('name');
 });
 
+it('validasi register: username wajib diisi', function () {
+    $this->post(route('register'), [
+        'name'                  => 'User Baru',
+        'username'              => '',
+        'email'                 => 'baru@test.com',
+        'password'              => 'password123',
+        'password_confirmation' => 'password123',
+    ])->assertSessionHasErrors('username');
+});
+
 it('validasi register: email wajib diisi', function () {
     $this->post(route('register'), [
         'name'                  => 'User Baru',
+        'username'              => 'userbaru',
         'email'                 => '',
         'password'              => 'password123',
         'password_confirmation' => 'password123',
@@ -103,6 +134,7 @@ it('validasi register: email wajib diisi', function () {
 it('validasi register: password minimal 6 karakter', function () {
     $this->post(route('register'), [
         'name'                  => 'User Baru',
+        'username'              => 'userbaru',
         'email'                 => 'baru@test.com',
         'password'              => '123',
         'password_confirmation' => '123',

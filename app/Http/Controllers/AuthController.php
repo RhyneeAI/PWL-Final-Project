@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Enums\UserRole;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
@@ -34,31 +33,34 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request): RedirectResponse
     {
-        $throttleKey = Str::lower($request->input('email')) . '|' . $request->ip();
+        $username = Str::lower($request->input('username'));
+        $throttleKey = $username . '|' . $request->ip();
 
         if (RateLimiter::tooManyAttempts($throttleKey, maxAttempts: 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
 
             throw ValidationException::withMessages([
-                'email' => "Terlalu banyak percobaan login. Coba lagi dalam {$seconds} detik.",
+                'username' => "Terlalu banyak percobaan login. Coba lagi dalam {$seconds} detik.",
             ]);
         }
 
-        if (! Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
+        if (! Auth::attempt(
+            ['username' => $username, 'password' => $request->input('password')],
+            $request->boolean('remember')
+        )) {
             RateLimiter::hit($throttleKey, 60);
 
             throw ValidationException::withMessages([
-                'email' => 'Email atau password salah.',
+                'username' => 'Username atau password salah.',
             ]);
         }
 
-        // Cek apakah akun aktif setelah berhasil auth
         if (! auth()->user()->is_active) {
             Auth::logout();
             RateLimiter::hit($throttleKey, 60);
 
             throw ValidationException::withMessages([
-                'email' => 'Akun Anda telah dinonaktifkan. Hubungi administrator.',
+                'username' => 'Akun Anda telah dinonaktifkan. Hubungi administrator.',
             ]);
         }
 
@@ -88,6 +90,7 @@ class AuthController extends Controller
     {
         $user = User::create([
             'name'      => $request->input('name'),
+            'username'  => Str::lower($request->input('username')),
             'email'     => $request->input('email'),
             'password'  => $request->input('password'),
             'role'      => UserRole::Cashier,

@@ -1,30 +1,25 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In | MyFanel</title>
+    <script src="/assets/js/theme.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' };</script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        /* Custom dark mode override */
-        .dark {
-            background-color: #0f172a;
-        }
-    </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
 
     <section class="grid text-center h-screen items-center p-8">
         <div>
-            <!-- Dark mode toggle button -->
-            <button id="darkModeToggle" class="fixed top-6 right-6 p-3 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:scale-110 transition-all duration-300 shadow-lg z-50">
-                <i id="darkModeIcon" class="fas fa-moon text-lg"></i>
+            <button id="theme-toggle" type="button" title="Ganti tema" class="fixed top-6 right-6 p-3 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:scale-110 transition-all duration-300 shadow-lg z-50">
+                <i id="theme-toggle-icon" class="fas fa-sun text-lg"></i>
             </button>
 
             <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent mb-2">Sign In</h1>
             <p class="mb-8 text-gray-600 dark:text-gray-400 font-normal text-lg">
-                Enter your email and password to sign in
+                Masukkan username dan password untuk sign in
             </p>
 
             {{-- Flash success --}}
@@ -43,19 +38,20 @@
 
             <form action="{{ route('login') }}" method="POST" class="mx-auto max-w-md text-left">
                 @csrf
-                <!-- Email Field -->
+                <!-- Username Field -->
                 <div class="mb-6">
-                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Your Email
+                    <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Username
                     </label>
                     <div class="relative">
-                        <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 text-sm"></i>
+                        <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 text-sm"></i>
                         <input
-                            id="email"
-                            type="email"
-                            name="email"
-                            value="{{ old('email') }}"
-                            placeholder="name@mail.com"
+                            id="username"
+                            type="text"
+                            name="username"
+                            value="{{ old('username') }}"
+                            placeholder="username"
+                            autocomplete="username"
                             class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 
                                    bg-white dark:bg-gray-900 text-gray-900 dark:text-white
                                    placeholder:text-gray-400 dark:placeholder:text-gray-600
@@ -63,7 +59,7 @@
                                    transition-all duration-200"
                         >
                     </div>
-                    @error('email')
+                    @error('username')
                         <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
                     @enderror
                 </div>
@@ -124,36 +120,9 @@
     </section>
 
     <script>
-        // Dark Mode Toggle
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        const darkModeIcon = document.getElementById('darkModeIcon');
-        
-        // Check for saved dark mode preference
-        if (localStorage.getItem('darkMode') === 'true') {
-            document.documentElement.classList.add('dark');
-            document.body.classList.add('dark');
-            darkModeIcon.classList.remove('fa-moon');
-            darkModeIcon.classList.add('fa-sun');
-        }
-        
-        darkModeToggle.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-            document.body.classList.toggle('dark');
-            
-            const isDark = document.documentElement.classList.contains('dark');
-            localStorage.setItem('darkMode', isDark);
-            
-            // Toggle icon
-            if (isDark) {
-                darkModeIcon.classList.remove('fa-moon');
-                darkModeIcon.classList.add('fa-sun');
-            } else {
-                darkModeIcon.classList.remove('fa-sun');
-                darkModeIcon.classList.add('fa-moon');
-            }
-        });
-        
-        // Toggle Password Visibility
+        document.getElementById('theme-toggle').addEventListener('click', () => window.MyFanelTheme.toggleTheme());
+        window.MyFanelTheme.applyTheme(window.MyFanelTheme.getTheme());
+
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
         const eyeIcon = document.getElementById('eyeIcon');

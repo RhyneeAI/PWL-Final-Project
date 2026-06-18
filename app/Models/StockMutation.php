@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class StockMutation extends Model
 {
     protected $fillable = [
-        'branch_id', 'product_id', 'user_id', 'transaction_id',
+        'branch_id', 'product_id', 'user_id', 'transaction_id', 'supplier_id',
         'reference_code', 'type', 'quantity_before',
         'quantity_change', 'quantity_after', 'notes', 'mutation_date',
     ];
@@ -40,5 +40,10 @@ class StockMutation extends Model
     public function transaction(): BelongsTo
     {
         return $this->belongsTo(Transaction::class);
+    }
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
     }
 }

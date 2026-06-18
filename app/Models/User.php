@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Enums\UserRole;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -15,6 +17,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
         'role',
@@ -36,6 +39,13 @@ class User extends Authenticatable
         ];
     }
 
+    protected function username(): Attribute
+    {
+        return Attribute::make(
+            set: fn (?string $value) => $value ? Str::lower($value) : $value,
+        );
+    }
+
     // ─── Relations ───────────────────────────────────────────────
 
     public function branches(): BelongsToMany
@@ -50,14 +60,28 @@ class User extends Authenticatable
         return $this->role === UserRole::Owner;
     }
 
-    public function isAdmin(): bool
+    public function isManager(): bool
     {
-        return $this->role === UserRole::Admin;
+        return $this->role === UserRole::Manager;
     }
 
     public function isCashier(): bool
     {
         return $this->role === UserRole::Cashier;
+    }
+
+    public function isWarehouse(): bool
+    {
+        return $this->role === UserRole::Warehouse;
+    }
+
+    public function initials(): string
+    {
+        return collect(explode(' ', $this->name))
+            ->filter()
+            ->map(fn (string $word) => mb_strtoupper(mb_substr($word, 0, 1)))
+            ->take(2)
+            ->implode('');
     }
 
     public function hasAccessToBranch(int $branchId): bool
