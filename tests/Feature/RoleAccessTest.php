@@ -23,6 +23,7 @@ it('owner dapat akses semua route yang dilindungi role', function () {
     $this->actingAs($user)->get(route('user.index'))->assertOk();
     $this->actingAs($user)->get(route('category.index'))->assertOk();
     $this->actingAs($user)->get(route('product.index'))->assertOk();
+    $this->actingAs($user)->get(route('supplier.index'))->assertOk();
     $this->actingAs($user)->get(route('report.index'))->assertOk();
     $this->actingAs($user)->get(route('settings.index'))->assertOk();
     $this->actingAs($user)->get(route('stock-mutation.index'))->assertOk();
@@ -38,6 +39,7 @@ it('manager tidak dapat akses cabang tapi dapat akses master data lain', functio
     $this->actingAs($user)->get(route('user.index'))->assertOk();
     $this->actingAs($user)->get(route('category.index'))->assertOk();
     $this->actingAs($user)->get(route('product.index'))->assertOk();
+    $this->actingAs($user)->get(route('supplier.index'))->assertOk();
     $this->actingAs($user)->get(route('report.index'))->assertOk();
     $this->actingAs($user)->get(route('settings.index'))->assertOk();
     $this->actingAs($user)->get(route('stock-mutation.index'))->assertOk();
@@ -55,6 +57,7 @@ it('kasir dapat akses dashboard transaksi dan lihat produk', function () {
     $this->actingAs($user)->get(route('branch.index'))->assertForbidden();
     $this->actingAs($user)->get(route('report.index'))->assertForbidden();
     $this->actingAs($user)->get(route('stock-mutation.index'))->assertForbidden();
+    $this->actingAs($user)->get(route('supplier.index'))->assertForbidden();
 });
 
 it('kasir tidak melihat tombol kelola produk di halaman produk', function () {
@@ -76,6 +79,7 @@ it('pegawai gudang dapat akses dashboard stok dan lihat produk', function () {
     $this->actingAs($user)->get(route('dashboard'))->assertOk();
     $this->actingAs($user)->get(route('stock-mutation.index'))->assertOk();
     $this->actingAs($user)->get(route('product.index'))->assertOk();
+    $this->actingAs($user)->get(route('supplier.index'))->assertOk();
     $this->actingAs($user)->get(route('transaction.index'))->assertForbidden();
     $this->actingAs($user)->get(route('report.index'))->assertForbidden();
 });
@@ -87,6 +91,17 @@ it('pegawai gudang tidak melihat tombol kelola produk di halaman produk', functi
         ->get(route('product.index'))
         ->assertOk()
         ->assertDontSee('+ Tambah Produk')
+        ->assertDontSee('>Edit</button>')
+        ->assertDontSee('>Hapus</button>');
+});
+
+it('pegawai gudang tidak melihat tombol kelola supplier di halaman supplier', function () {
+    $user = makeRoleUser(UserRole::Warehouse);
+
+    $this->actingAs($user)
+        ->get(route('supplier.index'))
+        ->assertOk()
+        ->assertDontSee('+ Tambah Supplier')
         ->assertDontSee('>Edit</button>')
         ->assertDontSee('>Hapus</button>');
 });

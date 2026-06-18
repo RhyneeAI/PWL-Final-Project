@@ -54,7 +54,14 @@ Route::middleware(['auth', 'active'])->group(function () {
         })->name('product.index');
     });
 
-    // Owner + Manajer Toko + Pegawai Gudang — stok
+    // Owner + Manager + Warehouse — lihat supplier (read-only untuk gudang)
+    Route::middleware('role:owner,manager,warehouse')->group(function () {
+        Route::get('/suppliers', function () {
+            return view('master-data.supplier.index');
+        })->name('supplier.index');
+    });
+
+    // Owner + Manager + Warehouse — stok
     Route::middleware('role:owner,manager,warehouse')->group(function () {
         Route::get('/stock-mutations', function () {
             return view('transaksi.stock-in.index');

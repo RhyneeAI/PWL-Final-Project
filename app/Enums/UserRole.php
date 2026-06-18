@@ -49,6 +49,16 @@ enum UserRole: string
         return in_array($this, [self::Owner, self::Manager, self::Cashier, self::Warehouse]);
     }
 
+    public function canManageSuppliers(): bool
+    {
+        return in_array($this, [self::Owner, self::Manager]);
+    }
+
+    public function canViewSuppliers(): bool
+    {
+        return in_array($this, [self::Owner, self::Manager, self::Warehouse]);
+    }
+
     public function canManageTransactions(): bool
     {
         return in_array($this, [self::Owner, self::Manager, self::Cashier]);

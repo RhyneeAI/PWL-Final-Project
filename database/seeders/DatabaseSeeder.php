@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Enums\UserRole;
 use App\Models\Branch;
 use App\Models\BranchSetting;
+use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -138,5 +139,30 @@ class DatabaseSeeder extends Seeder
             ]
         );
         $gudangJakarta->branches()->syncWithoutDetaching([$branchJakarta->id]);
+
+        // ── Supplier per cabang ────────────────────────────────────────────
+        $suppliersBandung = [
+            ['code' => 'SUP-001', 'name' => 'PT Sumber Makmur', 'phone' => '022-1112233', 'email' => 'sumber@supplier.com', 'address' => 'Jl. Moh. Toha No. 10, Bandung'],
+            ['code' => 'SUP-002', 'name' => 'CV Fresh Food', 'phone' => '022-4445566', 'email' => 'fresh@supplier.com', 'address' => 'Jl. Soekarno Hatta No. 5, Bandung'],
+        ];
+
+        foreach ($suppliersBandung as $data) {
+            Supplier::firstOrCreate(
+                ['branch_id' => $branchBandung->id, 'code' => $data['code']],
+                array_merge($data, ['branch_id' => $branchBandung->id, 'is_active' => true])
+            );
+        }
+
+        $suppliersJakarta = [
+            ['code' => 'SUP-001', 'name' => 'PT Distribusi Nusantara', 'phone' => '021-3334455', 'email' => 'distribusi@supplier.com', 'address' => 'Jl. Gatot Subroto No. 20, Jakarta'],
+            ['code' => 'SUP-002', 'name' => 'UD Berkah Jaya', 'phone' => '021-7778899', 'email' => 'berkah@supplier.com', 'address' => 'Jl. Tanah Abang No. 8, Jakarta'],
+        ];
+
+        foreach ($suppliersJakarta as $data) {
+            Supplier::firstOrCreate(
+                ['branch_id' => $branchJakarta->id, 'code' => $data['code']],
+                array_merge($data, ['branch_id' => $branchJakarta->id, 'is_active' => true])
+            );
+        }
     }
 }

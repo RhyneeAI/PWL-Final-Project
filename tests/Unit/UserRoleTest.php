@@ -62,6 +62,21 @@ it('owner dan manager dapat melihat dan kelola produk', function () {
     expect(UserRole::Manager->canManageProducts())->toBeTrue();
 });
 
+it('gudang dapat melihat supplier tanpa kelola', function () {
+    expect(UserRole::Warehouse->canViewSuppliers())->toBeTrue();
+    expect(UserRole::Warehouse->canManageSuppliers())->toBeFalse();
+});
+
+it('kasir tidak dapat akses supplier', function () {
+    expect(UserRole::Cashier->canViewSuppliers())->toBeFalse();
+    expect(UserRole::Cashier->canManageSuppliers())->toBeFalse();
+});
+
+it('owner dan manager dapat kelola supplier', function () {
+    expect(UserRole::Owner->canManageSuppliers())->toBeTrue();
+    expect(UserRole::Manager->canManageSuppliers())->toBeTrue();
+});
+
 // ─── canViewTransactions ──────────────────────────────────────────────────────
 
 it('kasir dapat mengelola dan melihat transaksi', function () {
