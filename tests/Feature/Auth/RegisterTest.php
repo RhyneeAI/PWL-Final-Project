@@ -31,7 +31,7 @@ it('user baru dapat mendaftar dengan data valid', function () {
         'password_confirmation' => 'password123',
     ]);
 
-    $response->assertRedirect(route('dashboard'));
+    $response->assertRedirect(route('login'));
 
     $this->assertDatabaseHas('users', [
         'name'      => 'Kasir Baru',
@@ -41,20 +41,19 @@ it('user baru dapat mendaftar dengan data valid', function () {
         'is_active' => true,
     ]);
 
-    $this->assertAuthenticated();
+    $this->assertGuest();
 });
 
-it('user langsung login setelah register berhasil', function () {
+it('user tidak langsung login setelah register berhasil', function () {
     $this->post(route('register'), [
         'name'                  => 'Kasir Baru',
         'username'              => 'kasirbaru',
         'email'                 => 'kasirbaru@test.com',
         'password'              => 'password123',
         'password_confirmation' => 'password123',
-    ]);
+    ])->assertRedirect(route('login'));
 
-    $user = User::where('username', 'kasirbaru')->first();
-    $this->assertAuthenticatedAs($user);
+    $this->assertGuest();
 });
 
 // ─── Register failure ─────────────────────────────────────────────────────────

@@ -6,5 +6,3 @@
         <p class="text-xs">v1.0.0 • Made with Tailwind</p>
     </div>
 </footer>
-<script src="{{ asset('assets') }}/js/jquery.min.js"></script>
-@stack('scripts')

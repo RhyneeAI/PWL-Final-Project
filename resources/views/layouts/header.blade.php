@@ -8,3 +8,4 @@
     tailwind.config = { darkMode: 'class' };
 </script>
 <link rel="stylesheet" href="/assets/css/admin.css">
+@stack('styles')

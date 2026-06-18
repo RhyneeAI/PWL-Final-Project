@@ -1,12 +1,18 @@
-let isCollapsed = false;
+const SIDEBAR_STORAGE_KEY = 'sidebar-collapsed';
+
+let isCollapsed = localStorage.getItem(SIDEBAR_STORAGE_KEY) === 'true';
+
 $(document).ready(function() {
     initSidebarMenu();
     initHeaderDropdowns();
     initThemeToggle();
+    initNavbarSearch();
+    applySidebarState(false);
 
     $('#sidebar-toggle').on('click', function() {
         isCollapsed = !isCollapsed;
-        toggleSidebar();
+        localStorage.setItem(SIDEBAR_STORAGE_KEY, isCollapsed);
+        applySidebarState(true);
     });
 });
 
@@ -22,28 +28,28 @@ function initThemeToggle() {
     });
 }
 
-// ====================== FUNGSI COLLAPSE SIDEBAR ======================
-function toggleSidebar() {
+// ====================== SIDEBAR COLLAPSE ======================
+function applySidebarState(animate) {
     const sidebar = $('#sidebar');
+    const toggleIcon = $('#sidebar-toggle i');
 
     if (isCollapsed) {
-        // === COLLAPSED MODE ===
-        sidebar.addClass('w-16').removeClass('w-64');
+        sidebar.addClass('is-collapsed');
         $('.menu-text').addClass('hidden');
         $('#logo-text').addClass('hidden');
-        $('#sidebar-logo-text').addClass('hidden');
-        $('#sidebar-version').addClass('hidden');
-
-        $('#sidebar-toggle i').removeClass('fa-bars').addClass('fa-chevron-right');
+        toggleIcon.removeClass('fa-bars').addClass('fa-chevron-right');
     } else {
-        // === NORMAL MODE ===
-        sidebar.removeClass('w-16').addClass('w-64');
+        sidebar.removeClass('is-collapsed');
         $('.menu-text').removeClass('hidden');
         $('#logo-text').removeClass('hidden');
-        $('#sidebar-logo-text').removeClass('hidden');
-        $('#sidebar-version').removeClass('hidden');
+        toggleIcon.removeClass('fa-chevron-right').addClass('fa-bars');
+    }
 
-        $('#sidebar-toggle i').removeClass('fa-chevron-right').addClass('fa-bars');
+    if (!animate) {
+        sidebar.css('transition', 'none');
+        requestAnimationFrame(function() {
+            sidebar.css('transition', '');
+        });
     }
 }
 
@@ -51,12 +57,9 @@ function toggleSidebar() {
 function initSidebarMenu() {
     $('.admin-menu-item').off('click').on('click', function() {
         const $this = $(this);
-        
-        // Update active state
-        $('.admin-menu-item').removeClass('active bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400');
-        $this.addClass('active bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400');
-        
-        // Let href do the navigation
+
+        $('.admin-menu-item').removeClass('active');
+        $this.addClass('active');
     });
 }
 
@@ -80,6 +83,9 @@ function initHeaderDropdowns() {
         }
         if (!$(e.target).closest('#user-menu-btn, #user-dropdown').length) {
             $('#user-dropdown').addClass('hidden');
+        }
+        if (!$(e.target).closest('#navbar-search-wrap').length) {
+            $('#navbar-search-dropdown').addClass('hidden');
         }
     });
 }

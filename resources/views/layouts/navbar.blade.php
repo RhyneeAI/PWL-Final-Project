@@ -17,10 +17,26 @@
 
         <!-- Right Side -->
         <div class="flex items-center gap-x-5">
-            <div class="relative hidden md:block w-80">
-                <input type="text" id="search-input" placeholder="Cari data atau menu..." class="w-full bg-gray-100 dark:bg-gray-800 border border-transparent focus:border-blue-500 focus:bg-gray-900 focus:text-white pl-11 py-3 rounded-3xl text-sm focus:outline-none transition-all">
-                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+            <div class="relative hidden md:block w-80" id="navbar-search-wrap">
+                <input
+                    type="text"
+                    id="search-input"
+                    autocomplete="off"
+                    placeholder="Cari menu..."
+                    class="w-full bg-gray-100 dark:bg-gray-800 border border-transparent focus:border-blue-500 dark:focus:border-blue-500 text-gray-900 dark:text-white pl-11 py-3 rounded-3xl text-sm focus:outline-none transition-all"
+                >
+                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
                     <i class="fas fa-search"></i>
+                </div>
+
+                <div id="navbar-search-dropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
+                    <div class="px-4 py-2.5 border-b border-gray-100 dark:border-gray-700">
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Navigasi Menu</p>
+                    </div>
+                    <div id="navbar-search-results" class="max-h-72 overflow-y-auto py-1"></div>
+                    <div id="navbar-search-empty" class="hidden px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                        Menu tidak ditemukan
+                    </div>
                 </div>
             </div>
 

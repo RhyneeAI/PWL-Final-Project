@@ -22,19 +22,21 @@
                 Masukkan username dan password untuk sign in
             </p>
 
-            {{-- Flash success --}}
-            @if (session('success'))
-                <div class="mb-4 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm">
-                    <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
-                </div>
-            @endif
+            <div class="mx-auto max-w-md text-left">
+                {{-- Flash success --}}
+                @if (session('success'))
+                    <div data-flash-message class="flash-message mb-4 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm transition-all duration-500 ease-in-out">
+                        <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
+                    </div>
+                @endif
 
-            {{-- Flash error --}}
-            @if (session('error'))
-                <div class="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
-                    <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
-                </div>
-            @endif
+                {{-- Flash error --}}
+                @if (session('error'))
+                    <div data-flash-message class="flash-message mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm transition-all duration-500 ease-in-out">
+                        <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
+                    </div>
+                @endif
+            </div>
 
             <form action="{{ route('login') }}" method="POST" class="mx-auto max-w-md text-left">
                 @csrf
@@ -101,13 +103,6 @@
                     <span>Sign In</span>
                 </button>
 
-                <!-- Forgot Password -->
-                <div class="mt-4 flex justify-end">
-                    <a href="#" class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors">
-                        Forgot password?
-                    </a>
-                </div>
-
                 <!-- Register Link -->
                 <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
                     Not registered? 
@@ -141,5 +136,6 @@
             }
         });
     </script>
+    <script src="/assets/js/flash.js"></script>
 </body>
 </html>
