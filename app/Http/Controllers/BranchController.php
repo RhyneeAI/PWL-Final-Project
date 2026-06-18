@@ -28,7 +28,7 @@ class BranchController extends Controller
             'city' => $request->city,
             'address' => $request->address,
             'phone' => $request->phone,
-            'is_active' => true,
+            'is_active' => $request->is_active,
         ]);
 
         return redirect()->route('branch.index');
@@ -48,6 +48,7 @@ class BranchController extends Controller
             'city' => $request->city,
             'address' => $request->address,
             'phone' => $request->phone,
+            'is_active' => $request->is_active,
         ]);
 
         return redirect()->route('branch.index');

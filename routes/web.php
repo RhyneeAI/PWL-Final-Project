@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\UserController;
 
 // ─── Guest routes (belum login) ───────────────────────────────────────────────
 Route::middleware('guest')->group(function () {
@@ -47,9 +48,23 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     // Owner + Manajer Toko
     Route::middleware('role:owner,manager')->group(function () {
-        Route::get('/users', function () {
-            return view('master-data.user.index');
-        })->name('user.index');
+        Route::get('/users', [UserController::class, 'index'])
+    ->name('user.index');
+
+        Route::get('/users/create', [UserController::class, 'create'])
+            ->name('user.create');
+
+        Route::post('/users', [UserController::class, 'store'])
+            ->name('user.store');
+
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])
+            ->name('user.edit');
+
+        Route::put('/users/{user}', [UserController::class, 'update'])
+            ->name('user.update');
+
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])
+            ->name('user.destroy');
 
         Route::get('/categories', function () {
             return view('master-data.category.index');

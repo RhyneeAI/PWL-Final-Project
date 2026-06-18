@@ -66,12 +66,28 @@
                             </span>
                         </td>
 
-                        @include('partials.master-data.action-buttons', [
-                        'show' => $canManage,
-                        'id' => $supplier->id,
-                        'editRoute' => 'supplier.edit',
-                        'deleteRoute' => 'supplier.destroy'
-                    ])
+                        <td class="px-6 py-4 text-center whitespace-nowrap">
+    <div class="inline-flex items-center justify-center gap-2">
+
+        <a href="{{ route('supplier.edit', $supplier->id) }}"
+           class="btn-action btn-action-edit">
+            <i class="fas fa-pen-to-square"></i>
+        </a>
+
+        <form action="{{ route('supplier.destroy', $supplier->id) }}"
+              method="POST"
+              onsubmit="return confirm('Yakin ingin menghapus supplier ini?')">
+            @csrf
+            @method('DELETE')
+
+            <button type="submit"
+                    class="btn-action btn-action-delete">
+                <i class="fas fa-trash-can"></i>
+            </button>
+        </form>
+
+    </div>
+</td>
                     </tr>
                     @endforeach
                 </tbody>

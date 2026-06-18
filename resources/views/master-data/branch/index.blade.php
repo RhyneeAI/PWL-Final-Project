@@ -55,11 +55,28 @@
                     {{ $branch->is_active ? 'Aktif' : 'Nonaktif' }}
                 </span>
             </td>
-            @include('partials.master-data.action-buttons', [
-            'id' => $branch->id,
-            'editRoute' => 'branch.edit',
-            'deleteRoute' => 'branch.destroy'
-        ])
+            <td class="px-6 py-4 text-center whitespace-nowrap">
+    <div class="inline-flex items-center justify-center gap-2">
+
+        <a href="{{ route('branch.edit', $branch->id) }}"
+           class="btn-action btn-action-edit">
+            <i class="fas fa-pen-to-square"></i>
+        </a>
+
+        <form action="{{ route('branch.destroy', $branch->id) }}"
+              method="POST"
+              onsubmit="return confirm('Yakin ingin menghapus cabang ini?')">
+            @csrf
+            @method('DELETE')
+
+            <button type="submit"
+                    class="btn-action btn-action-delete">
+                <i class="fas fa-trash-can"></i>
+            </button>
+        </form>
+
+    </div>
+</td>
         </tr>
     @endforeach
 </tbody>

@@ -84,6 +84,25 @@
                                focus:outline-none focus:ring-2 focus:ring-green-500">
                 </div>
 
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">
+                        Status
+                    </label>
+
+                    <select
+                        name="is_active"
+                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600
+                               bg-white dark:bg-gray-800
+                               text-gray-900 dark:text-white
+                               px-4 py-3
+                               focus:outline-none focus:ring-2 focus:ring-green-500">
+
+                        <option value="1">Aktif</option>
+                        <option value="0">Nonaktif</option>
+
+                    </select>
+                </div>
+
             </div>
 
             <div class="mt-6">

@@ -28,7 +28,7 @@
                     <input
                         type="text"
                         name="code"
-                        value="{{ $branch->code }}"
+                        value="{{ old('code', $branch->code) }}"
                         class="w-full rounded-xl border border-gray-300 dark:border-gray-600
                                bg-white dark:bg-gray-800
                                text-gray-900 dark:text-white
@@ -43,7 +43,7 @@
                     <input
                         type="text"
                         name="name"
-                        value="{{ $branch->name }}"
+                        value="{{ old('name', $branch->name) }}"
                         class="w-full rounded-xl border border-gray-300 dark:border-gray-600
                                bg-white dark:bg-gray-800
                                text-gray-900 dark:text-white
@@ -58,7 +58,7 @@
                     <input
                         type="text"
                         name="city"
-                        value="{{ $branch->city }}"
+                        value="{{ old('city', $branch->city) }}"
                         class="w-full rounded-xl border border-gray-300 dark:border-gray-600
                                bg-white dark:bg-gray-800
                                text-gray-900 dark:text-white
@@ -73,12 +73,36 @@
                     <input
                         type="text"
                         name="phone"
-                        value="{{ $branch->phone }}"
+                        value="{{ old('phone', $branch->phone) }}"
                         class="w-full rounded-xl border border-gray-300 dark:border-gray-600
                                bg-white dark:bg-gray-800
                                text-gray-900 dark:text-white
                                px-4 py-3
                                focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">
+                        Status
+                    </label>
+
+                    <select
+                        name="is_active"
+                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600
+                               bg-white dark:bg-gray-800
+                               text-gray-900 dark:text-white
+                               px-4 py-3
+                               focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                        <option value="1" {{ $branch->is_active ? 'selected' : '' }}>
+                            Aktif
+                        </option>
+
+                        <option value="0" {{ !$branch->is_active ? 'selected' : '' }}>
+                            Nonaktif
+                        </option>
+
+                    </select>
                 </div>
 
             </div>
@@ -95,7 +119,7 @@
                            bg-white dark:bg-gray-800
                            text-gray-900 dark:text-white
                            px-4 py-3
-                           focus:outline-none focus:ring-2 focus:ring-blue-500">{{ $branch->address }}</textarea>
+                           focus:outline-none focus:ring-2 focus:ring-blue-500">{{ old('address', $branch->address) }}</textarea>
             </div>
 
             <div class="flex justify-end gap-3 mt-8">
