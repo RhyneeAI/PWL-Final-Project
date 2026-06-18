@@ -55,9 +55,28 @@ class User extends Authenticatable
         return $this->role === UserRole::Admin;
     }
 
+    public function isSupervisor(): bool
+    {
+        return $this->role === UserRole::Supervisor;
+    }
+
     public function isCashier(): bool
     {
         return $this->role === UserRole::Cashier;
+    }
+
+    public function isWarehouse(): bool
+    {
+        return $this->role === UserRole::Warehouse;
+    }
+
+    public function initials(): string
+    {
+        return collect(explode(' ', $this->name))
+            ->filter()
+            ->map(fn (string $word) => mb_strtoupper(mb_substr($word, 0, 1)))
+            ->take(2)
+            ->implode('');
     }
 
     public function hasAccessToBranch(int $branchId): bool

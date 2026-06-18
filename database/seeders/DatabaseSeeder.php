@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // ── Owner (Pak Jayusman) ──────────────────────────────────────────
-        $owner = User::firstOrCreate(
+        User::firstOrCreate(
             ['email' => 'owner@myfanel.com'],
             [
                 'name'      => 'Pak Jayusman',
@@ -48,7 +48,6 @@ class DatabaseSeeder extends Seeder
                 $branchData
             );
 
-            // Default settings untuk tiap cabang
             BranchSetting::firstOrCreate(
                 ['branch_id' => $branch->id],
                 [
@@ -62,19 +61,33 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // ── Contoh Admin untuk BR-001 ────────────────────────────────────
+        $branchBandung = Branch::where('code', 'BR-001')->first();
+
+        // ── Manajer Toko BR-001 ──────────────────────────────────────────
         $admin = User::firstOrCreate(
             ['email' => 'admin@myfanel.com'],
             [
-                'name'      => 'Admin Bandung',
+                'name'      => 'Manajer Bandung',
                 'password'  => Hash::make('password'),
                 'role'      => UserRole::Admin,
                 'is_active' => true,
             ]
         );
-        $admin->branches()->syncWithoutDetaching([Branch::where('code', 'BR-001')->first()->id]);
+        $admin->branches()->syncWithoutDetaching([$branchBandung->id]);
 
-        // ── Contoh Kasir untuk BR-001 ────────────────────────────────────
+        // ── Supervisor BR-001 ────────────────────────────────────────────
+        $supervisor = User::firstOrCreate(
+            ['email' => 'supervisor@myfanel.com'],
+            [
+                'name'      => 'Supervisor Bandung',
+                'password'  => Hash::make('password'),
+                'role'      => UserRole::Supervisor,
+                'is_active' => true,
+            ]
+        );
+        $supervisor->branches()->syncWithoutDetaching([$branchBandung->id]);
+
+        // ── Kasir BR-001 ─────────────────────────────────────────────────
         $cashier = User::firstOrCreate(
             ['email' => 'kasir@myfanel.com'],
             [
@@ -84,6 +97,18 @@ class DatabaseSeeder extends Seeder
                 'is_active' => true,
             ]
         );
-        $cashier->branches()->syncWithoutDetaching([Branch::where('code', 'BR-001')->first()->id]);
+        $cashier->branches()->syncWithoutDetaching([$branchBandung->id]);
+
+        // ── Pegawai Gudang BR-001 ────────────────────────────────────────
+        $warehouse = User::firstOrCreate(
+            ['email' => 'gudang@myfanel.com'],
+            [
+                'name'      => 'Gudang Bandung',
+                'password'  => Hash::make('password'),
+                'role'      => UserRole::Warehouse,
+                'is_active' => true,
+            ]
+        );
+        $warehouse->branches()->syncWithoutDetaching([$branchBandung->id]);
     }
 }

@@ -13,7 +13,7 @@ Route::middleware('guest')->group(function () {
 });
 
 // ─── Auth routes (sudah login) ────────────────────────────────────────────────
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'active'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Dashboard (semua role)
@@ -21,19 +21,19 @@ Route::middleware('auth')->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
-    // Owner only
+    // Owner only — kelola cabang
     Route::middleware('role:owner')->group(function () {
         Route::get('/branches', function () {
             return view('master-data.branch.index');
         })->name('branch.index');
+    });
 
+    // Owner + Manajer Toko
+    Route::middleware('role:owner,admin')->group(function () {
         Route::get('/users', function () {
             return view('master-data.user.index');
         })->name('user.index');
-    });
 
-    // Owner + Admin
-    Route::middleware('role:owner,admin')->group(function () {
         Route::get('/categories', function () {
             return view('master-data.category.index');
         })->name('category.index');
@@ -42,27 +42,34 @@ Route::middleware('auth')->group(function () {
             return view('master-data.product.index');
         })->name('product.index');
 
-        Route::get('/stock-mutations', function () {
-            return view('transaksi.stock-mutation.index');
-        })->name('stock-mutation.index');
-
-        Route::get('/reports', function () {
-            return view('reports.index');
-        })->name('report.index');
-
         Route::get('/settings', function () {
             return view('settings.index');
         })->name('settings.index');
     });
 
-    // Semua role (owner, admin, cashier)
-    Route::get('/transactions', function () {
-        return view('transaksi.transaction.index');
-    })->name('transaction.index');
+    // Owner + Manajer Toko + Supervisor — laporan
+    Route::middleware('role:owner,admin,supervisor')->group(function () {
+        Route::get('/reports', function () {
+            return view('reports.index');
+        })->name('report.index');
+    });
+
+    // Owner + Manajer Toko + Pegawai Gudang — stok
+    Route::middleware('role:owner,admin,warehouse')->group(function () {
+        Route::get('/stock-mutations', function () {
+            return view('transaksi.stock-in.index');
+        })->name('stock-mutation.index');
+    });
+
+    // Owner + Manajer Toko + Supervisor + Kasir — transaksi
+    Route::middleware('role:owner,admin,supervisor,cashier')->group(function () {
+        Route::get('/transactions', function () {
+            return view('transaksi.transaction.index');
+        })->name('transaction.index');
+    });
 });
 
 // ─── Fallback (route tidak ditemukan) ────────────────────────────────────────
-// Sudah login → tampilkan 404, belum login → redirect ke login
 Route::fallback(function () {
     if (auth()->check()) {
         return response()->view('errors.404', [], 404);
