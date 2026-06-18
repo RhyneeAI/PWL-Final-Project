@@ -19,57 +19,76 @@ function makeRoleUser(UserRole $role): User
 it('owner dapat akses semua route yang dilindungi role', function () {
     $user = makeRoleUser(UserRole::Owner);
 
-    $this->actingAs($user)
-        ->get(route('branch.index'))->assertOk()
-        ->get(route('user.index'))->assertOk()
-        ->get(route('category.index'))->assertOk()
-        ->get(route('product.index'))->assertOk()
-        ->get(route('report.index'))->assertOk()
-        ->get(route('settings.index'))->assertOk()
-        ->get(route('stock-mutation.index'))->assertOk()
-        ->get(route('transaction.index'))->assertOk();
+    $this->actingAs($user)->get(route('branch.index'))->assertOk();
+    $this->actingAs($user)->get(route('user.index'))->assertOk();
+    $this->actingAs($user)->get(route('category.index'))->assertOk();
+    $this->actingAs($user)->get(route('product.index'))->assertOk();
+    $this->actingAs($user)->get(route('report.index'))->assertOk();
+    $this->actingAs($user)->get(route('settings.index'))->assertOk();
+    $this->actingAs($user)->get(route('stock-mutation.index'))->assertOk();
+    $this->actingAs($user)->get(route('transaction.index'))->assertOk();
 });
 
-// ─── Manajer Toko ─────────────────────────────────────────────────────────────
+// ─── Manager ──────────────────────────────────────────────────────────────────
 
 it('manager tidak dapat akses cabang tapi dapat akses master data lain', function () {
     $user = makeRoleUser(UserRole::Manager);
 
-    $this->actingAs($user)
-        ->get(route('branch.index'))->assertForbidden()
-        ->get(route('user.index'))->assertOk()
-        ->get(route('category.index'))->assertOk()
-        ->get(route('product.index'))->assertOk()
-        ->get(route('report.index'))->assertOk()
-        ->get(route('settings.index'))->assertOk()
-        ->get(route('stock-mutation.index'))->assertOk()
-        ->get(route('transaction.index'))->assertOk();
+    $this->actingAs($user)->get(route('branch.index'))->assertForbidden();
+    $this->actingAs($user)->get(route('user.index'))->assertOk();
+    $this->actingAs($user)->get(route('category.index'))->assertOk();
+    $this->actingAs($user)->get(route('product.index'))->assertOk();
+    $this->actingAs($user)->get(route('report.index'))->assertOk();
+    $this->actingAs($user)->get(route('settings.index'))->assertOk();
+    $this->actingAs($user)->get(route('stock-mutation.index'))->assertOk();
+    $this->actingAs($user)->get(route('transaction.index'))->assertOk();
 });
 
 // ─── Kasir ────────────────────────────────────────────────────────────────────
 
-it('kasir hanya dapat akses dashboard dan transaksi', function () {
+it('kasir dapat akses dashboard transaksi dan lihat produk', function () {
+    $user = makeRoleUser(UserRole::Cashier);
+
+    $this->actingAs($user)->get(route('dashboard'))->assertOk();
+    $this->actingAs($user)->get(route('transaction.index'))->assertOk();
+    $this->actingAs($user)->get(route('product.index'))->assertOk();
+    $this->actingAs($user)->get(route('branch.index'))->assertForbidden();
+    $this->actingAs($user)->get(route('report.index'))->assertForbidden();
+    $this->actingAs($user)->get(route('stock-mutation.index'))->assertForbidden();
+});
+
+it('kasir tidak melihat tombol kelola produk di halaman produk', function () {
     $user = makeRoleUser(UserRole::Cashier);
 
     $this->actingAs($user)
-        ->get(route('dashboard'))->assertOk()
-        ->get(route('transaction.index'))->assertOk()
-        ->get(route('branch.index'))->assertForbidden()
-        ->get(route('report.index'))->assertForbidden()
-        ->get(route('stock-mutation.index'))->assertForbidden();
+        ->get(route('product.index'))
+        ->assertOk()
+        ->assertDontSee('+ Tambah Produk')
+        ->assertDontSee('>Edit</button>')
+        ->assertDontSee('>Hapus</button>');
 });
 
 // ─── Pegawai Gudang ───────────────────────────────────────────────────────────
 
-it('pegawai gudang hanya dapat akses dashboard dan stok', function () {
+it('pegawai gudang dapat akses dashboard stok dan lihat produk', function () {
+    $user = makeRoleUser(UserRole::Warehouse);
+
+    $this->actingAs($user)->get(route('dashboard'))->assertOk();
+    $this->actingAs($user)->get(route('stock-mutation.index'))->assertOk();
+    $this->actingAs($user)->get(route('product.index'))->assertOk();
+    $this->actingAs($user)->get(route('transaction.index'))->assertForbidden();
+    $this->actingAs($user)->get(route('report.index'))->assertForbidden();
+});
+
+it('pegawai gudang tidak melihat tombol kelola produk di halaman produk', function () {
     $user = makeRoleUser(UserRole::Warehouse);
 
     $this->actingAs($user)
-        ->get(route('dashboard'))->assertOk()
-        ->get(route('stock-mutation.index'))->assertOk()
-        ->get(route('transaction.index'))->assertForbidden()
-        ->get(route('report.index'))->assertForbidden()
-        ->get(route('product.index'))->assertForbidden();
+        ->get(route('product.index'))
+        ->assertOk()
+        ->assertDontSee('+ Tambah Produk')
+        ->assertDontSee('>Edit</button>')
+        ->assertDontSee('>Hapus</button>');
 });
 
 // ─── Akun nonaktif ────────────────────────────────────────────────────────────

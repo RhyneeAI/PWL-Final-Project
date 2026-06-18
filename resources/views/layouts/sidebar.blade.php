@@ -23,7 +23,7 @@
                 <span class="menu-text">Dashboard</span>
             </a>
 
-            @if ($role->canManageBranches() || $role->canManageProducts() || $role->canManageCategories() || $role->canManageUsers())
+            @if ($role->canManageBranches() || $role->canViewProducts() || $role->canManageCategories() || $role->canManageUsers())
                 <!-- Master Data -->
                 <div class="text-xs font-semibold text-gray-400 uppercase mt-4 mb-2">Master Data</div>
 
@@ -34,7 +34,7 @@
                     </a>
                 @endif
 
-                @if ($role->canManageProducts())
+                @if ($role->canViewProducts())
                     <a href="{{ route('product.index') }}" data-page="products" class="admin-menu-item">
                         <i class="fas fa-boxes"></i>
                         <span class="menu-text">Produk</span>

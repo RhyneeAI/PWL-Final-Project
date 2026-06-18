@@ -46,6 +46,22 @@ it('owner dan manager dapat mengelola user', function () {
     expect(UserRole::Warehouse->canManageUsers())->toBeFalse();
 });
 
+// ─── canManageProducts / canViewProducts ────────────────────────────────────────
+
+it('kasir dan gudang dapat melihat produk tanpa kelola', function () {
+    expect(UserRole::Cashier->canViewProducts())->toBeTrue();
+    expect(UserRole::Cashier->canManageProducts())->toBeFalse();
+    expect(UserRole::Warehouse->canViewProducts())->toBeTrue();
+    expect(UserRole::Warehouse->canManageProducts())->toBeFalse();
+});
+
+it('owner dan manager dapat melihat dan kelola produk', function () {
+    expect(UserRole::Owner->canViewProducts())->toBeTrue();
+    expect(UserRole::Owner->canManageProducts())->toBeTrue();
+    expect(UserRole::Manager->canViewProducts())->toBeTrue();
+    expect(UserRole::Manager->canManageProducts())->toBeTrue();
+});
+
 // ─── canViewTransactions ──────────────────────────────────────────────────────
 
 it('kasir dapat mengelola dan melihat transaksi', function () {

@@ -38,10 +38,6 @@ Route::middleware(['auth', 'active'])->group(function () {
             return view('master-data.category.index');
         })->name('category.index');
 
-        Route::get('/products', function () {
-            return view('master-data.product.index');
-        })->name('product.index');
-
         Route::get('/reports', function () {
             return view('reports.index');
         })->name('report.index');
@@ -49,6 +45,13 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::get('/settings', function () {
             return view('settings.index');
         })->name('settings.index');
+    });
+
+    // Semua role operasional — lihat produk (read-only untuk kasir & gudang)
+    Route::middleware('role:owner,manager,cashier,warehouse')->group(function () {
+        Route::get('/products', function () {
+            return view('master-data.product.index');
+        })->name('product.index');
     });
 
     // Owner + Manajer Toko + Pegawai Gudang — stok
