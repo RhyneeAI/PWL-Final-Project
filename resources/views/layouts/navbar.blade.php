@@ -24,6 +24,11 @@
                 </div>
             </div>
 
+            <!-- Theme Toggle -->
+            <button id="theme-toggle" type="button" title="Ganti tema" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <i id="theme-toggle-icon" class="fas fa-sun text-xl"></i>
+            </button>
+
             <!-- Notification -->
             <div class="relative">
                 <button id="notification-btn" class="relative text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">

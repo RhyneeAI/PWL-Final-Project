@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full">
+<html lang="id" class="dark h-full">
 <head>
     @include('layouts.header')
 </head>
-<body class="h-full bg-gray-950 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+<body class="h-full bg-gray-100 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300">
     <!-- Container utama -->
     <div class="flex h-screen overflow-hidden">  
         <!-- Sidebar -->
@@ -15,7 +15,7 @@
             @include('layouts.navbar')
 
             <!-- Content Wrapper -->
-            <main id="content-wrapper" class="flex-1 overflow-auto bg-gray-950 p-8">
+            <main id="content-wrapper" class="flex-1 overflow-auto bg-gray-100 dark:bg-gray-950 p-8 transition-colors duration-300">
                 <div class="px-4 py-2">
                     @yield('content')
                 </div>
@@ -26,8 +26,8 @@
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-    <script src="{{ asset('assets/js/main.js') }}"></script>
+    <!-- Scripts (path relatif ke public/, tidak melalui Vite dev server) -->
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/main.js"></script>
 </body>
 </html>

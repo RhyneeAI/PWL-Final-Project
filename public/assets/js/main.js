@@ -1,18 +1,26 @@
 let isCollapsed = false;
 $(document).ready(function() {
-    // Load Sidebar
     initSidebarMenu();
-
-    // Load Header
     initHeaderDropdowns();
+    initThemeToggle();
 
-    // Event tombol burger
     $('#sidebar-toggle').on('click', function() {
         isCollapsed = !isCollapsed;
         toggleSidebar();
     });
-
 });
+
+// ====================== THEME TOGGLE ======================
+function initThemeToggle() {
+    if (window.MyFanelTheme) {
+        window.MyFanelTheme.applyTheme(window.MyFanelTheme.getTheme());
+    }
+
+    $('#theme-toggle').off('click').on('click', function(e) {
+        e.stopImmediatePropagation();
+        window.MyFanelTheme?.toggleTheme();
+    });
+}
 
 // ====================== FUNGSI COLLAPSE SIDEBAR ======================
 function toggleSidebar() {
