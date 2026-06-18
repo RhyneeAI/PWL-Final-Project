@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BranchController;
 
 // ─── Guest routes (belum login) ───────────────────────────────────────────────
 Route::middleware('guest')->group(function () {
@@ -23,9 +24,24 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     // Owner only — kelola cabang
     Route::middleware('role:owner')->group(function () {
-        Route::get('/branches', function () {
-            return view('master-data.branch.index');
-        })->name('branch.index');
+
+    Route::get('/branches', [BranchController::class, 'index'])
+        ->name('branch.index');
+
+    Route::get('/branches/create', [BranchController::class, 'create'])
+        ->name('branch.create');
+
+    Route::post('/branches', [BranchController::class, 'store'])
+        ->name('branch.store');
+
+    Route::get('/branches/{branch}/edit', [BranchController::class, 'edit'])
+    ->name('branch.edit');
+
+    Route::put('/branches/{branch}', [BranchController::class, 'update'])
+    ->name('branch.update');
+
+    Route::delete('/branches/{branch}', [BranchController::class, 'destroy'])
+    ->name('branch.destroy');
     });
 
     // Owner + Manajer Toko
@@ -85,3 +101,4 @@ Route::fallback(function () {
     return redirect()->route('login')
         ->with('error', 'Silakan login terlebih dahulu.');
 });
+

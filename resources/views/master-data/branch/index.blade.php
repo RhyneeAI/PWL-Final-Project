@@ -11,9 +11,10 @@
                 <p class="text-gray-500 dark:text-gray-400">Kelola cabang mini market MyFanel.</p>
             </div>
 
-            <button type="button" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm">
-                <i class="fas fa-plus mr-1"></i> Tambah Cabang
-            </button>
+            <a href="{{ route('branch.create') }}"
+             class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm">
+             <i class="fas fa-plus mr-1"></i> Tambah Cabang
+            </a>
         </div>
 
         @include('partials.master-data.table-toolbar', [
@@ -42,23 +43,22 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ([
-                            ['BR-001', 'MyFanel Bandung', 'Bandung', '022-1234567', 'Jl. Asia Afrika No. 1', 'Aktif', true],
-                            ['BR-002', 'MyFanel Jakarta', 'Jakarta', '021-9876543', 'Jl. Sudirman No. 10', 'Aktif', true],
-                        ] as [$kode, $nama, $kota, $telepon, $alamat, $status, $isActive])
-                            <tr>
-                                <td class="px-6 py-4 font-medium">{{ $kode }}</td>
-                                <td class="px-6 py-4">{{ $nama }}</td>
-                                <td class="px-6 py-4">{{ $kota }}</td>
-                                <td class="px-6 py-4">{{ $telepon }}</td>
-                                <td class="px-6 py-4">{{ $alamat }}</td>
-                                <td class="px-6 py-4">
-                                    <span class="status-badge {{ $isActive ? 'status-badge-active' : 'status-badge-inactive' }}">{{ $status }}</span>
-                                </td>
-                                @include('partials.master-data.action-buttons')
-                            </tr>
-                        @endforeach
-                    </tbody>
+    @foreach ($branches as $branch)
+        <tr>
+            <td class="px-6 py-4 font-medium">{{ $branch->code }}</td>
+            <td class="px-6 py-4">{{ $branch->name }}</td>
+            <td class="px-6 py-4">{{ $branch->city }}</td>
+            <td class="px-6 py-4">{{ $branch->phone }}</td>
+            <td class="px-6 py-4">{{ $branch->address }}</td>
+            <td class="px-6 py-4">
+                <span class="status-badge {{ $branch->is_active ? 'status-badge-active' : 'status-badge-inactive' }}">
+                    {{ $branch->is_active ? 'Aktif' : 'Nonaktif' }}
+                </span>
+            </td>
+            @include('partials.master-data.action-buttons', ['id' => $branch->id])
+        </tr>
+    @endforeach
+</tbody>
                 </table>
             </div>
         </div>
