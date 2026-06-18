@@ -22,17 +22,19 @@
                 Buat akun baru untuk mengakses MyFanel
             </p>
 
-            @if (session('success'))
-                <div class="mb-4 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm">
-                    <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
-                </div>
-            @endif
+            <div class="mx-auto max-w-md text-left">
+                @if (session('success'))
+                    <div data-flash-message class="flash-message mb-4 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm transition-all duration-500 ease-in-out">
+                        <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
+                    </div>
+                @endif
 
-            @if (session('error'))
-                <div class="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
-                    <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
-                </div>
-            @endif
+                @if (session('error'))
+                    <div data-flash-message class="flash-message mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm transition-all duration-500 ease-in-out">
+                        <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
+                    </div>
+                @endif
+            </div>
 
             <form action="{{ route('register') }}" method="POST" class="mx-auto max-w-md text-left">
                 @csrf
@@ -204,5 +206,6 @@
         setupPasswordToggle('togglePassword', 'password', 'eyeIcon');
         setupPasswordToggle('togglePasswordConfirmation', 'password_confirmation', 'eyeIconConfirmation');
     </script>
+    <script src="/assets/js/flash.js"></script>
 </body>
 </html>

@@ -88,7 +88,7 @@ class AuthController extends Controller
      */
     public function register(RegisterRequest $request): RedirectResponse
     {
-        $user = User::create([
+        User::create([
             'name'      => $request->input('name'),
             'username'  => Str::lower($request->input('username')),
             'email'     => $request->input('email'),
@@ -97,11 +97,8 @@ class AuthController extends Controller
             'is_active' => true,
         ]);
 
-        Auth::login($user);
-        $request->session()->regenerate();
-
-        return redirect()->route('dashboard')
-            ->with('success', 'Akun berhasil dibuat. Selamat datang, ' . $user->name . '!');
+        return redirect()->route('login')
+            ->with('success', 'Akun berhasil dibuat. Silakan login dengan username Anda.');
     }
 
     /**

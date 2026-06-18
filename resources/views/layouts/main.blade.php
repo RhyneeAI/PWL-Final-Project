@@ -28,6 +28,8 @@
 
     <!-- Scripts (path relatif ke public/, tidak melalui Vite dev server) -->
     <script src="/assets/js/jquery.min.js"></script>
+    @stack('scripts')
+    <script src="/assets/js/navbar-search.js"></script>
     <script src="/assets/js/main.js"></script>
 </body>
 </html>

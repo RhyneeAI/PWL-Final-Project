@@ -1,111 +1,74 @@
 @extends('layouts.main')
-@section('title', 'Produk')
+@section('title', 'Kategori')
+
+@include('partials.master-data.datatables-assets')
 
 @section('content')
     <div class="space-y-6 min-h-full">
-        <!-- Header -->
-        <div>
-            <h1 class="text-3xl font-semibold text-gray-800 dark:text-white mb-2">Orders</h1>
-            <p class="text-gray-500 dark:text-gray-400">Kelola semua pesanan pelanggan di sini.</p>
-        </div>
-
-        <!-- Filter & Search -->
-        <div class="bg-white dark:bg-gray-900 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            
-            <!-- Search -->
-            <div class="w-full md:w-1/3">
-                <input type="text" placeholder="Cari order..." 
-                    class="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-semibold text-gray-800 dark:text-white">Kategori</h1>
+                <p class="text-gray-500 dark:text-gray-400">Kelola kategori produk per cabang.</p>
             </div>
 
-            <!-- Filter Status -->
-            <div class="flex gap-2">
-                <button class="px-4 py-2 text-sm rounded-xl bg-blue-500 text-white">Semua</button>
-                <button class="px-4 py-2 text-sm rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">Selesai</button>
-                <button class="px-4 py-2 text-sm rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">Proses</button>
-                <button class="px-4 py-2 text-sm rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">Batal</button>
-            </div>
+            <button type="button" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm">
+                <i class="fas fa-plus mr-1"></i> Tambah Kategori
+            </button>
         </div>
 
-        <!-- Table Orders -->
+        @include('partials.master-data.table-toolbar', [
+            'searchId' => 'search-category',
+            'searchPlaceholder' => 'Cari nama kategori...',
+            'filters' => [
+                ['label' => 'Semua', 'column' => '', 'value' => ''],
+                ['label' => 'Aktif', 'column' => 3, 'value' => 'Aktif'],
+                ['label' => 'Nonaktif', 'column' => 3, 'value' => 'Nonaktif'],
+            ],
+        ])
+
         <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-            
             <div class="overflow-x-auto">
-                <table class="w-full min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-
-                    <!-- Table Head -->
+                <table id="category-table" class="master-data-table w-full min-w-full">
                     <thead>
-                        <tr class="bg-gray-50 dark:bg-gray-800">
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Order ID</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Pelanggan</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Produk</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Tanggal</th>
-                            <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Total</th>
-                            <th class="px-6 py-4 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
-                            <th class="px-6 py-4 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Aksi</th>
+                        <tr class="bg-gray-50 dark:bg-gray-800 text-left text-xs text-gray-500 uppercase">
+                            <th class="px-6 py-4">Nama Kategori</th>
+                            <th class="px-6 py-4">Deskripsi</th>
+                            <th class="px-6 py-4">Jumlah Produk</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4 text-center">Aksi</th>
                         </tr>
                     </thead>
-
-                    <!-- Table Body -->
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
-                            <td class="px-6 py-5 text-sm font-medium text-gray-900 dark:text-white">#ORD-9001</td>
-                            <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">Ridwan</td>
-                            <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">Laptop ASUS</td>
-                            <td class="px-6 py-5 text-sm text-gray-500 dark:text-gray-400">28 Mar 2026</td>
-                            <td class="px-6 py-5 text-sm text-right font-medium text-gray-900 dark:text-white">Rp 12.000.000</td>
-                            <td class="px-6 py-5 text-center">
-                                <span class="px-3 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-400">
-                                    Selesai
-                                </span>
-                            </td>
-                            <td class="px-6 py-5 text-center">
-                                <button class="text-blue-500 hover:underline text-sm">Detail</button>
-                            </td>
-                        </tr>
-
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
-                            <td class="px-6 py-5 text-sm font-medium text-gray-900 dark:text-white">#ORD-9002</td>
-                            <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">Luhung</td>
-                            <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">Mouse Logitech</td>
-                            <td class="px-6 py-5 text-sm text-gray-500 dark:text-gray-400">28 Mar 2026</td>
-                            <td class="px-6 py-5 text-sm text-right font-medium text-gray-900 dark:text-white">Rp 250.000</td>
-                            <td class="px-6 py-5 text-center">
-                                <span class="px-3 py-1 text-xs rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-400">
-                                    Proses
-                                </span>
-                            </td>
-                            <td class="px-6 py-5 text-center">
-                                <button class="text-blue-500 hover:underline text-sm">Detail</button>
-                            </td>
-                        </tr>
-
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
-                            <td class="px-6 py-5 text-sm font-medium text-gray-900 dark:text-white">#ORD-9003</td>
-                            <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">Andi</td>
-                            <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">Keyboard RGB</td>
-                            <td class="px-6 py-5 text-sm text-gray-500 dark:text-gray-400">27 Mar 2026</td>
-                            <td class="px-6 py-5 text-sm text-right font-medium text-gray-900 dark:text-white">Rp 450.000</td>
-                            <td class="px-6 py-5 text-center">
-                                <span class="px-3 py-1 text-xs rounded-full bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-400">
-                                    Batal
-                                </span>
-                            </td>
-                            <td class="px-6 py-5 text-center">
-                                <button class="text-blue-500 hover:underline text-sm">Detail</button>
-                            </td>
-                        </tr>
-
+                    <tbody>
+                        @foreach ([
+                            ['Elektronik', 'Perangkat elektronik dan aksesoris', '24', 'Aktif', true],
+                            ['Makanan', 'Makanan dan minuman kemasan', '56', 'Aktif', true],
+                            ['Perawatan', 'Produk perawatan tubuh', '18', 'Aktif', true],
+                            ['Kebutuhan Rumah', 'Peralatan rumah tangga', '0', 'Nonaktif', false],
+                        ] as [$nama, $deskripsi, $jumlah, $status, $isActive])
+                            <tr>
+                                <td class="px-6 py-4 font-medium">{{ $nama }}</td>
+                                <td class="px-6 py-4">{{ $deskripsi }}</td>
+                                <td class="px-6 py-4">{{ $jumlah }}</td>
+                                <td class="px-6 py-4">
+                                    <span class="status-badge {{ $isActive ? 'status-badge-active' : 'status-badge-inactive' }}">{{ $status }}</span>
+                                </td>
+                                @include('partials.master-data.action-buttons')
+                            </tr>
+                        @endforeach
                     </tbody>
-
                 </table>
             </div>
         </div>
-
     </div>
 @endsection
 
 @push('scripts')
-    
+    <script>
+        $(function () {
+            initMasterDataTable('#category-table', {
+                searchInput: '#search-category',
+                filterButtons: '.table-filter-btn',
+            });
+        });
+    </script>
 @endpush
