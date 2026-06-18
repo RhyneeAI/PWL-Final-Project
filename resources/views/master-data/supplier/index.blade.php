@@ -20,9 +20,10 @@
             </div>
 
             @if ($canManage)
-                <button type="button" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm">
+                <a href="{{ route('supplier.create') }}"
+                    class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm">
                     <i class="fas fa-plus mr-1"></i> Tambah Supplier
-                </button>
+                </a>
             @endif
         </div>
 
@@ -52,23 +53,28 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ([
-                            ['SUP-001', 'PT Sumber Makmur', '022-1112233', 'sumber@supplier.com', 'Aktif', true],
-                            ['SUP-002', 'CV Fresh Food', '022-4445566', 'fresh@supplier.com', 'Aktif', true],
-                            ['SUP-003', 'UD Berkah Jaya', '021-7778899', 'berkah@supplier.com', 'Nonaktif', false],
-                        ] as [$kode, $nama, $telepon, $email, $status, $isActive])
-                            <tr>
-                                <td class="px-6 py-4 font-medium">{{ $kode }}</td>
-                                <td class="px-6 py-4">{{ $nama }}</td>
-                                <td class="px-6 py-4">{{ $telepon }}</td>
-                                <td class="px-6 py-4">{{ $email }}</td>
-                                <td class="px-6 py-4">
-                                    <span class="status-badge {{ $isActive ? 'status-badge-active' : 'status-badge-inactive' }}">{{ $status }}</span>
-                                </td>
-                                @include('partials.master-data.action-buttons', ['show' => $canManage])
-                            </tr>
-                        @endforeach
-                    </tbody>
+                    @foreach ($suppliers as $supplier)
+                    <tr>
+                        <td class="px-6 py-4 font-medium">{{ $supplier->code }}</td>
+                        <td class="px-6 py-4">{{ $supplier->name }}</td>
+                        <td class="px-6 py-4">{{ $supplier->phone }}</td>
+                        <td class="px-6 py-4">{{ $supplier->email }}</td>
+
+                        <td class="px-6 py-4">
+                            <span class="status-badge {{ $supplier->is_active ? 'status-badge-active' : 'status-badge-inactive' }}">
+                                {{ $supplier->is_active ? 'Aktif' : 'Nonaktif' }}
+                            </span>
+                        </td>
+
+                        @include('partials.master-data.action-buttons', [
+                        'show' => $canManage,
+                        'id' => $supplier->id,
+                        'editRoute' => 'supplier.edit',
+                        'deleteRoute' => 'supplier.destroy'
+                    ])
+                    </tr>
+                    @endforeach
+                </tbody>
                 </table>
             </div>
         </div>

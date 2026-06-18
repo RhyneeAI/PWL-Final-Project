@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\SupplierController;
 
 // ─── Guest routes (belum login) ───────────────────────────────────────────────
 Route::middleware('guest')->group(function () {
@@ -25,23 +26,23 @@ Route::middleware(['auth', 'active'])->group(function () {
     // Owner only — kelola cabang
     Route::middleware('role:owner')->group(function () {
 
-    Route::get('/branches', [BranchController::class, 'index'])
-        ->name('branch.index');
+        Route::get('/branches', [BranchController::class, 'index'])
+            ->name('branch.index');
 
-    Route::get('/branches/create', [BranchController::class, 'create'])
-        ->name('branch.create');
+        Route::get('/branches/create', [BranchController::class, 'create'])
+            ->name('branch.create');
 
-    Route::post('/branches', [BranchController::class, 'store'])
-        ->name('branch.store');
+        Route::post('/branches', [BranchController::class, 'store'])
+            ->name('branch.store');
 
-    Route::get('/branches/{branch}/edit', [BranchController::class, 'edit'])
-    ->name('branch.edit');
+        Route::get('/branches/{branch}/edit', [BranchController::class, 'edit'])
+        ->name('branch.edit');
 
-    Route::put('/branches/{branch}', [BranchController::class, 'update'])
-    ->name('branch.update');
+        Route::put('/branches/{branch}', [BranchController::class, 'update'])
+        ->name('branch.update');
 
-    Route::delete('/branches/{branch}', [BranchController::class, 'destroy'])
-    ->name('branch.destroy');
+        Route::delete('/branches/{branch}', [BranchController::class, 'destroy'])
+        ->name('branch.destroy');
     });
 
     // Owner + Manajer Toko
@@ -72,10 +73,25 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     // Owner + Manager + Warehouse — lihat supplier (read-only untuk gudang)
     Route::middleware('role:owner,manager,warehouse')->group(function () {
-        Route::get('/suppliers', function () {
-            return view('master-data.supplier.index');
-        })->name('supplier.index');
-    });
+
+        Route::get('/suppliers', [SupplierController::class, 'index'])
+            ->name('supplier.index');
+
+        Route::get('/suppliers/create', [SupplierController::class, 'create'])
+            ->name('supplier.create');
+
+        Route::post('/suppliers', [SupplierController::class, 'store'])
+            ->name('supplier.store');
+
+        Route::get('/suppliers/{supplier}/edit', [SupplierController::class, 'edit'])
+            ->name('supplier.edit');
+
+        Route::put('/suppliers/{supplier}', [SupplierController::class, 'update'])
+            ->name('supplier.update');
+
+        Route::delete('/suppliers/{supplier}', [SupplierController::class, 'destroy'])
+            ->name('supplier.destroy');
+});
 
     // Owner + Manager + Warehouse — stok
     Route::middleware('role:owner,manager,warehouse')->group(function () {

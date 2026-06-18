@@ -55,7 +55,11 @@
                     {{ $branch->is_active ? 'Aktif' : 'Nonaktif' }}
                 </span>
             </td>
-            @include('partials.master-data.action-buttons', ['id' => $branch->id])
+            @include('partials.master-data.action-buttons', [
+            'id' => $branch->id,
+            'editRoute' => 'branch.edit',
+            'deleteRoute' => 'branch.destroy'
+        ])
         </tr>
     @endforeach
 </tbody>
