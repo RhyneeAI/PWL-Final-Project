@@ -75,18 +75,6 @@ class DatabaseSeeder extends Seeder
         );
         $admin->branches()->syncWithoutDetaching([$branchBandung->id]);
 
-        // ── Supervisor BR-001 ────────────────────────────────────────────
-        $supervisor = User::firstOrCreate(
-            ['email' => 'supervisor@myfanel.com'],
-            [
-                'name'      => 'Supervisor Bandung',
-                'password'  => Hash::make('password'),
-                'role'      => UserRole::Supervisor,
-                'is_active' => true,
-            ]
-        );
-        $supervisor->branches()->syncWithoutDetaching([$branchBandung->id]);
-
         // ── Kasir BR-001 ─────────────────────────────────────────────────
         $cashier = User::firstOrCreate(
             ['email' => 'kasir@myfanel.com'],

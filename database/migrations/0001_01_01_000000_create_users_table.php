@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->enum('role', ['owner', 'admin', 'supervisor', 'cashier', 'warehouse'])->default('cashier');
+            $table->enum('role', ['owner', 'admin', 'cashier', 'warehouse'])->default('cashier');
             $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();

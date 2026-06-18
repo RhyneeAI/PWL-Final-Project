@@ -4,20 +4,18 @@ namespace App\Enums;
 
 enum UserRole: string
 {
-    case Owner      = 'owner';
-    case Admin      = 'admin';
-    case Supervisor = 'supervisor';
-    case Cashier    = 'cashier';
-    case Warehouse  = 'warehouse';
+    case Owner     = 'owner';
+    case Admin     = 'admin';
+    case Cashier   = 'cashier';
+    case Warehouse = 'warehouse';
 
     public function label(): string
     {
         return match ($this) {
-            self::Owner      => 'Owner',
-            self::Admin      => 'Manajer Toko',
-            self::Supervisor => 'Supervisor',
-            self::Cashier    => 'Kasir',
-            self::Warehouse  => 'Pegawai Gudang',
+            self::Owner     => 'Owner',
+            self::Admin     => 'Manajer Toko',
+            self::Cashier   => 'Kasir',
+            self::Warehouse => 'Pegawai Gudang',
         };
     }
 
@@ -53,7 +51,7 @@ enum UserRole: string
 
     public function canViewTransactions(): bool
     {
-        return in_array($this, [self::Owner, self::Admin, self::Supervisor, self::Cashier]);
+        return in_array($this, [self::Owner, self::Admin, self::Cashier]);
     }
 
     public function canManageStock(): bool
@@ -63,7 +61,7 @@ enum UserRole: string
 
     public function canPrintReport(): bool
     {
-        return in_array($this, [self::Owner, self::Admin, self::Supervisor]);
+        return in_array($this, [self::Owner, self::Admin]);
     }
 
     public function canManageSettings(): bool

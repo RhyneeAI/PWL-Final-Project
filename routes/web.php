@@ -42,16 +42,13 @@ Route::middleware(['auth', 'active'])->group(function () {
             return view('master-data.product.index');
         })->name('product.index');
 
-        Route::get('/settings', function () {
-            return view('settings.index');
-        })->name('settings.index');
-    });
-
-    // Owner + Manajer Toko + Supervisor — laporan
-    Route::middleware('role:owner,admin,supervisor')->group(function () {
         Route::get('/reports', function () {
             return view('reports.index');
         })->name('report.index');
+
+        Route::get('/settings', function () {
+            return view('settings.index');
+        })->name('settings.index');
     });
 
     // Owner + Manajer Toko + Pegawai Gudang — stok
@@ -61,8 +58,8 @@ Route::middleware(['auth', 'active'])->group(function () {
         })->name('stock-mutation.index');
     });
 
-    // Owner + Manajer Toko + Supervisor + Kasir — transaksi
-    Route::middleware('role:owner,admin,supervisor,cashier')->group(function () {
+    // Owner + Manajer Toko + Kasir — transaksi
+    Route::middleware('role:owner,admin,cashier')->group(function () {
         Route::get('/transactions', function () {
             return view('transaksi.transaction.index');
         })->name('transaction.index');

@@ -46,22 +46,6 @@ it('manajer toko tidak dapat akses cabang tapi dapat akses master data lain', fu
         ->get(route('transaction.index'))->assertOk();
 });
 
-// ─── Supervisor ───────────────────────────────────────────────────────────────
-
-it('supervisor hanya dapat akses dashboard transaksi dan laporan', function () {
-    $user = makeRoleUser(UserRole::Supervisor);
-
-    $this->actingAs($user)
-        ->get(route('dashboard'))->assertOk()
-        ->get(route('transaction.index'))->assertOk()
-        ->get(route('report.index'))->assertOk()
-        ->get(route('branch.index'))->assertForbidden()
-        ->get(route('user.index'))->assertForbidden()
-        ->get(route('product.index'))->assertForbidden()
-        ->get(route('stock-mutation.index'))->assertForbidden()
-        ->get(route('settings.index'))->assertForbidden();
-});
-
 // ─── Kasir ────────────────────────────────────────────────────────────────────
 
 it('kasir hanya dapat akses dashboard dan transaksi', function () {
