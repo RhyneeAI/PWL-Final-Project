@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ProductUnit;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -14,26 +15,39 @@ class ProductRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $merged = [];
+
         if ($this->has('is_active')) {
-            $this->merge([
-                'is_active' => $this->boolean('is_active'),
-            ]);
+            $merged['is_active'] = $this->boolean('is_active');
+        }
+
+        foreach (['buy_price', 'sell_price', 'min_stock'] as $field) {
+            if ($this->has($field)) {
+                $merged[$field] = $this->normalizeFormattedNumber($this->input($field));
+            }
+        }
+
+        if ($merged !== []) {
+            $this->merge($merged);
         }
     }
 
     public function rules(): array
     {
-        $product = $this->route('product');
+        $user = $this->user();
 
         return [
-            'branch_id' => ['required', 'exists:branches,id'],
-            'category_id' => ['nullable', 'exists:categories,id'],
-            'code' => [
-                'required',
-                'string',
-                'max:50',
-                Rule::unique('products', 'code')->ignore($product),
+            'branch_id' => [
+                ! $user->canSelectBranch() ? 'prohibited' : 'required',
+                'exists:branches,id',
+                function (string $attribute, mixed $value, \Closure $fail) use ($user): void {
+                    if ($value && ! $user->hasAccessToBranch((int) $value)) {
+                        $fail('Cabang tidak valid atau tidak dapat diakses.');
+                    }
+                },
             ],
+            'category_id' => ['nullable', 'exists:categories,id'],
+            'code' => ['prohibited'],
             'barcode' => [
                 'nullable',
                 'string',
@@ -41,7 +55,7 @@ class ProductRequest extends FormRequest
                 Rule::unique('products', 'barcode')->ignore($product),
             ],
             'name' => ['required', 'string', 'max:255'],
-            'unit' => ['required', 'string', 'max:50'],
+            'unit' => ['required', Rule::enum(ProductUnit::class)],
             'buy_price' => ['required', 'numeric', 'min:0'],
             'sell_price' => ['required', 'numeric', 'min:0'],
             'min_stock' => ['required', 'integer', 'min:0'],
@@ -53,14 +67,18 @@ class ProductRequest extends FormRequest
     {
         return [
             'branch_id.required' => 'Cabang wajib dipilih.',
-            'code.required' => 'Kode produk wajib diisi.',
-            'code.unique' => 'Kode produk sudah digunakan.',
+            'branch_id.prohibited' => 'Cabang tidak dapat diubah.',
             'barcode.unique' => 'Barcode sudah digunakan.',
             'name.required' => 'Nama produk wajib diisi.',
-            'unit.required' => 'Satuan wajib diisi.',
+            'unit.required' => 'Satuan wajib dipilih.',
             'buy_price.required' => 'Harga beli wajib diisi.',
             'sell_price.required' => 'Harga jual wajib diisi.',
             'min_stock.required' => 'Stok minimum wajib diisi.',
         ];
+    }
+
+    private function normalizeFormattedNumber(mixed $value): string
+    {
+        return (string) (int) preg_replace('/\D/', '', (string) $value);
     }
 }

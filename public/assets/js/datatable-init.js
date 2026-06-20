@@ -19,10 +19,38 @@
         },
     };
 
+    function applyColumnFilters(table, filterState) {
+        table.columns().search('');
+
+        Object.keys(filterState).forEach(function (column) {
+            const value = filterState[column];
+
+            if (value) {
+                const escaped = $.fn.dataTable.util.escapeRegex(value);
+                table.column(Number(column)).search('^' + escaped + '$', true, false);
+            }
+        });
+
+        table.draw();
+    }
+
+    function removePlaceholderRows($table) {
+        $table.find('tbody tr').each(function () {
+            const $cells = $(this).children('td, th');
+
+            if ($cells.length === 1 && $cells.first().attr('colspan')) {
+                $(this).remove();
+            }
+        });
+    }
+
     function initMasterDataTable(tableSelector, options = {}) {
         const {
             searchInput,
             filterButtons,
+            branchFilter,
+            roleFilter,
+            selectFilters = [],
             order = [[0, 'asc']],
             columnDefs = [],
             pageLength = 10,
@@ -32,6 +60,8 @@
         if (!$table.length || $.fn.DataTable.isDataTable($table)) {
             return $table.DataTable ? $table.DataTable() : null;
         }
+
+        removePlaceholderRows($table);
 
         const hasActionColumn = $table.find('thead th').last().text().trim().toLowerCase() === 'aksi';
         const defaultColumnDefs = hasActionColumn
@@ -43,11 +73,12 @@
             pageLength,
             lengthChange: false,
             autoWidth: false,
-            responsive: true,
             order,
             language: DEFAULT_LANGUAGE,
             columnDefs: [...defaultColumnDefs, ...columnDefs],
         });
+
+        const filterState = {};
 
         if (searchInput) {
             $(searchInput).on('keyup search', function () {
@@ -56,30 +87,67 @@
         }
 
         if (filterButtons) {
-            bindFilterButtons(table, filterButtons);
+            bindFilterButtons(table, filterButtons, filterState);
         }
+
+        if (branchFilter) {
+            bindSelectColumnFilter(table, branchFilter, filterState);
+        }
+
+        if (roleFilter) {
+            bindSelectColumnFilter(table, roleFilter, filterState);
+        }
+
+        selectFilters.forEach(function (config) {
+            bindSelectColumnFilter(table, config, filterState);
+        });
 
         return table;
     }
 
-    function bindFilterButtons(table, buttonsSelector) {
+    function bindSelectColumnFilter(table, filterConfig, filterState) {
+        const { select, column } = filterConfig;
+        const columnKey = String(column);
+
+        $(select).on('change', function () {
+            const value = $(this).val();
+
+            if (value) {
+                filterState[columnKey] = value;
+            } else {
+                delete filterState[columnKey];
+            }
+
+            applyColumnFilters(table, filterState);
+        });
+    }
+
+    function bindBranchFilter(table, branchFilter, filterState) {
+        bindSelectColumnFilter(table, branchFilter, filterState);
+    }
+
+    function bindFilterButtons(table, buttonsSelector, filterState) {
         const $buttons = $(buttonsSelector);
 
         $buttons.on('click', function () {
             const $btn = $(this);
-            const column = $btn.data('filterColumn');
+            const column = String($btn.data('filterColumn'));
             const value = String($btn.data('filterValue') ?? '');
 
             $buttons.removeClass('is-active');
             $btn.addClass('is-active');
 
-            if (value === '' || column === '' || column === undefined) {
-                table.columns().search('').draw();
-                return;
+            if (column === '' || column === undefined) {
+                Object.keys(filterState).forEach(function (key) {
+                    delete filterState[key];
+                });
+            } else if (value === '') {
+                delete filterState[column];
+            } else {
+                filterState[column] = value;
             }
 
-            table.columns().search('');
-            table.column(column).search(value, true, false).draw();
+            applyColumnFilters(table, filterState);
         });
     }
 

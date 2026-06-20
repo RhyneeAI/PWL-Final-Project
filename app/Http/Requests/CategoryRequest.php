@@ -24,17 +24,13 @@ class CategoryRequest extends FormRequest
     public function rules(): array
     {
         $category = $this->route('category');
-        $branchId = $category?->branch_id ?? $this->input('branch_id');
 
         return [
-            'branch_id' => [$category ? 'prohibited' : 'required', 'exists:branches,id'],
             'name' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('categories', 'name')
-                    ->where('branch_id', $branchId)
-                    ->ignore($category),
+                Rule::unique('categories', 'name')->ignore($category),
             ],
             'description' => ['nullable', 'string', 'max:500'],
             'is_active' => ['sometimes', 'boolean'],
@@ -44,9 +40,8 @@ class CategoryRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'branch_id.required' => 'Cabang wajib dipilih.',
             'name.required' => 'Nama kategori wajib diisi.',
-            'name.unique' => 'Nama kategori sudah digunakan di cabang ini.',
+            'name.unique' => 'Nama kategori sudah digunakan.',
         ];
     }
 }

@@ -92,4 +92,44 @@ class User extends Authenticatable
 
         return $this->branches()->where('branch_id', $branchId)->exists();
     }
+
+    /**
+     * @return list<int>
+     */
+    public function accessibleBranchIds(): array
+    {
+        if ($this->isOwner()) {
+            return Branch::query()->pluck('id')->all();
+        }
+
+        return $this->branches()->pluck('branches.id')->all();
+    }
+
+    public function canSelectBranch(): bool
+    {
+        return $this->isOwner();
+    }
+
+    public function canBeManagedBy(User $actor): bool
+    {
+        if ($actor->id === $this->id) {
+            return true;
+        }
+
+        return UserRole::canManageAccount($actor->role, $this->role);
+    }
+
+    public function branchLabel(): string
+    {
+        if ($this->role === UserRole::Owner) {
+            return 'Kantor Pusat';
+        }
+
+        return $this->branches->first()?->name ?? '-';
+    }
+
+    public function primaryBranchId(): ?int
+    {
+        return $this->branches->first()?->id;
+    }
 }

@@ -19,6 +19,38 @@ enum UserRole: string
         };
     }
 
+    public function listOrder(): int
+    {
+        return match ($this) {
+            self::Owner => 0,
+            self::Manager => 1,
+            self::Warehouse => 2,
+            self::Cashier => 3,
+        };
+    }
+
+    /**
+     * @return list<self>
+     */
+    public static function displayOrder(): array
+    {
+        $roles = self::cases();
+        usort($roles, fn (self $a, self $b) => $a->listOrder() <=> $b->listOrder());
+
+        return $roles;
+    }
+
+    /**
+     * @param  list<self>  $roles
+     * @return list<self>
+     */
+    public static function sortForDisplay(array $roles): array
+    {
+        usort($roles, fn (self $a, self $b) => $a->listOrder() <=> $b->listOrder());
+
+        return $roles;
+    }
+
     public function canAccessAllBranches(): bool
     {
         return $this === self::Owner;
@@ -82,5 +114,50 @@ enum UserRole: string
     public function canManageSettings(): bool
     {
         return in_array($this, [self::Owner, self::Manager]);
+    }
+
+    /**
+     * Role yang boleh ditetapkan oleh pengguna dengan role tertentu.
+     *
+     * @return list<self>
+     */
+    public static function assignableBy(self $actor): array
+    {
+        $roles = match ($actor) {
+            self::Owner => self::cases(),
+            self::Manager => [self::Manager, self::Cashier, self::Warehouse],
+            default => [],
+        };
+
+        return self::sortForDisplay($roles);
+    }
+
+    public static function assignableValuesBy(self $actor): array
+    {
+        return array_map(fn (self $role) => $role->value, self::assignableBy($actor));
+    }
+
+    public function canBeAssignedBy(self $actor): bool
+    {
+        return in_array($this, self::assignableBy($actor), true);
+    }
+
+    public function hierarchyLevel(): int
+    {
+        return match ($this) {
+            self::Owner => 4,
+            self::Manager => 3,
+            self::Cashier, self::Warehouse => 2,
+        };
+    }
+
+    public function isAbove(self $other): bool
+    {
+        return $this->hierarchyLevel() > $other->hierarchyLevel();
+    }
+
+    public static function canManageAccount(self $actor, self $target): bool
+    {
+        return $actor->hierarchyLevel() >= $target->hierarchyLevel();
     }
 }

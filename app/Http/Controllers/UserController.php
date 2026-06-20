@@ -2,59 +2,154 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRole;
+use App\Http\Requests\ToggleActiveStatusRequest;
+use App\Http\Requests\UserRequest;
+use App\Models\Branch;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Collection;
+use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(): View
     {
-        $users = User::all();
+        $actor = auth()->user();
+        $canSelectBranch = $actor->canSelectBranch();
 
-        return view('master-data.user.index', compact('users'));
+        $users = User::query()
+            ->with('branches')
+            ->when(! $actor->isOwner(), function ($query) use ($actor) {
+                $branchIds = $actor->accessibleBranchIds();
+
+                $query->where(function ($q) use ($branchIds) {
+                    $q->where('role', UserRole::Owner)
+                        ->orWhereHas('branches', fn ($b) => $b->whereIn('branches.id', $branchIds));
+                });
+            })
+            ->get()
+            ->sortBy([
+                fn (User $user) => $user->role->listOrder(),
+                fn (User $user) => $user->name,
+            ])
+            ->values();
+
+        $branches = $canSelectBranch
+            ? Branch::query()->where('is_active', true)->orderBy('name')->get()
+            : collect();
+
+        $roleFilterOptions = UserRole::displayOrder();
+
+        return view('master-data.user.index', compact(
+            'users',
+            'branches',
+            'roleFilterOptions',
+            'canSelectBranch',
+        ));
     }
 
-    public function create()
+    public function create(): View
     {
-        return view('master-data.user.create');
+        $assignableRoles = UserRole::assignableBy(auth()->user()->role);
+        $branches = $this->availableBranches();
+        $canSelectBranch = auth()->user()->canSelectBranch();
+        $selectedBranchId = (int) old('branch_id', $branches->first()?->id);
+
+        return view('master-data.user.create', compact(
+            'assignableRoles',
+            'branches',
+            'canSelectBranch',
+            'selectedBranchId',
+        ));
     }
 
-    public function store(Request $request)
+    public function store(UserRequest $request): RedirectResponse
     {
-        User::create([
-            'name' => $request->name,
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => $request->password,
-            'role' => $request->role,
-            'is_active' => $request->is_active,
-        ]);
+        $user = User::create($request->validatedPayload());
+        $request->syncBranches($user);
 
-        return redirect()->route('users.index');
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'Pengguna berhasil ditambahkan.');
     }
 
-    public function edit(User $user)
+    public function edit(User $user): View
     {
-        return view('master-data.user.edit', compact('user'));
+        abort_unless($user->canBeManagedBy(auth()->user()), 403);
+
+        $user->load('branches');
+        $assignableRoles = UserRole::assignableBy(auth()->user()->role);
+        $isEditingSelf = auth()->id() === $user->id;
+        $branches = $this->availableBranches();
+        $canSelectBranch = auth()->user()->canSelectBranch();
+
+        return view('master-data.user.edit', compact(
+            'user',
+            'assignableRoles',
+            'isEditingSelf',
+            'branches',
+            'canSelectBranch',
+        ));
     }
 
-    public function update(Request $request, User $user)
+    public function update(UserRequest $request, User $user): RedirectResponse
     {
-        $user->update([
-            'name' => $request->name,
-            'username' => $request->username,
-            'email' => $request->email,
-            'role' => $request->role,
-            'is_active' => $request->is_active,
-        ]);
+        $user->update($request->validatedPayload($user));
+        $request->syncBranches($user);
 
-        return redirect()->route('users.index');
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'Pengguna berhasil diperbarui.');
     }
 
-    public function destroy(User $user)
+    public function destroy(User $user): RedirectResponse
     {
+        if (auth()->id() === $user->id) {
+            return redirect()
+                ->route('users.index')
+                ->with('error', 'Tidak dapat menghapus akun sendiri.');
+        }
+
+        abort_unless($user->canBeManagedBy(auth()->user()), 403);
+
         $user->delete();
 
-        return redirect()->route('users.index');
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'Pengguna berhasil dihapus.');
+    }
+
+    public function updateActive(ToggleActiveStatusRequest $request, User $user): JsonResponse
+    {
+        abort_unless($user->canBeManagedBy(auth()->user()), 403);
+
+        if (auth()->id() === $user->id) {
+            return response()->json([
+                'message' => 'Tidak dapat mengubah status akun sendiri.',
+            ], 422);
+        }
+
+        $user->update(['is_active' => $request->boolean('is_active')]);
+
+        return response()->json(['is_active' => $user->is_active]);
+    }
+
+    private function availableBranches(): Collection
+    {
+        $actor = auth()->user();
+
+        if ($actor->isOwner()) {
+            return Branch::query()
+                ->where('is_active', true)
+                ->orderBy('name')
+                ->get();
+        }
+
+        return $actor->branches()
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
     }
 }

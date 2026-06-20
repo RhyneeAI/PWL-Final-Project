@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class BranchSetting extends Model
 {
     protected $fillable = [
-        'branch_id', 'product_prefix', 'transaction_prefix',
+        'branch_id', 'product_prefix', 'transaction_prefix', 'supplier_prefix',
         'tax_enabled', 'tax_rate', 'discount_enabled', 'currency_symbol',
     ];
 

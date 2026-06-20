@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('branch_id')->unique()->constrained('branches')->cascadeOnDelete();
             $table->string('product_prefix')->default('PRD');   // prefix kode produk
             $table->string('transaction_prefix')->default('TRX'); // prefix kode transaksi
+            $table->string('supplier_prefix')->default('SUP'); // prefix kode supplier
             $table->boolean('tax_enabled')->default(false);
             $table->decimal('tax_rate', 5, 2)->default(0.00);   // persentase pajak, e.g. 11.00
             $table->boolean('discount_enabled')->default(true);

@@ -16,13 +16,25 @@
             @method('PUT')
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                @if ($canSelectBranch)
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cabang</label>
+                        <select name="branch_id" class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+                            @foreach ($branches as $branch)
+                                <option value="{{ $branch->id }}" @selected(old('branch_id', $product->branch_id) == $branch->id)>{{ $branch->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
+
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cabang</label>
-                    <select name="branch_id" class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
-                        @foreach ($branches as $branch)
-                            <option value="{{ $branch->id }}" @selected(old('branch_id', $product->branch_id) == $branch->id)>{{ $branch->name }}</option>
-                        @endforeach
-                    </select>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kode Produk</label>
+                    <input
+                        type="text"
+                        value="{{ $product->code }}"
+                        readonly
+                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                    >
                 </div>
 
                 <div>
@@ -30,33 +42,32 @@
                     <select name="category_id" class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
                         <option value="">— Tanpa Kategori —</option>
                         @foreach ($categories as $category)
-                            <option value="{{ $category->id }}" @selected(old('category_id', $product->category_id) == $category->id)>{{ $category->name }} ({{ $category->branch->name }})</option>
+                            <option value="{{ $category->id }}" @selected(old('category_id', $product->category_id) == $category->id)>{{ $category->name }}</option>
                         @endforeach
                     </select>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kode Produk</label>
-                    <input type="text" name="code" value="{{ old('code', $product->code) }}"
-                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
-                </div>
-
-                <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Barcode</label>
                     <input type="text" name="barcode" value="{{ old('barcode', $product->barcode) }}"
-                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+                        placeholder="Opsional"
+                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
                 </div>
 
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nama Produk</label>
                     <input type="text" name="name" value="{{ old('name', $product->name) }}"
-                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+                        placeholder="Indomie Goreng"
+                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Satuan</label>
-                    <input type="text" name="unit" value="{{ old('unit', $product->unit) }}"
-                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+                    <select name="unit" class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+                        @foreach ($units as $unit)
+                            <option value="{{ $unit->value }}" @selected(old('unit', $product->unit->value) === $unit->value)>{{ $unit->label() }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
                 <div>
@@ -69,26 +80,37 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Harga Beli</label>
-                    <input type="number" name="buy_price" min="0" step="0.01" value="{{ old('buy_price', $product->buy_price) }}"
-                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+                    @include('partials.formatted-number-input', [
+                        'name' => 'buy_price',
+                        'value' => old('buy_price', $product->buy_price),
+                        'prefix' => 'Rp',
+                        'placeholder' => '0',
+                    ])
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Harga Jual</label>
-                    <input type="number" name="sell_price" min="0" step="0.01" value="{{ old('sell_price', $product->sell_price) }}"
-                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+                    @include('partials.formatted-number-input', [
+                        'name' => 'sell_price',
+                        'value' => old('sell_price', $product->sell_price),
+                        'prefix' => 'Rp',
+                        'placeholder' => '0',
+                    ])
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Stok Saat Ini</label>
-                    <input type="text" value="{{ $product->stock }}" disabled
-                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                    <input type="text" value="{{ number_format($product->stock, 0, ',', '.') }}" readonly
+                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Stok Minimum</label>
-                    <input type="number" name="min_stock" min="0" value="{{ old('min_stock', $product->min_stock) }}"
-                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+                    @include('partials.formatted-number-input', [
+                        'name' => 'min_stock',
+                        'value' => old('min_stock', $product->min_stock),
+                        'placeholder' => '0',
+                    ])
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Batas peringatan stok menipis.</p>
                 </div>
             </div>
@@ -101,3 +123,7 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+    <script src="/assets/js/formatted-number-input.js"></script>
+@endpush

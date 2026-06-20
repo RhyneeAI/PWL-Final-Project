@@ -31,16 +31,14 @@ class DatabaseSeeder extends Seeder
             [
                 'code'    => 'BR-001',
                 'name'    => 'MyFanel Bandung',
-                'city'    => 'Bandung',
                 'address' => 'Jl. Asia Afrika No. 1, Bandung',
-                'phone'   => '022-1234567',
+                'phone'   => '+62 821-2834-999',
             ],
             [
                 'code'    => 'BR-002',
                 'name'    => 'MyFanel Jakarta',
-                'city'    => 'Jakarta',
                 'address' => 'Jl. Sudirman No. 10, Jakarta Pusat',
-                'phone'   => '021-9876543',
+                'phone'   => '+62 821-9876-543',
             ],
         ];
 
@@ -55,6 +53,7 @@ class DatabaseSeeder extends Seeder
                 [
                     'product_prefix'     => 'PRD',
                     'transaction_prefix' => 'TRX',
+                    'supplier_prefix'    => 'SUP',
                     'tax_enabled'        => false,
                     'tax_rate'           => 0,
                     'discount_enabled'   => true,
@@ -142,8 +141,8 @@ class DatabaseSeeder extends Seeder
 
         // ── Supplier per cabang ────────────────────────────────────────────
         $suppliersBandung = [
-            ['code' => 'SUP-001', 'name' => 'PT Sumber Makmur', 'phone' => '022-1112233', 'email' => 'sumber@supplier.com', 'address' => 'Jl. Moh. Toha No. 10, Bandung'],
-            ['code' => 'SUP-002', 'name' => 'CV Fresh Food', 'phone' => '022-4445566', 'email' => 'fresh@supplier.com', 'address' => 'Jl. Soekarno Hatta No. 5, Bandung'],
+            ['code' => 'SUPMB-001', 'name' => 'PT Sumber Makmur', 'phone' => '022-1112233', 'email' => 'sumber@supplier.com', 'address' => 'Jl. Moh. Toha No. 10, Bandung'],
+            ['code' => 'SUPMB-002', 'name' => 'CV Fresh Food', 'phone' => '022-4445566', 'email' => 'fresh@supplier.com', 'address' => 'Jl. Soekarno Hatta No. 5, Bandung'],
         ];
 
         foreach ($suppliersBandung as $data) {
@@ -154,8 +153,8 @@ class DatabaseSeeder extends Seeder
         }
 
         $suppliersJakarta = [
-            ['code' => 'SUP-001', 'name' => 'PT Distribusi Nusantara', 'phone' => '021-3334455', 'email' => 'distribusi@supplier.com', 'address' => 'Jl. Gatot Subroto No. 20, Jakarta'],
-            ['code' => 'SUP-002', 'name' => 'UD Berkah Jaya', 'phone' => '021-7778899', 'email' => 'berkah@supplier.com', 'address' => 'Jl. Tanah Abang No. 8, Jakarta'],
+            ['code' => 'SUPMJ-001', 'name' => 'PT Distribusi Nusantara', 'phone' => '021-3334455', 'email' => 'distribusi@supplier.com', 'address' => 'Jl. Gatot Subroto No. 20, Jakarta'],
+            ['code' => 'SUPMJ-002', 'name' => 'UD Berkah Jaya', 'phone' => '021-7778899', 'email' => 'berkah@supplier.com', 'address' => 'Jl. Tanah Abang No. 8, Jakarta'],
         ];
 
         foreach ($suppliersJakarta as $data) {

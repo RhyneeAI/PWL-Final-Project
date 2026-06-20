@@ -21,11 +21,11 @@
 
         @include('partials.master-data.table-toolbar', [
             'searchId' => 'search-branch',
-            'searchPlaceholder' => 'Cari kode, nama, atau kota cabang...',
+            'searchPlaceholder' => 'Cari kode, nama, atau alamat cabang...',
             'filters' => [
                 ['label' => 'Semua', 'column' => '', 'value' => ''],
-                ['label' => 'Aktif', 'column' => 5, 'value' => 'Aktif'],
-                ['label' => 'Nonaktif', 'column' => 5, 'value' => 'Nonaktif'],
+                ['label' => 'Aktif', 'column' => 4, 'value' => 'Aktif'],
+                ['label' => 'Nonaktif', 'column' => 4, 'value' => 'Nonaktif'],
             ],
         ])
 
@@ -36,7 +36,6 @@
                         <tr class="bg-gray-50 dark:bg-gray-800 text-left text-xs text-gray-500 uppercase">
                             <th class="px-6 py-4">Kode</th>
                             <th class="px-6 py-4">Nama Cabang</th>
-                            <th class="px-6 py-4">Kota</th>
                             <th class="px-6 py-4">Telepon</th>
                             <th class="px-6 py-4">Alamat</th>
                             <th class="px-6 py-4">Status</th>
@@ -48,13 +47,13 @@
                             <tr>
                                 <td class="px-6 py-4 font-medium">{{ $branch->code }}</td>
                                 <td class="px-6 py-4">{{ $branch->name }}</td>
-                                <td class="px-6 py-4">{{ $branch->city }}</td>
                                 <td class="px-6 py-4">{{ $branch->phone ?? '-' }}</td>
                                 <td class="px-6 py-4">{{ $branch->address }}</td>
-                                <td class="px-6 py-4">
-                                    <span class="status-badge {{ $branch->is_active ? 'status-badge-active' : 'status-badge-inactive' }}">
-                                        {{ $branch->is_active ? 'Aktif' : 'Nonaktif' }}
-                                    </span>
+                                <td class="px-6 py-4" data-order="{{ $branch->is_active ? 1 : 0 }}">
+                                    @include('partials.master-data.active-toggle', [
+                                        'active' => $branch->is_active,
+                                        'url' => route('branches.update-active', $branch),
+                                    ])
                                 </td>
                                 <td class="px-6 py-4 text-center whitespace-nowrap">
                                     <div class="inline-flex items-center justify-center gap-2">
@@ -73,7 +72,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">Belum ada data cabang.</td>
+                                <td colspan="6" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">Belum ada data cabang.</td>
                             </tr>
                         @endforelse
                     </tbody>

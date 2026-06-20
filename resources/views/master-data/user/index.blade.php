@@ -5,6 +5,8 @@
 
 @section('content')
     <div class="space-y-6 min-h-full">
+        @include('partials.session-alert')
+
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-3xl font-semibold text-gray-800 dark:text-white">Pengguna</h1>
@@ -19,13 +21,16 @@
 
         @include('partials.master-data.table-toolbar', [
             'searchId' => 'search-user',
-            'searchPlaceholder' => 'Cari nama, username, atau email...',
+            'searchPlaceholder' => 'Cari nama, username, email, atau cabang...',
+            'branchFilterId' => $canSelectBranch ? 'filter-user-branch' : null,
+            'branches' => $branches,
+            'headOfficeFilter' => $canSelectBranch,
+            'roleFilterId' => 'filter-user-role',
+            'roleFilterOptions' => $roleFilterOptions,
             'filters' => [
                 ['label' => 'Semua', 'column' => '', 'value' => ''],
-                ['label' => 'Owner', 'column' => 3, 'value' => 'Owner'],
-                ['label' => 'Manager', 'column' => 3, 'value' => 'Manager'],
-                ['label' => 'Kasir', 'column' => 3, 'value' => 'Kasir'],
-                ['label' => 'Gudang', 'column' => 3, 'value' => 'Gudang'],
+                ['label' => 'Aktif', 'column' => 5, 'value' => 'Aktif'],
+                ['label' => 'Nonaktif', 'column' => 5, 'value' => 'Nonaktif'],
             ],
         ])
 
@@ -35,46 +40,61 @@
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800 text-left text-xs text-gray-500 uppercase">
                             <th class="px-6 py-4">Nama</th>
+                            <th class="px-6 py-4">Cabang</th>
                             <th class="px-6 py-4">Username</th>
                             <th class="px-6 py-4">Email</th>
                             <th class="px-6 py-4">Role</th>
+                            <th class="px-6 py-4">Status</th>
                             <th class="px-6 py-4 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($users as $user)
-                    <tr>
-                        <td class="px-6 py-4 font-medium">{{ $user->name }}</td>
-                        <td class="px-6 py-4">{{ $user->username }}</td>
-                        <td class="px-6 py-4">{{ $user->email }}</td>
-                        <td class="px-6 py-4">{{ $user->role->label() }}</td>
+                        @forelse ($users as $user)
+                            <tr>
+                                <td class="px-6 py-4 font-medium">{{ $user->name }}</td>
+                                <td class="px-6 py-4">{{ $user->branchLabel() }}</td>
+                                <td class="px-6 py-4">{{ $user->username }}</td>
+                                <td class="px-6 py-4">{{ $user->email }}</td>
+                                <td class="px-6 py-4" data-order="{{ $user->role->listOrder() }}">{{ $user->role->label() }}</td>
+                                <td class="px-6 py-4" data-order="{{ $user->is_active ? 1 : 0 }}">
+                                    @include('partials.master-data.active-toggle', [
+                                        'active' => $user->is_active,
+                                        'url' => route('users.update-active', $user),
+                                        'editable' => $user->canBeManagedBy(auth()->user())
+                                            && auth()->id() !== $user->id,
+                                    ])
+                                </td>
+                                <td class="px-6 py-4 text-center whitespace-nowrap">
+                                    @if ($user->canBeManagedBy(auth()->user()))
+                                        <div class="inline-flex items-center justify-center gap-2">
+                                            <a href="{{ route('users.edit', $user->id) }}"
+                                            class="btn-action btn-action-edit">
+                                                <i class="fas fa-pen-to-square"></i>
+                                            </a>
 
-                        <td class="px-6 py-4 text-center whitespace-nowrap">
-                            <div class="inline-flex items-center justify-center gap-2">
-
-                                <a href="{{ route('users.edit', $user->id) }}"
-                                class="btn-action btn-action-edit">
-                                    <i class="fas fa-pen-to-square"></i>
-                                </a>
-
-                                <form action="{{ route('users.destroy', $user->id) }}"
-                                    method="POST"
-                                    onsubmit="return confirm('Yakin ingin menghapus pengguna ini?')">
-
-                                    @csrf
-                                    @method('DELETE')
-
-                                    <button type="submit"
-                                            class="btn-action btn-action-delete">
-                                        <i class="fas fa-trash-can"></i>
-                                    </button>
-
-                                </form>
-
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
+                                            @if (auth()->id() !== $user->id)
+                                                <form action="{{ route('users.destroy', $user->id) }}"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Yakin ingin menghapus pengguna ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                            class="btn-action btn-action-delete">
+                                                        <i class="fas fa-trash-can"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="text-xs text-gray-400">—</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">Belum ada data pengguna.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -85,10 +105,24 @@
 @push('scripts')
     <script>
         $(function () {
-            initMasterDataTable('#user-table', {
+            const options = {
                 searchInput: '#search-user',
                 filterButtons: '.table-filter-btn',
-            });
+                roleFilter: {
+                    select: '#filter-user-role',
+                    column: 4,
+                },
+                order: [[4, 'asc'], [0, 'asc']],
+            };
+
+            @if ($canSelectBranch)
+                options.branchFilter = {
+                    select: '#filter-user-branch',
+                    column: 1,
+                };
+            @endif
+
+            initMasterDataTable('#user-table', options);
         });
     </script>
 @endpush

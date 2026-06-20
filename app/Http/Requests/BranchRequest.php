@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Support\IndonesianPhone;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -14,10 +15,18 @@ class BranchRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $merged = [];
+
         if ($this->has('is_active')) {
-            $this->merge([
-                'is_active' => $this->boolean('is_active'),
-            ]);
+            $merged['is_active'] = $this->boolean('is_active');
+        }
+
+        if ($this->filled('phone')) {
+            $merged['phone'] = IndonesianPhone::normalize($this->input('phone'));
+        }
+
+        if ($merged !== []) {
+            $this->merge($merged);
         }
     }
 
@@ -26,14 +35,12 @@ class BranchRequest extends FormRequest
         $branch = $this->route('branch');
 
         return [
-            'code' => [
+            'name' => [
                 'required',
                 'string',
-                'max:50',
-                Rule::unique('branches', 'code')->ignore($branch),
+                'max:255',
+                Rule::unique('branches', 'name')->ignore($branch),
             ],
-            'name' => ['required', 'string', 'max:255'],
-            'city' => ['required', 'string', 'max:100'],
             'address' => ['required', 'string'],
             'phone' => ['nullable', 'string', 'max:30'],
             'is_active' => ['sometimes', 'boolean'],
@@ -43,10 +50,8 @@ class BranchRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'code.required' => 'Kode cabang wajib diisi.',
-            'code.unique' => 'Kode cabang sudah digunakan.',
             'name.required' => 'Nama cabang wajib diisi.',
-            'city.required' => 'Kota wajib diisi.',
+            'name.unique' => 'Nama cabang sudah digunakan.',
             'address.required' => 'Alamat wajib diisi.',
         ];
     }

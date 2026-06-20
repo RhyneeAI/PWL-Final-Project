@@ -32,10 +32,12 @@
         @include('partials.master-data.table-toolbar', [
             'searchId' => 'search-produk',
             'searchPlaceholder' => 'Cari kode, nama, kategori, atau cabang...',
+            'branchFilterId' => $canSelectBranch ? 'filter-product-branch' : null,
+            'branches' => $branches,
             'filters' => [
                 ['label' => 'Semua', 'column' => '', 'value' => ''],
-                ['label' => 'Aktif', 'column' => 7, 'value' => 'Aktif'],
-                ['label' => 'Nonaktif', 'column' => 7, 'value' => 'Nonaktif'],
+                ['label' => 'Aktif', 'column' => 6, 'value' => 'Aktif'],
+                ['label' => 'Nonaktif', 'column' => 6, 'value' => 'Nonaktif'],
             ],
         ])
 
@@ -57,7 +59,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($products as $product)
+                        @foreach ($products as $product)
                             <tr>
                                 <td class="px-6 py-4 font-medium">{{ $product->code }}</td>
                                 <td class="px-6 py-4">{{ $product->name }}</td>
@@ -65,10 +67,12 @@
                                 <td class="px-6 py-4">{{ $product->branch->name }}</td>
                                 <td class="px-6 py-4">Rp {{ number_format($product->sell_price, 0, ',', '.') }}</td>
                                 <td class="px-6 py-4 {{ $product->isLowStock() ? 'text-red-500 font-medium' : '' }}">{{ $product->stock }}</td>
-                                <td class="px-6 py-4">
-                                    <span class="status-badge {{ $product->is_active ? 'status-badge-active' : 'status-badge-inactive' }}">
-                                        {{ $product->is_active ? 'Aktif' : 'Nonaktif' }}
-                                    </span>
+                                <td class="px-6 py-4" data-order="{{ $product->is_active ? 1 : 0 }}">
+                                    @include('partials.master-data.active-toggle', [
+                                        'active' => $product->is_active,
+                                        'url' => route('products.update-active', $product),
+                                        'editable' => $canManage,
+                                    ])
                                 </td>
                                 @if ($canManage)
                                     <td class="px-6 py-4 text-center whitespace-nowrap">
@@ -87,11 +91,7 @@
                                     </td>
                                 @endif
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="{{ $canManage ? 8 : 7 }}" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">Belum ada data produk.</td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -102,10 +102,19 @@
 @push('scripts')
     <script>
         $(function () {
-            initMasterDataTable('#product-table', {
+            const options = {
                 searchInput: '#search-produk',
                 filterButtons: '.table-filter-btn',
-            });
+            };
+
+            @if ($canSelectBranch)
+                options.branchFilter = {
+                    select: '#filter-product-branch',
+                    column: 3,
+                };
+            @endif
+
+            initMasterDataTable('#product-table', options);
         });
     </script>
 @endpush

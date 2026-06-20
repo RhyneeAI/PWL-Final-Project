@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BranchRequest;
+use App\Http\Requests\ToggleActiveStatusRequest;
 use App\Models\Branch;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -18,13 +20,16 @@ class BranchController extends Controller
 
     public function create(): View
     {
-        return view('master-data.branch.create');
+        return view('master-data.branch.create', [
+            'nextCode' => Branch::generateNextCode(),
+        ]);
     }
 
     public function store(BranchRequest $request): RedirectResponse
     {
         Branch::create([
             ...$request->validated(),
+            'code' => Branch::generateNextCode(),
             'is_active' => $request->boolean('is_active', true),
         ]);
 
@@ -57,5 +62,12 @@ class BranchController extends Controller
         return redirect()
             ->route('branches.index')
             ->with('success', 'Cabang berhasil dihapus.');
+    }
+
+    public function updateActive(ToggleActiveStatusRequest $request, Branch $branch): JsonResponse
+    {
+        $branch->update(['is_active' => $request->boolean('is_active')]);
+
+        return response()->json(['is_active' => $branch->is_active]);
     }
 }
