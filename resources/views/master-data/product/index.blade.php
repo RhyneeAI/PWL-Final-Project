@@ -32,10 +32,12 @@
         @include('partials.master-data.table-toolbar', [
             'searchId' => 'search-produk',
             'searchPlaceholder' => 'Cari kode, nama, kategori, atau cabang...',
+            'branchFilterId' => 'filter-product-branch',
+            'branches' => $branches,
             'filters' => [
                 ['label' => 'Semua', 'column' => '', 'value' => ''],
-                ['label' => 'Aktif', 'column' => 7, 'value' => 'Aktif'],
-                ['label' => 'Nonaktif', 'column' => 7, 'value' => 'Nonaktif'],
+                ['label' => 'Aktif', 'column' => 6, 'value' => 'Aktif'],
+                ['label' => 'Nonaktif', 'column' => 6, 'value' => 'Nonaktif'],
             ],
         ])
 
@@ -57,7 +59,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($products as $product)
+                        @foreach ($products as $product)
                             <tr>
                                 <td class="px-6 py-4 font-medium">{{ $product->code }}</td>
                                 <td class="px-6 py-4">{{ $product->name }}</td>
@@ -87,11 +89,7 @@
                                     </td>
                                 @endif
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="{{ $canManage ? 8 : 7 }}" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">Belum ada data produk.</td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -105,6 +103,10 @@
             initMasterDataTable('#product-table', {
                 searchInput: '#search-produk',
                 filterButtons: '.table-filter-btn',
+                branchFilter: {
+                    select: '#filter-product-branch',
+                    column: 3,
+                },
             });
         });
     </script>

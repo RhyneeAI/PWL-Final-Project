@@ -18,7 +18,9 @@ class ProductController extends Controller
             ->latest()
             ->get();
 
-        return view('master-data.product.index', compact('products'));
+        $branches = Branch::query()->orderBy('name')->get();
+
+        return view('master-data.product.index', compact('products', 'branches'));
     }
 
     public function create(): View
