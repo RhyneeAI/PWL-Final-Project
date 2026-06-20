@@ -81,4 +81,14 @@ class Branch extends Model
 
         return 'SUP' . $initials;
     }
+
+    public function productCodePrefix(): string
+    {
+        $initials = collect(preg_split('/\s+/', trim($this->name)))
+            ->filter()
+            ->map(fn (string $word) => mb_strtoupper(mb_substr($word, 0, 1)))
+            ->implode('');
+
+        return 'PRD' . $initials;
+    }
 }

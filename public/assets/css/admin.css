@@ -469,6 +469,63 @@ table.dataTable tbody tr:hover td {
   color: rgb(243, 244, 246);
 }
 
+/* Prefix input (Rp, etc.) */
+.prefix-input-group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.prefix-input-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.875rem;
+  border: 1px solid rgb(209, 213, 219);
+  border-right: none;
+  border-radius: 0.75rem 0 0 0.75rem;
+  background-color: rgb(243, 244, 246);
+  color: rgb(75, 85, 99);
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.dark .prefix-input-label {
+  border-color: rgb(75, 85, 99);
+  background-color: rgb(31, 41, 55);
+  color: rgb(209, 213, 219);
+}
+
+.prefix-input-field {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid rgb(209, 213, 219);
+  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 0.75rem 1rem;
+  background-color: #fff;
+  color: rgb(31, 41, 55);
+}
+
+.prefix-input-group:not(:has(.prefix-input-label)) .prefix-input-field {
+  border-radius: 0.75rem;
+  border-left: 1px solid rgb(209, 213, 219);
+}
+
+.dark .prefix-input-field {
+  border-color: rgb(75, 85, 99);
+  background-color: rgb(31, 41, 55);
+  color: rgb(243, 244, 246);
+}
+
+.prefix-input-field:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgb(34, 197, 94);
+}
+
+.prefix-input-field::placeholder {
+  color: rgb(156, 163, 175);
+}
+
 /* Code input with prefix */
 .code-input-group {
   display: flex;
