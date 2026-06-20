@@ -30,7 +30,7 @@ class UserController extends Controller
             'is_active' => $request->is_active,
         ]);
 
-        return redirect()->route('user.index');
+        return redirect()->route('users.index');
     }
 
     public function edit(User $user)
@@ -48,13 +48,13 @@ class UserController extends Controller
             'is_active' => $request->is_active,
         ]);
 
-        return redirect()->route('user.index');
+        return redirect()->route('users.index');
     }
 
     public function destroy(User $user)
     {
         $user->delete();
 
-        return redirect()->route('user.index');
+        return redirect()->route('users.index');
     }
 }

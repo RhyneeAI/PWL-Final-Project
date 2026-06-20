@@ -11,7 +11,7 @@
                 <p class="text-gray-500 dark:text-gray-400">Kelola semua pengguna sistem di sini.</p>
             </div>
 
-            <a href="{{ route('user.create') }}"
+            <a href="{{ route('users.create') }}"
             class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm">
                 <i class="fas fa-plus mr-1"></i> Tambah Pengguna
             </a>
@@ -52,12 +52,12 @@
                         <td class="px-6 py-4 text-center whitespace-nowrap">
                             <div class="inline-flex items-center justify-center gap-2">
 
-                                <a href="{{ route('user.edit', $user->id) }}"
+                                <a href="{{ route('users.edit', $user->id) }}"
                                 class="btn-action btn-action-edit">
                                     <i class="fas fa-pen-to-square"></i>
                                 </a>
 
-                                <form action="{{ route('user.destroy', $user->id) }}"
+                                <form action="{{ route('users.destroy', $user->id) }}"
                                     method="POST"
                                     onsubmit="return confirm('Yakin ingin menghapus pengguna ini?')">
 

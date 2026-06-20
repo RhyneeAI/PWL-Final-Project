@@ -16,7 +16,7 @@
             </p>
         </div>
 
-        <form action="{{ route('user.store') }}" method="POST">
+        <form action="{{ route('users.store') }}" method="POST">
             @csrf
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -99,7 +99,7 @@
 
             <div class="flex justify-end gap-3 mt-8">
 
-                <a href="{{ route('user.index') }}"
+                <a href="{{ route('users.index') }}"
                     class="px-5 py-3 rounded-xl border border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
                     Batal
                 </a>

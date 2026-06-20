@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 // ─── Guest routes (belum login) ───────────────────────────────────────────────
 Route::middleware('guest')->group(function () {
@@ -19,56 +21,19 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth', 'active'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Dashboard (semua role)
     Route::get('/', function () {
         return view('dashboard');
     })->name('dashboard');
 
     // Owner only — kelola cabang
     Route::middleware('role:owner')->group(function () {
-
-        Route::get('/branches', [BranchController::class, 'index'])
-            ->name('branch.index');
-
-        Route::get('/branches/create', [BranchController::class, 'create'])
-            ->name('branch.create');
-
-        Route::post('/branches', [BranchController::class, 'store'])
-            ->name('branch.store');
-
-        Route::get('/branches/{branch}/edit', [BranchController::class, 'edit'])
-        ->name('branch.edit');
-
-        Route::put('/branches/{branch}', [BranchController::class, 'update'])
-        ->name('branch.update');
-
-        Route::delete('/branches/{branch}', [BranchController::class, 'destroy'])
-        ->name('branch.destroy');
+        Route::resource('branches', BranchController::class)->except(['show']);
     });
 
-    // Owner + Manajer Toko
+    // Owner + Manager
     Route::middleware('role:owner,manager')->group(function () {
-        Route::get('/users', [UserController::class, 'index'])
-    ->name('user.index');
-
-        Route::get('/users/create', [UserController::class, 'create'])
-            ->name('user.create');
-
-        Route::post('/users', [UserController::class, 'store'])
-            ->name('user.store');
-
-        Route::get('/users/{user}/edit', [UserController::class, 'edit'])
-            ->name('user.edit');
-
-        Route::put('/users/{user}', [UserController::class, 'update'])
-            ->name('user.update');
-
-        Route::delete('/users/{user}', [UserController::class, 'destroy'])
-            ->name('user.destroy');
-
-        Route::get('/categories', function () {
-            return view('master-data.category.index');
-        })->name('category.index');
+        Route::resource('users', UserController::class)->except(['show']);
+        Route::resource('categories', CategoryController::class)->except(['show']);
 
         Route::get('/reports', function () {
             return view('reports.index');
@@ -79,43 +44,34 @@ Route::middleware(['auth', 'active'])->group(function () {
         })->name('settings.index');
     });
 
-    // Semua role operasional — lihat produk (read-only untuk kasir & gudang)
+    // Produk — index untuk semua role operasional
     Route::middleware('role:owner,manager,cashier,warehouse')->group(function () {
-        Route::get('/products', function () {
-            return view('master-data.product.index');
-        })->name('product.index');
+        Route::resource('products', ProductController::class)->only(['index']);
     });
 
-    // Owner + Manager + Warehouse — lihat supplier (read-only untuk gudang)
+    // Produk — CRUD untuk owner & manager
+    Route::middleware('role:owner,manager')->group(function () {
+        Route::resource('products', ProductController::class)->except(['index', 'show']);
+    });
+
+    // Supplier — index untuk owner, manager & gudang
     Route::middleware('role:owner,manager,warehouse')->group(function () {
+        Route::resource('suppliers', SupplierController::class)->only(['index']);
+    });
 
-        Route::get('/suppliers', [SupplierController::class, 'index'])
-            ->name('supplier.index');
+    // Supplier — CRUD untuk owner & manager
+    Route::middleware('role:owner,manager')->group(function () {
+        Route::resource('suppliers', SupplierController::class)->except(['index', 'show']);
+    });
 
-        Route::get('/suppliers/create', [SupplierController::class, 'create'])
-            ->name('supplier.create');
-
-        Route::post('/suppliers', [SupplierController::class, 'store'])
-            ->name('supplier.store');
-
-        Route::get('/suppliers/{supplier}/edit', [SupplierController::class, 'edit'])
-            ->name('supplier.edit');
-
-        Route::put('/suppliers/{supplier}', [SupplierController::class, 'update'])
-            ->name('supplier.update');
-
-        Route::delete('/suppliers/{supplier}', [SupplierController::class, 'destroy'])
-            ->name('supplier.destroy');
-});
-
-    // Owner + Manager + Warehouse — stok
+    // Stok
     Route::middleware('role:owner,manager,warehouse')->group(function () {
         Route::get('/stock-mutations', function () {
             return view('transaksi.stock-in.index');
         })->name('stock-mutation.index');
     });
 
-    // Owner + Manajer Toko + Kasir — transaksi
+    // Transaksi
     Route::middleware('role:owner,manager,cashier')->group(function () {
         Route::get('/transactions', function () {
             return view('transaksi.transaction.index');
@@ -123,7 +79,6 @@ Route::middleware(['auth', 'active'])->group(function () {
     });
 });
 
-// ─── Fallback (route tidak ditemukan) ────────────────────────────────────────
 Route::fallback(function () {
     if (auth()->check()) {
         return response()->view('errors.404', [], 404);
@@ -132,4 +87,3 @@ Route::fallback(function () {
     return redirect()->route('login')
         ->with('error', 'Silakan login terlebih dahulu.');
 });
-

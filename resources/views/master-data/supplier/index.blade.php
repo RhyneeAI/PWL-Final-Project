@@ -7,6 +7,8 @@
 
 @section('content')
     <div class="space-y-6 min-h-full">
+        @include('partials.session-alert')
+
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-3xl font-semibold text-gray-800 dark:text-white">Supplier</h1>
@@ -20,7 +22,7 @@
             </div>
 
             @if ($canManage)
-                <a href="{{ route('supplier.create') }}"
+                <a href="{{ route('suppliers.create') }}"
                     class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm">
                     <i class="fas fa-plus mr-1"></i> Tambah Supplier
                 </a>
@@ -53,44 +55,40 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @foreach ($suppliers as $supplier)
-                    <tr>
-                        <td class="px-6 py-4 font-medium">{{ $supplier->code }}</td>
-                        <td class="px-6 py-4">{{ $supplier->name }}</td>
-                        <td class="px-6 py-4">{{ $supplier->phone }}</td>
-                        <td class="px-6 py-4">{{ $supplier->email }}</td>
-
-                        <td class="px-6 py-4">
-                            <span class="status-badge {{ $supplier->is_active ? 'status-badge-active' : 'status-badge-inactive' }}">
-                                {{ $supplier->is_active ? 'Aktif' : 'Nonaktif' }}
-                            </span>
-                        </td>
-
-                        <td class="px-6 py-4 text-center whitespace-nowrap">
-    <div class="inline-flex items-center justify-center gap-2">
-
-        <a href="{{ route('supplier.edit', $supplier->id) }}"
-           class="btn-action btn-action-edit">
-            <i class="fas fa-pen-to-square"></i>
-        </a>
-
-        <form action="{{ route('supplier.destroy', $supplier->id) }}"
-              method="POST"
-              onsubmit="return confirm('Yakin ingin menghapus supplier ini?')">
-            @csrf
-            @method('DELETE')
-
-            <button type="submit"
-                    class="btn-action btn-action-delete">
-                <i class="fas fa-trash-can"></i>
-            </button>
-        </form>
-
-    </div>
-</td>
-                    </tr>
-                    @endforeach
-                </tbody>
+                        @forelse ($suppliers as $supplier)
+                            <tr>
+                                <td class="px-6 py-4 font-medium">{{ $supplier->code }}</td>
+                                <td class="px-6 py-4">{{ $supplier->name }}</td>
+                                <td class="px-6 py-4">{{ $supplier->phone ?? '-' }}</td>
+                                <td class="px-6 py-4">{{ $supplier->email ?? '-' }}</td>
+                                <td class="px-6 py-4">
+                                    <span class="status-badge {{ $supplier->is_active ? 'status-badge-active' : 'status-badge-inactive' }}">
+                                        {{ $supplier->is_active ? 'Aktif' : 'Nonaktif' }}
+                                    </span>
+                                </td>
+                                @if ($canManage)
+                                    <td class="px-6 py-4 text-center whitespace-nowrap">
+                                        <div class="inline-flex items-center justify-center gap-2">
+                                            <a href="{{ route('suppliers.edit', $supplier) }}" class="btn-action btn-action-edit" title="Edit">
+                                                <i class="fas fa-pen-to-square"></i>
+                                            </a>
+                                            <form action="{{ route('suppliers.destroy', $supplier) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus supplier ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn-action btn-action-delete" title="Hapus">
+                                                    <i class="fas fa-trash-can"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                @endif
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="{{ $canManage ? 6 : 5 }}" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">Belum ada data supplier.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
                 </table>
             </div>
         </div>

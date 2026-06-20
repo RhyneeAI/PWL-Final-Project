@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto">
+    @include('partials.session-alert')
     <div class="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-8">
 
         <div class="mb-8">
@@ -16,7 +17,7 @@
             </p>
         </div>
 
-        <form action="{{ route('supplier.store') }}" method="POST">
+        <form action="{{ route('suppliers.store') }}" method="POST">
             @csrf
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -91,7 +92,7 @@
 
             <div class="flex justify-end gap-3 mt-8">
 
-                <a href="{{ route('supplier.index') }}"
+                <a href="{{ route('suppliers.index') }}"
                     class="px-5 py-3 rounded-xl border border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
                     Batal
                 </a>

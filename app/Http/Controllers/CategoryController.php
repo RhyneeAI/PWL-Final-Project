@@ -2,53 +2,69 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CategoryRequest;
+use App\Models\Branch;
 use App\Models\Category;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(): View
     {
-        return Category::all();
+        $categories = Category::query()
+            ->with('branch')
+            ->withCount('products')
+            ->latest()
+            ->get();
+
+        return view('master-data.category.index', compact('categories'));
     }
 
-    public function store(Request $request)
+    public function create(): View
     {
-        $validated = $request->validate([
-            'branch_id' => 'required|exists:branches,id',
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'is_active' => 'boolean',
+        $branches = Branch::query()->where('is_active', true)->orderBy('name')->get();
+
+        return view('master-data.category.create', compact('branches'));
+    }
+
+    public function store(CategoryRequest $request): RedirectResponse
+    {
+        Category::create([
+            ...$request->validated(),
+            'is_active' => $request->boolean('is_active', true),
         ]);
 
-        return Category::create($validated);
+        return redirect()
+            ->route('categories.index')
+            ->with('success', 'Kategori berhasil ditambahkan.');
     }
 
-    public function show(Category $category)
+    public function edit(Category $category): View
     {
-        return $category;
+        $category->load('branch');
+
+        return view('master-data.category.edit', compact('category'));
     }
 
-    public function update(Request $request, Category $category)
+    public function update(CategoryRequest $request, Category $category): RedirectResponse
     {
-        $validated = $request->validate([
-            'branch_id' => 'required|exists:branches,id',
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'is_active' => 'boolean',
+        $category->update([
+            ...$request->validated(),
+            'is_active' => $request->boolean('is_active', true),
         ]);
 
-        $category->update($validated);
-
-        return $category;
+        return redirect()
+            ->route('categories.index')
+            ->with('success', 'Kategori berhasil diperbarui.');
     }
 
-    public function destroy(Category $category)
+    public function destroy(Category $category): RedirectResponse
     {
         $category->delete();
 
-        return response()->json([
-            'message' => 'Category deleted successfully'
-        ]);
+        return redirect()
+            ->route('categories.index')
+            ->with('success', 'Kategori berhasil dihapus.');
     }
 }
