@@ -16,23 +16,16 @@
             @method('PUT')
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cabang</label>
-                    @if ($canSelectBranch)
+                @if ($canSelectBranch)
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cabang</label>
                         <select name="branch_id" class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
                             @foreach ($branches as $branch)
                                 <option value="{{ $branch->id }}" @selected(old('branch_id', $product->branch_id) == $branch->id)>{{ $branch->name }}</option>
                             @endforeach
                         </select>
-                    @else
-                        <input
-                            type="text"
-                            value="{{ $product->branch->name }}"
-                            readonly
-                            class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                        >
-                    @endif
-                </div>
+                    </div>
+                @endif
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kode Produk</label>

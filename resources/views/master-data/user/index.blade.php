@@ -22,9 +22,9 @@
         @include('partials.master-data.table-toolbar', [
             'searchId' => 'search-user',
             'searchPlaceholder' => 'Cari nama, username, email, atau cabang...',
-            'branchFilterId' => 'filter-user-branch',
+            'branchFilterId' => $canSelectBranch ? 'filter-user-branch' : null,
             'branches' => $branches,
-            'headOfficeFilter' => true,
+            'headOfficeFilter' => $canSelectBranch,
             'roleFilterId' => 'filter-user-role',
             'roleFilterOptions' => $roleFilterOptions,
             'filters' => [
@@ -102,19 +102,24 @@
 @push('scripts')
     <script>
         $(function () {
-            initMasterDataTable('#user-table', {
+            const options = {
                 searchInput: '#search-user',
                 filterButtons: '.table-filter-btn',
-                branchFilter: {
-                    select: '#filter-user-branch',
-                    column: 1,
-                },
                 roleFilter: {
                     select: '#filter-user-role',
                     column: 4,
                 },
                 order: [[4, 'asc'], [0, 'asc']],
-            });
+            };
+
+            @if ($canSelectBranch)
+                options.branchFilter = {
+                    select: '#filter-user-branch',
+                    column: 1,
+                };
+            @endif
+
+            initMasterDataTable('#user-table', options);
         });
     </script>
 @endpush

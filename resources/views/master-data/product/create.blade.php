@@ -15,9 +15,9 @@
             @csrf
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cabang</label>
-                    @if ($canSelectBranch)
+                @if ($canSelectBranch)
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cabang</label>
                         <select
                             id="product-branch-id"
                             name="branch_id"
@@ -33,16 +33,8 @@
                                 </option>
                             @endforeach
                         </select>
-                    @else
-                        <input
-                            type="text"
-                            value="{{ $branches->first()?->name }}"
-                            readonly
-                            class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                        >
-                        <input type="hidden" name="branch_id" value="{{ old('branch_id', $selectedBranchId) }}">
-                    @endif
-                </div>
+                    </div>
+                @endif
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kode Produk</label>

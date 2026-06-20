@@ -14,8 +14,19 @@ class UserController extends Controller
 {
     public function index(): View
     {
+        $actor = auth()->user();
+        $canSelectBranch = $actor->canSelectBranch();
+
         $users = User::query()
             ->with('branches')
+            ->when(! $actor->isOwner(), function ($query) use ($actor) {
+                $branchIds = $actor->accessibleBranchIds();
+
+                $query->where(function ($q) use ($branchIds) {
+                    $q->where('role', UserRole::Owner)
+                        ->orWhereHas('branches', fn ($b) => $b->whereIn('branches.id', $branchIds));
+                });
+            })
             ->get()
             ->sortBy([
                 fn (User $user) => $user->role->listOrder(),
@@ -23,18 +34,33 @@ class UserController extends Controller
             ])
             ->values();
 
-        $branches = Branch::query()->where('is_active', true)->orderBy('name')->get();
+        $branches = $canSelectBranch
+            ? Branch::query()->where('is_active', true)->orderBy('name')->get()
+            : collect();
+
         $roleFilterOptions = UserRole::displayOrder();
 
-        return view('master-data.user.index', compact('users', 'branches', 'roleFilterOptions'));
+        return view('master-data.user.index', compact(
+            'users',
+            'branches',
+            'roleFilterOptions',
+            'canSelectBranch',
+        ));
     }
 
     public function create(): View
     {
         $assignableRoles = UserRole::assignableBy(auth()->user()->role);
         $branches = $this->availableBranches();
+        $canSelectBranch = auth()->user()->canSelectBranch();
+        $selectedBranchId = (int) old('branch_id', $branches->first()?->id);
 
-        return view('master-data.user.create', compact('assignableRoles', 'branches'));
+        return view('master-data.user.create', compact(
+            'assignableRoles',
+            'branches',
+            'canSelectBranch',
+            'selectedBranchId',
+        ));
     }
 
     public function store(UserRequest $request): RedirectResponse
@@ -55,12 +81,14 @@ class UserController extends Controller
         $assignableRoles = UserRole::assignableBy(auth()->user()->role);
         $isEditingSelf = auth()->id() === $user->id;
         $branches = $this->availableBranches();
+        $canSelectBranch = auth()->user()->canSelectBranch();
 
         return view('master-data.user.edit', compact(
             'user',
             'assignableRoles',
             'isEditingSelf',
             'branches',
+            'canSelectBranch',
         ));
     }
 

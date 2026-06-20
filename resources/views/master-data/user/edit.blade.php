@@ -127,35 +127,37 @@
                     @endif
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Cabang
-                    </label>
+                @if ($canSelectBranch)
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Cabang
+                        </label>
 
-                    @if ($isEditingSelf)
-                        <div id="user-branch-field" @class(['hidden' => $user->role === \App\Enums\UserRole::Owner])>
-                            <select name="branch_id"
-                                class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
-                                @foreach ($branches as $branch)
-                                    <option value="{{ $branch->id }}" @selected(old('branch_id', $user->primaryBranchId()) == $branch->id)>
-                                        {{ $branch->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div id="user-head-office-field" @class(['hidden' => $user->role !== \App\Enums\UserRole::Owner])>
+                        @if ($isEditingSelf)
+                            <div id="user-branch-field" @class(['hidden' => $user->role === \App\Enums\UserRole::Owner])>
+                                <select name="branch_id"
+                                    class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+                                    @foreach ($branches as $branch)
+                                        <option value="{{ $branch->id }}" @selected(old('branch_id', $user->primaryBranchId()) == $branch->id)>
+                                            {{ $branch->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div id="user-head-office-field" @class(['hidden' => $user->role !== \App\Enums\UserRole::Owner])>
+                                <input type="text"
+                                    value="Kantor Pusat"
+                                    readonly
+                                    class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed">
+                            </div>
+                        @else
                             <input type="text"
-                                value="Kantor Pusat"
+                                value="{{ $user->branchLabel() }}"
                                 readonly
                                 class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed">
-                        </div>
-                    @else
-                        <input type="text"
-                            value="{{ $user->branchLabel() }}"
-                            readonly
-                            class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed">
-                    @endif
-                </div>
+                        @endif
+                    </div>
+                @endif
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -198,7 +200,7 @@
 @endsection
 
 @push('scripts')
-    @if ($isEditingSelf)
+    @if ($isEditingSelf && $canSelectBranch)
         <script src="/assets/js/user-branch-form.js"></script>
     @endif
 @endpush

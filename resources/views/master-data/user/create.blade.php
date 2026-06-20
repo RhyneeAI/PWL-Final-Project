@@ -90,31 +90,33 @@
                     </select>
                 </div>
 
-                <div id="user-branch-field">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Cabang
-                    </label>
+                @if ($canSelectBranch)
+                    <div id="user-branch-field">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Cabang
+                        </label>
 
-                    <select name="branch_id"
-                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
-                        @foreach ($branches as $branch)
-                            <option value="{{ $branch->id }}" @selected(old('branch_id') == $branch->id)>
-                                {{ $branch->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                        <select name="branch_id"
+                            class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+                            @foreach ($branches as $branch)
+                                <option value="{{ $branch->id }}" @selected(old('branch_id', $selectedBranchId ?? null) == $branch->id)>
+                                    {{ $branch->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                <div id="user-head-office-field" class="hidden">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Cabang
-                    </label>
+                    <div id="user-head-office-field" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Cabang
+                        </label>
 
-                    <input type="text"
-                        value="Kantor Pusat"
-                        readonly
-                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed">
-                </div>
+                        <input type="text"
+                            value="Kantor Pusat"
+                            readonly
+                            class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed">
+                    </div>
+                @endif
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -152,5 +154,7 @@
 @endsection
 
 @push('scripts')
-    <script src="/assets/js/user-branch-form.js"></script>
+    @if ($canSelectBranch)
+        <script src="/assets/js/user-branch-form.js"></script>
+    @endif
 @endpush

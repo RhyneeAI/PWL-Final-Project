@@ -34,7 +34,10 @@ class SupplierRequest extends FormRequest
         $supplier = $this->route('supplier');
 
         return [
-            'branch_id' => [$supplier ? 'prohibited' : 'required', 'exists:branches,id'],
+            'branch_id' => [
+                $supplier || ! $this->user()->canSelectBranch() ? 'prohibited' : 'required',
+                'exists:branches,id',
+            ],
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:30'],
             'email' => ['nullable', 'email', 'max:255'],

@@ -16,17 +16,19 @@
             @method('PUT')
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">Cabang</label>
-                    <input
-                        type="text"
-                        value="{{ $supplier->branch->name }}"
-                        readonly
-                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600
-                               bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400
-                               px-4 py-3 cursor-not-allowed"
-                    >
-                </div>
+                @if ($canSelectBranch)
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">Cabang</label>
+                        <input
+                            type="text"
+                            value="{{ $supplier->branch->name }}"
+                            readonly
+                            class="w-full rounded-xl border border-gray-300 dark:border-gray-600
+                                   bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400
+                                   px-4 py-3 cursor-not-allowed"
+                        >
+                    </div>
+                @endif
 
                 <div>
                     <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">Kode Supplier</label>

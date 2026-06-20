@@ -25,7 +25,11 @@ class ProductController extends Controller
 
         $branches = $this->filterBranches();
 
-        return view('master-data.product.index', compact('products', 'branches'));
+        return view('master-data.product.index', [
+            'products' => $products,
+            'branches' => $branches,
+            'canSelectBranch' => $user->canSelectBranch(),
+        ]);
     }
 
     public function create(): View
@@ -48,9 +52,18 @@ class ProductController extends Controller
 
     public function store(ProductRequest $request): RedirectResponse
     {
+        $user = auth()->user();
+        $payload = $request->validated();
+
+        if (! $user->canSelectBranch()) {
+            $payload['branch_id'] = $user->primaryBranchId();
+        }
+
+        $branchId = (int) $payload['branch_id'];
+
         Product::create([
-            ...$request->validated(),
-            'code' => Product::generateNextCode((int) $request->branch_id),
+            ...$payload,
+            'code' => Product::generateNextCode($branchId),
             'stock' => 0,
             'is_active' => $request->boolean('is_active', true),
         ]);

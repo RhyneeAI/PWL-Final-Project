@@ -80,7 +80,9 @@ class UserRequest extends FormRequest
             'password' => [$userId ? 'nullable' : 'required', 'string', 'min:8'],
             'role' => ['required', Rule::in($assignableRoles)],
             'branch_id' => [
-                Rule::requiredIf($requiresBranch),
+                $this->user()->canSelectBranch()
+                    ? Rule::requiredIf($requiresBranch)
+                    : 'prohibited',
                 'nullable',
                 'exists:branches,id',
                 function (string $attribute, mixed $value, \Closure $fail): void {
@@ -161,11 +163,26 @@ class UserRequest extends FormRequest
             return;
         }
 
-        $branchId = $this->input('branch_id');
+        $branchId = $this->resolveBranchId();
 
         if ($branchId) {
-            $user->branches()->sync([(int) $branchId]);
+            $user->branches()->sync([$branchId]);
         }
+    }
+
+    private function resolveBranchId(): ?int
+    {
+        $role = UserRole::from($this->input('role', $this->route('user')?->role->value ?? UserRole::Cashier->value));
+
+        if ($role === UserRole::Owner) {
+            return null;
+        }
+
+        if (! $this->user()->canSelectBranch()) {
+            return $this->user()->primaryBranchId();
+        }
+
+        return $this->input('branch_id') ? (int) $this->input('branch_id') : null;
     }
 
     private function isEditingOtherUser(User $targetUser): bool

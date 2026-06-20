@@ -32,7 +32,7 @@
         @include('partials.master-data.table-toolbar', [
             'searchId' => 'search-produk',
             'searchPlaceholder' => 'Cari kode, nama, kategori, atau cabang...',
-            'branchFilterId' => 'filter-product-branch',
+            'branchFilterId' => $canSelectBranch ? 'filter-product-branch' : null,
             'branches' => $branches,
             'filters' => [
                 ['label' => 'Semua', 'column' => '', 'value' => ''],
@@ -100,14 +100,19 @@
 @push('scripts')
     <script>
         $(function () {
-            initMasterDataTable('#product-table', {
+            const options = {
                 searchInput: '#search-produk',
                 filterButtons: '.table-filter-btn',
-                branchFilter: {
+            };
+
+            @if ($canSelectBranch)
+                options.branchFilter = {
                     select: '#filter-product-branch',
                     column: 3,
-                },
-            });
+                };
+            @endif
+
+            initMasterDataTable('#product-table', options);
         });
     </script>
 @endpush

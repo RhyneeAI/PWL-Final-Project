@@ -15,26 +15,28 @@
             @csrf
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">Cabang</label>
-                    <select
-                        id="supplier-branch-id"
-                        name="branch_id"
-                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600
-                               bg-white dark:bg-gray-800 text-gray-900 dark:text-white
-                               px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    >
-                        @foreach ($branches as $branch)
-                            <option
-                                value="{{ $branch->id }}"
-                                data-next-code="{{ \App\Models\Supplier::generateNextCode($branch->id) }}"
-                                @selected(old('branch_id', $selectedBranchId) == $branch->id)
-                            >
-                                {{ $branch->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                @if ($canSelectBranch)
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">Cabang</label>
+                        <select
+                            id="supplier-branch-id"
+                            name="branch_id"
+                            class="w-full rounded-xl border border-gray-300 dark:border-gray-600
+                                   bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                                   px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+                        >
+                            @foreach ($branches as $branch)
+                                <option
+                                    value="{{ $branch->id }}"
+                                    data-next-code="{{ \App\Models\Supplier::generateNextCode($branch->id) }}"
+                                    @selected(old('branch_id', $selectedBranchId) == $branch->id)
+                                >
+                                    {{ $branch->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
 
                 <div>
                     <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">Kode Supplier</label>

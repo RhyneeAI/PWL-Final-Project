@@ -32,7 +32,7 @@
         @include('partials.master-data.table-toolbar', [
             'searchId' => 'search-supplier',
             'searchPlaceholder' => 'Cari kode, nama, cabang, atau email supplier...',
-            'branchFilterId' => 'filter-supplier-branch',
+            'branchFilterId' => $canSelectBranch ? 'filter-supplier-branch' : null,
             'branches' => $branches,
             'filters' => [
                 ['label' => 'Semua', 'column' => 5, 'value' => ''],
@@ -102,14 +102,19 @@
 @push('scripts')
     <script>
         $(function () {
-            initMasterDataTable('#supplier-table', {
+            const options = {
                 searchInput: '#search-supplier',
                 filterButtons: '.table-filter-btn',
-                branchFilter: {
+            };
+
+            @if ($canSelectBranch)
+                options.branchFilter = {
                     select: '#filter-supplier-branch',
                     column: 1,
-                },
-            });
+                };
+            @endif
+
+            initMasterDataTable('#supplier-table', options);
         });
     </script>
 @endpush

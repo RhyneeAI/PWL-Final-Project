@@ -73,7 +73,6 @@ it('manager tidak dapat membuat pengguna dengan role owner', function () {
             'email' => 'ownerilegal@example.com',
             'password' => 'password123',
             'role' => UserRole::Owner->value,
-            'branch_id' => $branch->id,
             'is_active' => true,
         ])
         ->assertSessionHasErrors('role');
@@ -93,15 +92,17 @@ it('manager dapat membuat pengguna dengan role manager kasir atau gudang', funct
             'email' => 'kasirbaru@example.com',
             'password' => 'password123',
             'role' => UserRole::Cashier->value,
-            'branch_id' => $branch->id,
             'is_active' => true,
         ])
         ->assertRedirect(route('users.index'));
 
-    expect(User::where('username', 'kasirbaru')->first()?->role)->toBe(UserRole::Cashier);
+    $kasir = User::where('username', 'kasirbaru')->first();
+
+    expect($kasir?->role)->toBe(UserRole::Cashier)
+        ->and($kasir?->primaryBranchId())->toBe($branch->id);
 });
 
-it('manager tidak dapat membuat pengguna di cabang yang tidak diaksesnya', function () {
+it('manager tidak dapat mengirim cabang saat membuat pengguna', function () {
     $manager = User::factory()->create(['role' => UserRole::Manager]);
     $branch = createBranch('MyFanel Bandung');
     $otherBranch = createBranch('MyFanel Jakarta');
@@ -211,9 +212,22 @@ it('halaman create manager tidak menampilkan opsi role owner', function () {
         ->get(route('users.create'))
         ->assertOk()
         ->assertDontSee('value="owner"', false)
+        ->assertDontSee('name="branch_id"', false)
         ->assertSee('value="manager"', false)
         ->assertSee('value="cashier"', false)
         ->assertSee('value="warehouse"', false);
+});
+
+it('halaman index manager tidak menampilkan filter cabang', function () {
+    $manager = User::factory()->create(['role' => UserRole::Manager]);
+    $branch = createBranch();
+    $manager->branches()->sync([$branch->id]);
+
+    $this->actingAs($manager)
+        ->get(route('users.index'))
+        ->assertOk()
+        ->assertDontSee('id="filter-user-branch"', false)
+        ->assertDontSee('Semua Cabang');
 });
 
 it('halaman index menampilkan kolom cabang dan status', function () {

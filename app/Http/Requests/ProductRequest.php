@@ -34,12 +34,11 @@ class ProductRequest extends FormRequest
 
     public function rules(): array
     {
-        $product = $this->route('product');
         $user = $this->user();
 
         return [
             'branch_id' => [
-                $product && ! $user->canSelectBranch() ? 'prohibited' : 'required',
+                ! $user->canSelectBranch() ? 'prohibited' : 'required',
                 'exists:branches,id',
                 function (string $attribute, mixed $value, \Closure $fail) use ($user): void {
                     if ($value && ! $user->hasAccessToBranch((int) $value)) {
