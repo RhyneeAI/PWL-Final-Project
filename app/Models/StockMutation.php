@@ -67,4 +67,17 @@ class StockMutation extends Model
     {
         return (float) $this->buy_price * abs($this->quantity_change);
     }
+
+    public function signedQuantityLabel(): string
+    {
+        $qty = abs($this->quantity_change);
+        $prefix = $this->quantity_change >= 0 ? '+' : '−';
+
+        return $prefix . number_format($qty, 0, ',', '.');
+    }
+
+    public function isStockIncrease(): bool
+    {
+        return $this->quantity_change > 0;
+    }
 }

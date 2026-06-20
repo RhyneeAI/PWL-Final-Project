@@ -49,9 +49,9 @@ Route::middleware(['auth', 'active'])->group(function () {
         })->name('settings.index');
     });
 
-    // Produk — index untuk semua role operasional
+    // Produk — index & detail untuk semua role operasional
     Route::middleware('role:owner,manager,cashier,warehouse')->group(function () {
-        Route::resource('products', ProductController::class)->only(['index']);
+        Route::resource('products', ProductController::class)->only(['index', 'show']);
     });
 
     // Produk — CRUD untuk owner & manager

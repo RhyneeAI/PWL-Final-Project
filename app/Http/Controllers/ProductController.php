@@ -8,8 +8,8 @@ use App\Http\Requests\ToggleActiveStatusRequest;
 use App\Models\Branch;
 use App\Models\Category;
 use App\Models\Product;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
@@ -85,6 +85,34 @@ class ProductController extends Controller
             'categories' => $this->activeCategories(),
             'units' => ProductUnit::cases(),
             'canSelectBranch' => auth()->user()->canSelectBranch(),
+        ]);
+    }
+
+    public function show(Request $request, Product $product): View
+    {
+        abort_unless(auth()->user()->hasAccessToBranch($product->branch_id), 403);
+
+        $product->load(['category', 'branch']);
+
+        $dateFrom = $request->input('date_from');
+        $dateTo = $request->input('date_to');
+
+        $mutations = $product->stockMutations()
+            ->with(['supplier', 'transaction'])
+            ->when($dateFrom, fn ($query) => $query->whereDate('mutation_date', '>=', $dateFrom))
+            ->when($dateTo, fn ($query) => $query->whereDate('mutation_date', '<=', $dateTo))
+            ->orderByDesc('mutation_date')
+            ->orderByDesc('id')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('master-data.product.show', [
+            'product' => $product,
+            'mutations' => $mutations,
+            'dateFrom' => $dateFrom,
+            'dateTo' => $dateTo,
+            'canManage' => auth()->user()->role->canManageProducts(),
+            'canViewStockIn' => auth()->user()->role->canManageStock(),
         ]);
     }
 
