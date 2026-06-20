@@ -418,3 +418,53 @@ table.dataTable tbody tr:hover td {
 .chart-filter-select.hidden {
   display: none;
 }
+
+/* Phone input with +62 prefix */
+.phone-input-group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.phone-input-prefix {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.875rem;
+  border: 1px solid rgb(209, 213, 219);
+  border-right: none;
+  border-radius: 0.75rem 0 0 0.75rem;
+  background-color: rgb(243, 244, 246);
+  color: rgb(75, 85, 99);
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.dark .phone-input-prefix {
+  border-color: rgb(75, 85, 99);
+  background-color: rgb(31, 41, 55);
+  color: rgb(209, 213, 219);
+}
+
+.phone-input-national {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid rgb(209, 213, 219);
+  border-radius: 0 0.75rem 0.75rem 0;
+  background-color: rgb(255, 255, 255);
+  color: rgb(17, 24, 39);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+}
+
+.phone-input-national:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.35);
+  border-color: rgb(34, 197, 94);
+}
+
+.dark .phone-input-national {
+  border-color: rgb(75, 85, 99);
+  background-color: rgb(31, 41, 55);
+  color: rgb(243, 244, 246);
+}

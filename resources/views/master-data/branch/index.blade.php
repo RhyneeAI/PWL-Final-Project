@@ -21,11 +21,11 @@
 
         @include('partials.master-data.table-toolbar', [
             'searchId' => 'search-branch',
-            'searchPlaceholder' => 'Cari kode, nama, atau kota cabang...',
+            'searchPlaceholder' => 'Cari kode, nama, atau alamat cabang...',
             'filters' => [
                 ['label' => 'Semua', 'column' => '', 'value' => ''],
-                ['label' => 'Aktif', 'column' => 5, 'value' => 'Aktif'],
-                ['label' => 'Nonaktif', 'column' => 5, 'value' => 'Nonaktif'],
+                ['label' => 'Aktif', 'column' => 4, 'value' => 'Aktif'],
+                ['label' => 'Nonaktif', 'column' => 4, 'value' => 'Nonaktif'],
             ],
         ])
 
@@ -36,7 +36,6 @@
                         <tr class="bg-gray-50 dark:bg-gray-800 text-left text-xs text-gray-500 uppercase">
                             <th class="px-6 py-4">Kode</th>
                             <th class="px-6 py-4">Nama Cabang</th>
-                            <th class="px-6 py-4">Kota</th>
                             <th class="px-6 py-4">Telepon</th>
                             <th class="px-6 py-4">Alamat</th>
                             <th class="px-6 py-4">Status</th>
@@ -48,7 +47,6 @@
                             <tr>
                                 <td class="px-6 py-4 font-medium">{{ $branch->code }}</td>
                                 <td class="px-6 py-4">{{ $branch->name }}</td>
-                                <td class="px-6 py-4">{{ $branch->city }}</td>
                                 <td class="px-6 py-4">{{ $branch->phone ?? '-' }}</td>
                                 <td class="px-6 py-4">{{ $branch->address }}</td>
                                 <td class="px-6 py-4">
@@ -73,7 +71,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">Belum ada data cabang.</td>
+                                <td colspan="6" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">Belum ada data cabang.</td>
                             </tr>
                         @endforelse
                     </tbody>

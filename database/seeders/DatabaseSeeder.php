@@ -31,16 +31,14 @@ class DatabaseSeeder extends Seeder
             [
                 'code'    => 'BR-001',
                 'name'    => 'MyFanel Bandung',
-                'city'    => 'Bandung',
                 'address' => 'Jl. Asia Afrika No. 1, Bandung',
-                'phone'   => '022-1234567',
+                'phone'   => '+62 821-2834-999',
             ],
             [
                 'code'    => 'BR-002',
                 'name'    => 'MyFanel Jakarta',
-                'city'    => 'Jakarta',
                 'address' => 'Jl. Sudirman No. 10, Jakarta Pusat',
-                'phone'   => '021-9876543',
+                'phone'   => '+62 821-9876-543',
             ],
         ];
 

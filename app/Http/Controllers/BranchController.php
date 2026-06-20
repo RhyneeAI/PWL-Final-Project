@@ -18,13 +18,16 @@ class BranchController extends Controller
 
     public function create(): View
     {
-        return view('master-data.branch.create');
+        return view('master-data.branch.create', [
+            'nextCode' => Branch::generateNextCode(),
+        ]);
     }
 
     public function store(BranchRequest $request): RedirectResponse
     {
         Branch::create([
             ...$request->validated(),
+            'code' => Branch::generateNextCode(),
             'is_active' => $request->boolean('is_active', true),
         ]);
 

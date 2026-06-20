@@ -16,7 +16,6 @@ class Branch extends Model
     protected $fillable = [
         'code',
         'name',
-        'city',
         'address',
         'phone',
         'is_active',
@@ -64,5 +63,17 @@ class Branch extends Model
     public function settings(): HasOne
     {
         return $this->hasOne(BranchSetting::class);
+    }
+
+    public static function generateNextCode(): string
+    {
+        $lastCode = static::withTrashed()
+            ->where('code', 'like', 'BR-%')
+            ->orderByRaw('CAST(SUBSTRING(code, 4) AS UNSIGNED) DESC')
+            ->value('code');
+
+        $nextNumber = $lastCode ? ((int) substr($lastCode, 3)) + 1 : 1;
+
+        return 'BR-' . str_pad((string) $nextNumber, 3, '0', STR_PAD_LEFT);
     }
 }

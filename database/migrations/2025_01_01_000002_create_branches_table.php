@@ -12,7 +12,6 @@ return new class extends Migration
             $table->id();
             $table->string('code')->unique();      // e.g. BR-001
             $table->string('name');
-            $table->string('city');
             $table->text('address');
             $table->string('phone')->nullable();
             $table->boolean('is_active')->default(true);
