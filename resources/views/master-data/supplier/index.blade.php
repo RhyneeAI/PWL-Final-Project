@@ -31,11 +31,13 @@
 
         @include('partials.master-data.table-toolbar', [
             'searchId' => 'search-supplier',
-            'searchPlaceholder' => 'Cari kode, nama, atau email supplier...',
+            'searchPlaceholder' => 'Cari kode, nama, cabang, atau email supplier...',
+            'branchFilterId' => 'filter-supplier-branch',
+            'branches' => $branches,
             'filters' => [
-                ['label' => 'Semua', 'column' => '', 'value' => ''],
-                ['label' => 'Aktif', 'column' => 4, 'value' => 'Aktif'],
-                ['label' => 'Nonaktif', 'column' => 4, 'value' => 'Nonaktif'],
+                ['label' => 'Semua', 'column' => 5, 'value' => ''],
+                ['label' => 'Aktif', 'column' => 5, 'value' => 'Aktif'],
+                ['label' => 'Nonaktif', 'column' => 5, 'value' => 'Nonaktif'],
             ],
         ])
 
@@ -45,6 +47,7 @@
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800 text-left text-xs text-gray-500 uppercase">
                             <th class="px-6 py-4">Kode</th>
+                            <th class="px-6 py-4">Cabang</th>
                             <th class="px-6 py-4">Nama Supplier</th>
                             <th class="px-6 py-4">Telepon</th>
                             <th class="px-6 py-4">Email</th>
@@ -58,6 +61,7 @@
                         @forelse ($suppliers as $supplier)
                             <tr>
                                 <td class="px-6 py-4 font-medium">{{ $supplier->code }}</td>
+                                <td class="px-6 py-4">{{ $supplier->branch->name }}</td>
                                 <td class="px-6 py-4">{{ $supplier->name }}</td>
                                 <td class="px-6 py-4">{{ $supplier->phone ?? '-' }}</td>
                                 <td class="px-6 py-4">{{ $supplier->email ?? '-' }}</td>
@@ -85,7 +89,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="{{ $canManage ? 6 : 5 }}" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">Belum ada data supplier.</td>
+                                <td colspan="{{ $canManage ? 7 : 6 }}" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">Belum ada data supplier.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -101,6 +105,10 @@
             initMasterDataTable('#supplier-table', {
                 searchInput: '#search-supplier',
                 filterButtons: '.table-filter-btn',
+                branchFilter: {
+                    select: '#filter-supplier-branch',
+                    column: 1,
+                },
             });
         });
     </script>

@@ -3,6 +3,8 @@
     'searchId',
     'searchPlaceholder' => 'Cari data...',
     'filters' => [],
+    'branchFilterId' => null,
+    'branches' => [],
 ])
 
 <div class="table-toolbar bg-white dark:bg-gray-900 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -16,18 +18,29 @@
         >
     </div>
 
-    @if (count($filters))
-        <div class="flex flex-wrap gap-2 lg:justify-end">
-            @foreach ($filters as $index => $filter)
-                <button
-                    type="button"
-                    class="table-filter-btn px-4 py-2 text-sm rounded-xl transition-colors {{ $index === 0 ? 'is-active' : '' }}"
-                    data-filter-column="{{ $filter['column'] ?? '' }}"
-                    data-filter-value="{{ $filter['value'] ?? '' }}"
-                >
-                    {{ $filter['label'] }}
-                </button>
-            @endforeach
-        </div>
-    @endif
+    <div class="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2 lg:justify-end">
+        @if ($branchFilterId && count($branches))
+            <select id="{{ $branchFilterId }}" class="chart-filter-select table-branch-filter" aria-label="Filter cabang">
+                <option value="">Semua Cabang</option>
+                @foreach ($branches as $branch)
+                    <option value="{{ $branch->name }}">{{ $branch->name }}</option>
+                @endforeach
+            </select>
+        @endif
+
+        @if (count($filters))
+            <div class="flex flex-wrap gap-2">
+                @foreach ($filters as $index => $filter)
+                    <button
+                        type="button"
+                        class="table-filter-btn px-4 py-2 text-sm rounded-xl transition-colors {{ $index === 0 ? 'is-active' : '' }}"
+                        data-filter-column="{{ $filter['column'] ?? '' }}"
+                        data-filter-value="{{ $filter['value'] ?? '' }}"
+                    >
+                        {{ $filter['label'] }}
+                    </button>
+                @endforeach
+            </div>
+        @endif
+    </div>
 </div>

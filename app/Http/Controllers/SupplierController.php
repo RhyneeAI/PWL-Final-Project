@@ -12,9 +12,10 @@ class SupplierController extends Controller
 {
     public function index(): View
     {
-        $suppliers = Supplier::query()->latest()->get();
+        $suppliers = Supplier::query()->with('branch')->latest()->get();
+        $branches = Branch::query()->orderBy('name')->get();
 
-        return view('master-data.supplier.index', compact('suppliers'));
+        return view('master-data.supplier.index', compact('suppliers', 'branches'));
     }
 
     public function create(): View

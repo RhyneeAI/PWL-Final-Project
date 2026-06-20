@@ -19,10 +19,26 @@
         },
     };
 
+    function applyColumnFilters(table, filterState) {
+        table.columns().search('');
+
+        Object.keys(filterState).forEach(function (column) {
+            const value = filterState[column];
+
+            if (value) {
+                const escaped = $.fn.dataTable.util.escapeRegex(value);
+                table.column(Number(column)).search('^' + escaped + '$', true, false);
+            }
+        });
+
+        table.draw();
+    }
+
     function initMasterDataTable(tableSelector, options = {}) {
         const {
             searchInput,
             filterButtons,
+            branchFilter,
             order = [[0, 'asc']],
             columnDefs = [],
             pageLength = 10,
@@ -49,6 +65,8 @@
             columnDefs: [...defaultColumnDefs, ...columnDefs],
         });
 
+        const filterState = {};
+
         if (searchInput) {
             $(searchInput).on('keyup search', function () {
                 table.search(this.value).draw();
@@ -56,30 +74,55 @@
         }
 
         if (filterButtons) {
-            bindFilterButtons(table, filterButtons);
+            bindFilterButtons(table, filterButtons, filterState);
+        }
+
+        if (branchFilter) {
+            bindBranchFilter(table, branchFilter, filterState);
         }
 
         return table;
     }
 
-    function bindFilterButtons(table, buttonsSelector) {
+    function bindBranchFilter(table, branchFilter, filterState) {
+        const { select, column } = branchFilter;
+        const columnKey = String(column);
+
+        $(select).on('change', function () {
+            const value = $(this).val();
+
+            if (value) {
+                filterState[columnKey] = value;
+            } else {
+                delete filterState[columnKey];
+            }
+
+            applyColumnFilters(table, filterState);
+        });
+    }
+
+    function bindFilterButtons(table, buttonsSelector, filterState) {
         const $buttons = $(buttonsSelector);
 
         $buttons.on('click', function () {
             const $btn = $(this);
-            const column = $btn.data('filterColumn');
+            const column = String($btn.data('filterColumn'));
             const value = String($btn.data('filterValue') ?? '');
 
             $buttons.removeClass('is-active');
             $btn.addClass('is-active');
 
-            if (value === '' || column === '' || column === undefined) {
-                table.columns().search('').draw();
-                return;
+            if (column === '' || column === undefined) {
+                Object.keys(filterState).forEach(function (key) {
+                    delete filterState[key];
+                });
+            } else if (value === '') {
+                delete filterState[column];
+            } else {
+                filterState[column] = value;
             }
 
-            table.columns().search('');
-            table.column(column).search(value, true, false).draw();
+            applyColumnFilters(table, filterState);
         });
     }
 
