@@ -20,6 +20,15 @@ it('warehouse memiliki label Pegawai Gudang', function () {
     expect(UserRole::Warehouse->label())->toBe('Pegawai Gudang');
 });
 
+it('role memiliki urutan tampilan owner manager gudang kasir', function () {
+    expect(UserRole::displayOrder())->toBe([
+        UserRole::Owner,
+        UserRole::Manager,
+        UserRole::Warehouse,
+        UserRole::Cashier,
+    ]);
+});
+
 // ─── canAccessAllBranches ─────────────────────────────────────────────────────
 
 it('hanya owner yang dapat mengakses semua cabang', function () {

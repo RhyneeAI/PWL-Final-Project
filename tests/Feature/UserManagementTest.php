@@ -1,10 +1,22 @@
 <?php
 
 use App\Enums\UserRole;
+use App\Models\Branch;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
+
+function createBranch(string $name = 'MyFanel Bandung'): Branch
+{
+    return Branch::create([
+        'code' => 'BR-' . uniqid(),
+        'name' => $name,
+        'address' => 'Jl. Test',
+        'phone' => '+62 821-1111-111',
+        'is_active' => true,
+    ]);
+}
 
 it('owner dapat membuat pengguna dengan semua role', function () {
     $owner = User::factory()->create(['role' => UserRole::Owner]);
@@ -20,11 +32,39 @@ it('owner dapat membuat pengguna dengan semua role', function () {
         ])
         ->assertRedirect(route('users.index'));
 
-    expect(User::where('username', 'ownerbaru')->first()?->role)->toBe(UserRole::Owner);
+    $user = User::where('username', 'ownerbaru')->first();
+
+    expect($user?->role)->toBe(UserRole::Owner)
+        ->and($user?->branchLabel())->toBe('Kantor Pusat')
+        ->and($user?->branches)->toBeEmpty();
+});
+
+it('owner dapat membuat kasir dengan cabang tertentu', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $branch = createBranch();
+
+    $this->actingAs($owner)
+        ->post(route('users.store'), [
+            'name' => 'Kasir Cabang',
+            'username' => 'kasircabang',
+            'email' => 'kasircabang@example.com',
+            'password' => 'password123',
+            'role' => UserRole::Cashier->value,
+            'branch_id' => $branch->id,
+            'is_active' => true,
+        ])
+        ->assertRedirect(route('users.index'));
+
+    $user = User::where('username', 'kasircabang')->first();
+
+    expect($user?->branchLabel())->toBe('MyFanel Bandung')
+        ->and($user?->primaryBranchId())->toBe($branch->id);
 });
 
 it('manager tidak dapat membuat pengguna dengan role owner', function () {
     $manager = User::factory()->create(['role' => UserRole::Manager]);
+    $branch = createBranch();
+    $manager->branches()->sync([$branch->id]);
 
     $this->actingAs($manager)
         ->post(route('users.store'), [
@@ -33,6 +73,7 @@ it('manager tidak dapat membuat pengguna dengan role owner', function () {
             'email' => 'ownerilegal@example.com',
             'password' => 'password123',
             'role' => UserRole::Owner->value,
+            'branch_id' => $branch->id,
             'is_active' => true,
         ])
         ->assertSessionHasErrors('role');
@@ -42,6 +83,8 @@ it('manager tidak dapat membuat pengguna dengan role owner', function () {
 
 it('manager dapat membuat pengguna dengan role manager kasir atau gudang', function () {
     $manager = User::factory()->create(['role' => UserRole::Manager]);
+    $branch = createBranch();
+    $manager->branches()->sync([$branch->id]);
 
     $this->actingAs($manager)
         ->post(route('users.store'), [
@@ -50,6 +93,7 @@ it('manager dapat membuat pengguna dengan role manager kasir atau gudang', funct
             'email' => 'kasirbaru@example.com',
             'password' => 'password123',
             'role' => UserRole::Cashier->value,
+            'branch_id' => $branch->id,
             'is_active' => true,
         ])
         ->assertRedirect(route('users.index'));
@@ -57,14 +101,36 @@ it('manager dapat membuat pengguna dengan role manager kasir atau gudang', funct
     expect(User::where('username', 'kasirbaru')->first()?->role)->toBe(UserRole::Cashier);
 });
 
+it('manager tidak dapat membuat pengguna di cabang yang tidak diaksesnya', function () {
+    $manager = User::factory()->create(['role' => UserRole::Manager]);
+    $branch = createBranch('MyFanel Bandung');
+    $otherBranch = createBranch('MyFanel Jakarta');
+    $manager->branches()->sync([$branch->id]);
+
+    $this->actingAs($manager)
+        ->post(route('users.store'), [
+            'name' => 'Kasir Jakarta',
+            'username' => 'kasirjkt',
+            'email' => 'kasirjkt@example.com',
+            'password' => 'password123',
+            'role' => UserRole::Cashier->value,
+            'branch_id' => $otherBranch->id,
+            'is_active' => true,
+        ])
+        ->assertSessionHasErrors('branch_id');
+});
+
 it('manager tidak dapat mengubah profil pengguna lain selain role dan status', function () {
     $manager = User::factory()->create(['role' => UserRole::Manager]);
+    $branch = createBranch();
+    $manager->branches()->sync([$branch->id]);
     $kasir = User::factory()->create([
         'role' => UserRole::Cashier,
         'name' => 'Kasir Lama',
         'username' => 'kasirlama',
         'email' => 'kasirlama@example.com',
     ]);
+    $kasir->branches()->sync([$branch->id]);
 
     $this->actingAs($manager)
         ->put(route('users.update', $kasir), [
@@ -79,7 +145,8 @@ it('manager tidak dapat mengubah profil pengguna lain selain role dan status', f
         ->and($kasir->username)->toBe('kasirlama')
         ->and($kasir->email)->toBe('kasirlama@example.com')
         ->and($kasir->role)->toBe(UserRole::Warehouse)
-        ->and($kasir->is_active)->toBeFalse();
+        ->and($kasir->is_active)->toBeFalse()
+        ->and($kasir->primaryBranchId())->toBe($branch->id);
 });
 
 it('manager tidak dapat mengubah akun owner', function () {
@@ -137,6 +204,8 @@ it('owner dapat mengubah profil sendiri', function () {
 
 it('halaman create manager tidak menampilkan opsi role owner', function () {
     $manager = User::factory()->create(['role' => UserRole::Manager]);
+    $branch = createBranch();
+    $manager->branches()->sync([$branch->id]);
 
     $this->actingAs($manager)
         ->get(route('users.create'))
@@ -145,4 +214,33 @@ it('halaman create manager tidak menampilkan opsi role owner', function () {
         ->assertSee('value="manager"', false)
         ->assertSee('value="cashier"', false)
         ->assertSee('value="warehouse"', false);
+});
+
+it('halaman index menampilkan kolom cabang dan status', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner, 'is_active' => true]);
+    $branch = createBranch();
+    $kasir = User::factory()->create(['role' => UserRole::Cashier, 'is_active' => false]);
+    $kasir->branches()->sync([$branch->id]);
+
+    $this->actingAs($owner)
+        ->get(route('users.index'))
+        ->assertOk()
+        ->assertSee('Kantor Pusat')
+        ->assertSee('MyFanel Bandung')
+        ->assertSee('status-badge-inactive');
+});
+
+it('role non owner wajib memilih cabang saat dibuat', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+
+    $this->actingAs($owner)
+        ->post(route('users.store'), [
+            'name' => 'Kasir Tanpa Cabang',
+            'username' => 'kasirtanpacabang',
+            'email' => 'tanpa@example.com',
+            'password' => 'password123',
+            'role' => UserRole::Cashier->value,
+            'is_active' => true,
+        ])
+        ->assertSessionHasErrors('branch_id');
 });

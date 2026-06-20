@@ -39,6 +39,8 @@
             searchInput,
             filterButtons,
             branchFilter,
+            roleFilter,
+            selectFilters = [],
             order = [[0, 'asc']],
             columnDefs = [],
             pageLength = 10,
@@ -78,14 +80,22 @@
         }
 
         if (branchFilter) {
-            bindBranchFilter(table, branchFilter, filterState);
+            bindSelectColumnFilter(table, branchFilter, filterState);
         }
+
+        if (roleFilter) {
+            bindSelectColumnFilter(table, roleFilter, filterState);
+        }
+
+        selectFilters.forEach(function (config) {
+            bindSelectColumnFilter(table, config, filterState);
+        });
 
         return table;
     }
 
-    function bindBranchFilter(table, branchFilter, filterState) {
-        const { select, column } = branchFilter;
+    function bindSelectColumnFilter(table, filterConfig, filterState) {
+        const { select, column } = filterConfig;
         const columnKey = String(column);
 
         $(select).on('change', function () {
@@ -99,6 +109,10 @@
 
             applyColumnFilters(table, filterState);
         });
+    }
+
+    function bindBranchFilter(table, branchFilter, filterState) {
+        bindSelectColumnFilter(table, branchFilter, filterState);
     }
 
     function bindFilterButtons(table, buttonsSelector, filterState) {

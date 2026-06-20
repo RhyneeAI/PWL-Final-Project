@@ -19,6 +19,38 @@ enum UserRole: string
         };
     }
 
+    public function listOrder(): int
+    {
+        return match ($this) {
+            self::Owner => 0,
+            self::Manager => 1,
+            self::Warehouse => 2,
+            self::Cashier => 3,
+        };
+    }
+
+    /**
+     * @return list<self>
+     */
+    public static function displayOrder(): array
+    {
+        $roles = self::cases();
+        usort($roles, fn (self $a, self $b) => $a->listOrder() <=> $b->listOrder());
+
+        return $roles;
+    }
+
+    /**
+     * @param  list<self>  $roles
+     * @return list<self>
+     */
+    public static function sortForDisplay(array $roles): array
+    {
+        usort($roles, fn (self $a, self $b) => $a->listOrder() <=> $b->listOrder());
+
+        return $roles;
+    }
+
     public function canAccessAllBranches(): bool
     {
         return $this === self::Owner;
@@ -91,11 +123,13 @@ enum UserRole: string
      */
     public static function assignableBy(self $actor): array
     {
-        return match ($actor) {
+        $roles = match ($actor) {
             self::Owner => self::cases(),
             self::Manager => [self::Manager, self::Cashier, self::Warehouse],
             default => [],
         };
+
+        return self::sortForDisplay($roles);
     }
 
     public static function assignableValuesBy(self $actor): array

@@ -27,10 +27,18 @@ class UserRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $merged = [];
+
         if ($this->has('is_active')) {
-            $this->merge([
-                'is_active' => $this->boolean('is_active'),
-            ]);
+            $merged['is_active'] = $this->boolean('is_active');
+        }
+
+        if ($this->input('role') === UserRole::Owner->value) {
+            $merged['branch_id'] = null;
+        }
+
+        if ($merged !== []) {
+            $this->merge($merged);
         }
     }
 
@@ -38,8 +46,7 @@ class UserRequest extends FormRequest
     {
         /** @var User|null $targetUser */
         $targetUser = $this->route('user');
-        $actor = $this->user()->role;
-        $assignableRoles = UserRole::assignableValuesBy($actor);
+        $assignableRoles = UserRole::assignableValuesBy($this->user()->role);
 
         if ($targetUser && $this->isEditingOtherUser($targetUser)) {
             return [
@@ -47,12 +54,14 @@ class UserRequest extends FormRequest
                 'username' => ['prohibited'],
                 'email' => ['prohibited'],
                 'password' => ['prohibited'],
+                'branch_id' => ['prohibited'],
                 'role' => ['required', Rule::in($assignableRoles)],
                 'is_active' => ['required', 'boolean'],
             ];
         }
 
         $userId = $targetUser?->id;
+        $requiresBranch = $this->input('role') !== UserRole::Owner->value;
 
         return [
             'name' => ['required', 'string', 'max:255'],
@@ -70,6 +79,20 @@ class UserRequest extends FormRequest
             ],
             'password' => [$userId ? 'nullable' : 'required', 'string', 'min:8'],
             'role' => ['required', Rule::in($assignableRoles)],
+            'branch_id' => [
+                Rule::requiredIf($requiresBranch),
+                'nullable',
+                'exists:branches,id',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    if ($value === null) {
+                        return;
+                    }
+
+                    if (! $this->user()->hasAccessToBranch((int) $value)) {
+                        $fail('Cabang tidak valid atau tidak dapat diakses.');
+                    }
+                },
+            ],
             'is_active' => ['required', 'boolean'],
         ];
     }
@@ -87,7 +110,8 @@ class UserRequest extends FormRequest
             'password.min' => 'Password minimal 8 karakter.',
             'role.required' => 'Role wajib dipilih.',
             'role.in' => 'Role tidak diizinkan.',
-            'role.prohibited' => 'Anda tidak dapat mengubah role pengguna ini.',
+            'branch_id.required' => 'Cabang wajib dipilih.',
+            'branch_id.exists' => 'Cabang tidak ditemukan.',
             'is_active.required' => 'Status wajib dipilih.',
         ];
     }
@@ -95,11 +119,13 @@ class UserRequest extends FormRequest
     /**
      * @return array<string, mixed>
      */
-    public function validatedPayload(User $targetUser): array
+    public function validatedPayload(?User $targetUser = null): array
     {
+        $targetUser ??= $this->route('user');
         $validated = $this->validated();
+        unset($validated['branch_id']);
 
-        if ($this->isEditingOtherUser($targetUser)) {
+        if ($targetUser && $this->isEditingOtherUser($targetUser)) {
             $payload = [
                 'is_active' => $validated['is_active'],
             ];
@@ -118,8 +144,32 @@ class UserRequest extends FormRequest
         return $validated;
     }
 
+    public function syncBranches(User $user): void
+    {
+        /** @var User|null $targetUser */
+        $targetUser = $this->route('user');
+
+        if ($targetUser && $this->isEditingOtherUser($targetUser)) {
+            return;
+        }
+
+        $role = UserRole::from($this->input('role', $user->role->value));
+
+        if ($role === UserRole::Owner) {
+            $user->branches()->sync([]);
+
+            return;
+        }
+
+        $branchId = $this->input('branch_id');
+
+        if ($branchId) {
+            $user->branches()->sync([(int) $branchId]);
+        }
+    }
+
     private function isEditingOtherUser(User $targetUser): bool
     {
-        return $targetUser->id !== $this->user()->id;
+        return $targetUser->exists && $targetUser->id !== $this->user()->id;
     }
 }

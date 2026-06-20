@@ -101,4 +101,18 @@ class User extends Authenticatable
 
         return UserRole::canManageAccount($actor->role, $this->role);
     }
+
+    public function branchLabel(): string
+    {
+        if ($this->role === UserRole::Owner) {
+            return 'Kantor Pusat';
+        }
+
+        return $this->branches->first()?->name ?? '-';
+    }
+
+    public function primaryBranchId(): ?int
+    {
+        return $this->branches->first()?->id;
+    }
 }
