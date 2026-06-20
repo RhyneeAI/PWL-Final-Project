@@ -20,15 +20,28 @@ class SupplierController extends Controller
 
     public function create(): View
     {
-        $branches = Branch::query()->where('is_active', true)->orderBy('name')->get();
+        $branches = Branch::query()
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
 
-        return view('master-data.supplier.create', compact('branches'));
+        $selectedBranchId = (int) old('branch_id', $branches->first()?->id);
+        $nextCode = $selectedBranchId
+            ? Supplier::generateNextCode($selectedBranchId)
+            : 'SUP-001';
+
+        return view('master-data.supplier.create', compact(
+            'branches',
+            'selectedBranchId',
+            'nextCode',
+        ));
     }
 
     public function store(SupplierRequest $request): RedirectResponse
     {
         Supplier::create([
             ...$request->validated(),
+            'code' => Supplier::generateNextCode((int) $request->branch_id),
             'is_active' => $request->boolean('is_active', true),
         ]);
 
@@ -39,6 +52,8 @@ class SupplierController extends Controller
 
     public function edit(Supplier $supplier): View
     {
+        $supplier->load('branch');
+
         return view('master-data.supplier.edit', compact('supplier'));
     }
 

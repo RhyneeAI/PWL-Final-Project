@@ -76,4 +76,14 @@ class Branch extends Model
 
         return 'BR-' . str_pad((string) $nextNumber, 3, '0', STR_PAD_LEFT);
     }
+
+    public function supplierCodePrefix(): string
+    {
+        $initials = collect(preg_split('/\s+/', trim($this->name)))
+            ->filter()
+            ->map(fn (string $word) => mb_strtoupper(mb_substr($word, 0, 1)))
+            ->implode('');
+
+        return 'SUP' . $initials;
+    }
 }
