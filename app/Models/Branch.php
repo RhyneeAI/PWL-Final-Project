@@ -91,4 +91,14 @@ class Branch extends Model
 
         return 'PRD' . $initials;
     }
+
+    public function stockInCodePrefix(): string
+    {
+        $initials = collect(preg_split('/\s+/', trim($this->name)))
+            ->filter()
+            ->map(fn (string $word) => mb_strtoupper(mb_substr($word, 0, 1)))
+            ->implode('');
+
+        return 'STM' . $initials;
+    }
 }

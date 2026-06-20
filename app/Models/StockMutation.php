@@ -11,7 +11,7 @@ class StockMutation extends Model
     protected $fillable = [
         'branch_id', 'product_id', 'user_id', 'transaction_id', 'supplier_id',
         'reference_code', 'type', 'quantity_before',
-        'quantity_change', 'quantity_after', 'notes', 'mutation_date',
+        'quantity_change', 'quantity_after', 'buy_price', 'notes', 'mutation_date',
     ];
 
     protected function casts(): array
@@ -19,6 +19,7 @@ class StockMutation extends Model
         return [
             'type'          => StockMutationType::class,
             'mutation_date' => 'datetime',
+            'buy_price'     => 'decimal:2',
         ];
     }
 
@@ -45,5 +46,25 @@ class StockMutation extends Model
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public static function generateNextReferenceCode(int $branchId): string
+    {
+        $branch = Branch::findOrFail($branchId);
+        $prefix = $branch->stockInCodePrefix();
+
+        $lastNumber = static::query()
+            ->where('branch_id', $branchId)
+            ->where('reference_code', 'like', $prefix . '-%')
+            ->pluck('reference_code')
+            ->map(fn (string $code) => (int) substr($code, strlen($prefix) + 1))
+            ->max() ?? 0;
+
+        return $prefix . '-' . str_pad((string) ($lastNumber + 1), 3, '0', STR_PAD_LEFT);
+    }
+
+    public function subtotal(): float
+    {
+        return (float) $this->buy_price * abs($this->quantity_change);
     }
 }

@@ -21,6 +21,12 @@
     }
 
     function initFormattedInputGroup($group) {
+        if ($group.data('formattedInitialized')) {
+            return;
+        }
+
+        $group.data('formattedInitialized', true);
+
         const $display = $group.find('[data-formatted-display]');
 
         $display.on('input', function () {
@@ -41,13 +47,15 @@
         });
     }
 
-    function initFormattedInputs() {
-        $('[data-formatted-input-group]').each(function () {
+    function initFormattedInputs($root) {
+        ($root || $(document)).find('[data-formatted-input-group]').each(function () {
             initFormattedInputGroup($(this));
         });
     }
 
     window.initFormattedInputs = initFormattedInputs;
 
-    $(initFormattedInputs);
+    $(function () {
+        initFormattedInputs();
+    });
 })(window, jQuery);
