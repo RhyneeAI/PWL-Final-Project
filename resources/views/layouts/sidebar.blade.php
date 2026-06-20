@@ -26,35 +26,35 @@
                 <div class="sidebar-section-label text-xs font-semibold text-gray-400 uppercase mt-4 mb-2 whitespace-nowrap">Master Data</div>
 
                 @if ($role->canManageBranches())
-                    <a href="{{ route('branch.index') }}" data-page="branches" class="admin-menu-item" title="Cabang Toko">
+                    <a href="{{ route('branches.index') }}" data-page="branches" class="admin-menu-item" title="Cabang Toko">
                         <i class="fas fa-store"></i>
                         <span class="menu-text">Cabang Toko</span>
                     </a>
                 @endif
 
                 @if ($role->canViewProducts())
-                    <a href="{{ route('product.index') }}" data-page="products" class="admin-menu-item" title="Produk">
+                    <a href="{{ route('products.index') }}" data-page="products" class="admin-menu-item" title="Produk">
                         <i class="fas fa-boxes"></i>
                         <span class="menu-text">Produk</span>
                     </a>
                 @endif
 
                 @if ($role->canViewSuppliers())
-                    <a href="{{ route('supplier.index') }}" data-page="suppliers" class="admin-menu-item" title="Supplier">
+                    <a href="{{ route('suppliers.index') }}" data-page="suppliers" class="admin-menu-item" title="Supplier">
                         <i class="fas fa-truck"></i>
                         <span class="menu-text">Supplier</span>
                     </a>
                 @endif
 
                 @if ($role->canManageCategories())
-                    <a href="{{ route('category.index') }}" data-page="categories" class="admin-menu-item" title="Kategori">
+                    <a href="{{ route('categories.index') }}" data-page="categories" class="admin-menu-item" title="Kategori">
                         <i class="fas fa-tags"></i>
                         <span class="menu-text">Kategori</span>
                     </a>
                 @endif
 
                 @if ($role->canManageUsers())
-                    <a href="{{ route('user.index') }}" data-page="users" class="admin-menu-item" title="Pengguna">
+                    <a href="{{ route('users.index') }}" data-page="users" class="admin-menu-item" title="Pengguna">
                         <i class="fas fa-users"></i>
                         <span class="menu-text">Pengguna</span>
                     </a>

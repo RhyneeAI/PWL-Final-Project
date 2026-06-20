@@ -2,68 +2,63 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SupplierRequest;
 use App\Models\Branch;
 use App\Models\Supplier;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class SupplierController extends Controller
 {
-    public function index()
+    public function index(): View
     {
-        $suppliers = Supplier::all();
+        $suppliers = Supplier::query()->latest()->get();
 
         return view('master-data.supplier.index', compact('suppliers'));
     }
 
-    public function create()
+    public function create(): View
     {
-        $branches = Branch::all();
+        $branches = Branch::query()->where('is_active', true)->orderBy('name')->get();
 
         return view('master-data.supplier.create', compact('branches'));
     }
 
-    public function store(Request $request)
+    public function store(SupplierRequest $request): RedirectResponse
     {
         Supplier::create([
-            'branch_id' => $request->branch_id,
-            'code' => $request->code,
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'address' => $request->address,
-            'is_active' => true,
+            ...$request->validated(),
+            'is_active' => $request->boolean('is_active', true),
         ]);
 
-        return redirect()->route('supplier.index');
+        return redirect()
+            ->route('suppliers.index')
+            ->with('success', 'Supplier berhasil ditambahkan.');
     }
 
-    public function edit(Supplier $supplier)
+    public function edit(Supplier $supplier): View
     {
-        $branches = Branch::all();
-
-        return view('master-data.supplier.edit', compact('supplier', 'branches'));
+        return view('master-data.supplier.edit', compact('supplier'));
     }
 
-    public function update(Request $request, Supplier $supplier)
+    public function update(SupplierRequest $request, Supplier $supplier): RedirectResponse
     {
         $supplier->update([
-            'code' => $request->code,
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'address' => $request->address,
-            'is_active' => $request->is_active,
+            ...$request->validated(),
+            'is_active' => $request->boolean('is_active', true),
         ]);
 
-        return redirect()->route('supplier.index');
+        return redirect()
+            ->route('suppliers.index')
+            ->with('success', 'Supplier berhasil diperbarui.');
     }
 
-       
-
-    public function destroy(Supplier $supplier)
+    public function destroy(Supplier $supplier): RedirectResponse
     {
         $supplier->delete();
 
-        return redirect()->route('supplier.index');
+        return redirect()
+            ->route('suppliers.index')
+            ->with('success', 'Supplier berhasil dihapus.');
     }
 }

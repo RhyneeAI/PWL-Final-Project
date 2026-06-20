@@ -2,67 +2,72 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequest;
+use App\Models\Branch;
+use App\Models\Category;
 use App\Models\Product;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(): View
     {
-        return Product::all();
+        $products = Product::query()
+            ->with(['category', 'branch'])
+            ->latest()
+            ->get();
+
+        return view('master-data.product.index', compact('products'));
     }
 
-    public function store(Request $request)
+    public function create(): View
     {
-        $validated = $request->validate([
-            'branch_id' => 'required|exists:branches,id',
-            'category_id' => 'nullable|exists:categories,id',
-            'code' => 'required|string|unique:products,code',
-            'barcode' => 'nullable|string|unique:products,barcode',
-            'name' => 'required|string|max:255',
-            'unit' => 'required|string|max:50',
-            'buy_price' => 'required|numeric|min:0',
-            'sell_price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'min_stock' => 'required|integer|min:0',
-            'is_active' => 'boolean',
+        $branches = Branch::query()->where('is_active', true)->orderBy('name')->get();
+        $categories = Category::query()->with('branch')->where('is_active', true)->orderBy('name')->get();
+
+        return view('master-data.product.create', compact('branches', 'categories'));
+    }
+
+    public function store(ProductRequest $request): RedirectResponse
+    {
+        Product::create([
+            ...$request->validated(),
+            'stock' => 0,
+            'is_active' => $request->boolean('is_active', true),
         ]);
 
-        return Product::create($validated);
+        return redirect()
+            ->route('products.index')
+            ->with('success', 'Produk berhasil ditambahkan.');
     }
 
-    public function show(Product $product)
+    public function edit(Product $product): View
     {
-        return $product;
+        $branches = Branch::query()->where('is_active', true)->orderBy('name')->get();
+        $categories = Category::query()->with('branch')->where('is_active', true)->orderBy('name')->get();
+
+        return view('master-data.product.edit', compact('product', 'branches', 'categories'));
     }
 
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request, Product $product): RedirectResponse
     {
-        $validated = $request->validate([
-            'branch_id' => 'required|exists:branches,id',
-            'category_id' => 'nullable|exists:categories,id',
-            'code' => 'required|string|unique:products,code,' . $product->id,
-            'barcode' => 'nullable|string|unique:products,barcode,' . $product->id,
-            'name' => 'required|string|max:255',
-            'unit' => 'required|string|max:50',
-            'buy_price' => 'required|numeric|min:0',
-            'sell_price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'min_stock' => 'required|integer|min:0',
-            'is_active' => 'boolean',
+        $product->update([
+            ...$request->validated(),
+            'is_active' => $request->boolean('is_active', true),
         ]);
 
-        $product->update($validated);
-
-        return $product;
+        return redirect()
+            ->route('products.index')
+            ->with('success', 'Produk berhasil diperbarui.');
     }
 
-    public function destroy(Product $product)
+    public function destroy(Product $product): RedirectResponse
     {
         $product->delete();
 
-        return response()->json([
-            'message' => 'Product deleted successfully'
-        ]);
+        return redirect()
+            ->route('products.index')
+            ->with('success', 'Produk berhasil dihapus.');
     }
 }

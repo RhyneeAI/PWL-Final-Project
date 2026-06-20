@@ -5,24 +5,27 @@
 
 @section('content')
     <div class="space-y-6 min-h-full">
+        @include('partials.session-alert')
+
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-3xl font-semibold text-gray-800 dark:text-white">Kategori</h1>
                 <p class="text-gray-500 dark:text-gray-400">Kelola kategori produk per cabang.</p>
             </div>
 
-            <button type="button" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm">
+            <a href="{{ route('categories.create') }}"
+                class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm">
                 <i class="fas fa-plus mr-1"></i> Tambah Kategori
-            </button>
+            </a>
         </div>
 
         @include('partials.master-data.table-toolbar', [
             'searchId' => 'search-category',
-            'searchPlaceholder' => 'Cari nama kategori...',
+            'searchPlaceholder' => 'Cari nama kategori atau cabang...',
             'filters' => [
                 ['label' => 'Semua', 'column' => '', 'value' => ''],
-                ['label' => 'Aktif', 'column' => 3, 'value' => 'Aktif'],
-                ['label' => 'Nonaktif', 'column' => 3, 'value' => 'Nonaktif'],
+                ['label' => 'Aktif', 'column' => 4, 'value' => 'Aktif'],
+                ['label' => 'Nonaktif', 'column' => 4, 'value' => 'Nonaktif'],
             ],
         ])
 
@@ -32,6 +35,7 @@
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800 text-left text-xs text-gray-500 uppercase">
                             <th class="px-6 py-4">Nama Kategori</th>
+                            <th class="px-6 py-4">Cabang</th>
                             <th class="px-6 py-4">Deskripsi</th>
                             <th class="px-6 py-4">Jumlah Produk</th>
                             <th class="px-6 py-4">Status</th>
@@ -39,22 +43,37 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ([
-                            ['Elektronik', 'Perangkat elektronik dan aksesoris', '24', 'Aktif', true],
-                            ['Makanan', 'Makanan dan minuman kemasan', '56', 'Aktif', true],
-                            ['Perawatan', 'Produk perawatan tubuh', '18', 'Aktif', true],
-                            ['Kebutuhan Rumah', 'Peralatan rumah tangga', '0', 'Nonaktif', false],
-                        ] as [$nama, $deskripsi, $jumlah, $status, $isActive])
+                        @forelse ($categories as $category)
                             <tr>
-                                <td class="px-6 py-4 font-medium">{{ $nama }}</td>
-                                <td class="px-6 py-4">{{ $deskripsi }}</td>
-                                <td class="px-6 py-4">{{ $jumlah }}</td>
+                                <td class="px-6 py-4 font-medium">{{ $category->name }}</td>
+                                <td class="px-6 py-4">{{ $category->branch->name }}</td>
+                                <td class="px-6 py-4">{{ $category->description ?? '-' }}</td>
+                                <td class="px-6 py-4">{{ $category->products_count }}</td>
                                 <td class="px-6 py-4">
-                                    <span class="status-badge {{ $isActive ? 'status-badge-active' : 'status-badge-inactive' }}">{{ $status }}</span>
+                                    <span class="status-badge {{ $category->is_active ? 'status-badge-active' : 'status-badge-inactive' }}">
+                                        {{ $category->is_active ? 'Aktif' : 'Nonaktif' }}
+                                    </span>
                                 </td>
-                                @include('partials.master-data.action-buttons')
+                                <td class="px-6 py-4 text-center whitespace-nowrap">
+                                    <div class="inline-flex items-center justify-center gap-2">
+                                        <a href="{{ route('categories.edit', $category) }}" class="btn-action btn-action-edit" title="Edit">
+                                            <i class="fas fa-pen-to-square"></i>
+                                        </a>
+                                        <form action="{{ route('categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus kategori ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-action btn-action-delete" title="Hapus">
+                                                <i class="fas fa-trash-can"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">Belum ada data kategori.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
