@@ -49,10 +49,11 @@
                                 <td class="px-6 py-4">{{ $branch->name }}</td>
                                 <td class="px-6 py-4">{{ $branch->phone ?? '-' }}</td>
                                 <td class="px-6 py-4">{{ $branch->address }}</td>
-                                <td class="px-6 py-4">
-                                    <span class="status-badge {{ $branch->is_active ? 'status-badge-active' : 'status-badge-inactive' }}">
-                                        {{ $branch->is_active ? 'Aktif' : 'Nonaktif' }}
-                                    </span>
+                                <td class="px-6 py-4" data-order="{{ $branch->is_active ? 1 : 0 }}">
+                                    @include('partials.master-data.active-toggle', [
+                                        'active' => $branch->is_active,
+                                        'url' => route('branches.update-active', $branch),
+                                    ])
                                 </td>
                                 <td class="px-6 py-4 text-center whitespace-nowrap">
                                     <div class="inline-flex items-center justify-center gap-2">

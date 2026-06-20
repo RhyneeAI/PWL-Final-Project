@@ -241,7 +241,39 @@ it('halaman index menampilkan kolom cabang dan status', function () {
         ->assertOk()
         ->assertSee('Kantor Pusat')
         ->assertSee('MyFanel Bandung')
-        ->assertSee('status-badge-inactive');
+        ->assertSee('Nonaktif');
+});
+
+it('owner dapat mengubah status aktif pengguna dari tabel', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $branch = createBranch();
+    $kasir = User::factory()->create(['role' => UserRole::Cashier, 'is_active' => true]);
+    $kasir->branches()->sync([$branch->id]);
+
+    $this->actingAs($owner)
+        ->patchJson(route('users.update-active', $kasir), ['is_active' => false])
+        ->assertOk()
+        ->assertJson(['is_active' => false]);
+
+    expect($kasir->fresh()->is_active)->toBeFalse();
+});
+
+it('pengguna tidak dapat mengubah status akun sendiri dari tabel', function () {
+    $manager = User::factory()->create(['role' => UserRole::Manager, 'is_active' => true]);
+    $branch = createBranch();
+    $manager->branches()->sync([$branch->id]);
+
+    $this->actingAs($manager)
+        ->get(route('users.index'))
+        ->assertOk()
+        ->assertDontSee('data-url="' . route('users.update-active', $manager) . '"', false);
+
+    $this->actingAs($manager)
+        ->patchJson(route('users.update-active', $manager), ['is_active' => false])
+        ->assertUnprocessable()
+        ->assertJson(['message' => 'Tidak dapat mengubah status akun sendiri.']);
+
+    expect($manager->fresh()->is_active)->toBeTrue();
 });
 
 it('role non owner wajib memilih cabang saat dibuat', function () {

@@ -56,10 +56,13 @@
                                 <td class="px-6 py-4">{{ $user->username }}</td>
                                 <td class="px-6 py-4">{{ $user->email }}</td>
                                 <td class="px-6 py-4" data-order="{{ $user->role->listOrder() }}">{{ $user->role->label() }}</td>
-                                <td class="px-6 py-4">
-                                    <span class="status-badge {{ $user->is_active ? 'status-badge-active' : 'status-badge-inactive' }}">
-                                        {{ $user->is_active ? 'Aktif' : 'Nonaktif' }}
-                                    </span>
+                                <td class="px-6 py-4" data-order="{{ $user->is_active ? 1 : 0 }}">
+                                    @include('partials.master-data.active-toggle', [
+                                        'active' => $user->is_active,
+                                        'url' => route('users.update-active', $user),
+                                        'editable' => $user->canBeManagedBy(auth()->user())
+                                            && auth()->id() !== $user->id,
+                                    ])
                                 </td>
                                 <td class="px-6 py-4 text-center whitespace-nowrap">
                                     @if ($user->canBeManagedBy(auth()->user()))

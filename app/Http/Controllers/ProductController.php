@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Enums\ProductUnit;
 use App\Http\Requests\ProductRequest;
+use App\Http\Requests\ToggleActiveStatusRequest;
 use App\Models\Branch;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
@@ -115,6 +117,15 @@ class ProductController extends Controller
         return redirect()
             ->route('products.index')
             ->with('success', 'Produk berhasil dihapus.');
+    }
+
+    public function updateActive(ToggleActiveStatusRequest $request, Product $product): JsonResponse
+    {
+        abort_unless(auth()->user()->hasAccessToBranch($product->branch_id), 403);
+
+        $product->update(['is_active' => $request->boolean('is_active')]);
+
+        return response()->json(['is_active' => $product->is_active]);
     }
 
     private function assignableBranches(): Collection

@@ -65,10 +65,12 @@
                                 <td class="px-6 py-4">{{ $supplier->name }}</td>
                                 <td class="px-6 py-4">{{ $supplier->phone ?? '-' }}</td>
                                 <td class="px-6 py-4">{{ $supplier->email ?? '-' }}</td>
-                                <td class="px-6 py-4">
-                                    <span class="status-badge {{ $supplier->is_active ? 'status-badge-active' : 'status-badge-inactive' }}">
-                                        {{ $supplier->is_active ? 'Aktif' : 'Nonaktif' }}
-                                    </span>
+                                <td class="px-6 py-4" data-order="{{ $supplier->is_active ? 1 : 0 }}">
+                                    @include('partials.master-data.active-toggle', [
+                                        'active' => $supplier->is_active,
+                                        'url' => route('suppliers.update-active', $supplier),
+                                        'editable' => $canManage,
+                                    ])
                                 </td>
                                 @if ($canManage)
                                     <td class="px-6 py-4 text-center whitespace-nowrap">

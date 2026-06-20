@@ -1,5 +1,5 @@
 (function () {
-    const DISMISS_MS = 5000;
+    const DISMISS_MS = 3000;
     const FADE_MS = 500;
 
     document.querySelectorAll('[data-flash-message]').forEach(function (el) {

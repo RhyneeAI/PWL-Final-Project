@@ -47,10 +47,11 @@
                                 <td class="px-6 py-4 font-medium">{{ $category->name }}</td>
                                 <td class="px-6 py-4">{{ $category->description ?? '-' }}</td>
                                 <td class="px-6 py-4">{{ $category->products_count }}</td>
-                                <td class="px-6 py-4">
-                                    <span class="status-badge {{ $category->is_active ? 'status-badge-active' : 'status-badge-inactive' }}">
-                                        {{ $category->is_active ? 'Aktif' : 'Nonaktif' }}
-                                    </span>
+                                <td class="px-6 py-4" data-order="{{ $category->is_active ? 1 : 0 }}">
+                                    @include('partials.master-data.active-toggle', [
+                                        'active' => $category->is_active,
+                                        'url' => route('categories.update-active', $category),
+                                    ])
                                 </td>
                                 <td class="px-6 py-4 text-center whitespace-nowrap">
                                     <div class="inline-flex items-center justify-center gap-2">

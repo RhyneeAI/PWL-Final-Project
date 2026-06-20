@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
+use App\Http\Requests\ToggleActiveStatusRequest;
 use App\Http\Requests\UserRequest;
 use App\Models\Branch;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
@@ -117,6 +119,21 @@ class UserController extends Controller
         return redirect()
             ->route('users.index')
             ->with('success', 'Pengguna berhasil dihapus.');
+    }
+
+    public function updateActive(ToggleActiveStatusRequest $request, User $user): JsonResponse
+    {
+        abort_unless($user->canBeManagedBy(auth()->user()), 403);
+
+        if (auth()->id() === $user->id) {
+            return response()->json([
+                'message' => 'Tidak dapat mengubah status akun sendiri.',
+            ], 422);
+        }
+
+        $user->update(['is_active' => $request->boolean('is_active')]);
+
+        return response()->json(['is_active' => $user->is_active]);
     }
 
     private function availableBranches(): Collection

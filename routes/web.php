@@ -27,12 +27,16 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     // Owner only — kelola cabang
     Route::middleware('role:owner')->group(function () {
+        Route::patch('branches/{branch}/active', [BranchController::class, 'updateActive'])->name('branches.update-active');
         Route::resource('branches', BranchController::class)->except(['show']);
     });
 
     // Owner + Manager
     Route::middleware('role:owner,manager')->group(function () {
+        Route::patch('users/{user}/active', [UserController::class, 'updateActive'])->name('users.update-active');
         Route::resource('users', UserController::class)->except(['show']);
+
+        Route::patch('categories/{category}/active', [CategoryController::class, 'updateActive'])->name('categories.update-active');
         Route::resource('categories', CategoryController::class)->except(['show']);
 
         Route::get('/reports', function () {
@@ -51,6 +55,7 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     // Produk — CRUD untuk owner & manager
     Route::middleware('role:owner,manager')->group(function () {
+        Route::patch('products/{product}/active', [ProductController::class, 'updateActive'])->name('products.update-active');
         Route::resource('products', ProductController::class)->except(['index', 'show']);
     });
 
@@ -61,6 +66,7 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     // Supplier — CRUD untuk owner & manager
     Route::middleware('role:owner,manager')->group(function () {
+        Route::patch('suppliers/{supplier}/active', [SupplierController::class, 'updateActive'])->name('suppliers.update-active');
         Route::resource('suppliers', SupplierController::class)->except(['index', 'show']);
     });
 

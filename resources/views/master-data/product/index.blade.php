@@ -67,10 +67,12 @@
                                 <td class="px-6 py-4">{{ $product->branch->name }}</td>
                                 <td class="px-6 py-4">Rp {{ number_format($product->sell_price, 0, ',', '.') }}</td>
                                 <td class="px-6 py-4 {{ $product->isLowStock() ? 'text-red-500 font-medium' : '' }}">{{ $product->stock }}</td>
-                                <td class="px-6 py-4">
-                                    <span class="status-badge {{ $product->is_active ? 'status-badge-active' : 'status-badge-inactive' }}">
-                                        {{ $product->is_active ? 'Aktif' : 'Nonaktif' }}
-                                    </span>
+                                <td class="px-6 py-4" data-order="{{ $product->is_active ? 1 : 0 }}">
+                                    @include('partials.master-data.active-toggle', [
+                                        'active' => $product->is_active,
+                                        'url' => route('products.update-active', $product),
+                                        'editable' => $canManage,
+                                    ])
                                 </td>
                                 @if ($canManage)
                                     <td class="px-6 py-4 text-center whitespace-nowrap">
