@@ -34,6 +34,16 @@
         table.draw();
     }
 
+    function removePlaceholderRows($table) {
+        $table.find('tbody tr').each(function () {
+            const $cells = $(this).children('td, th');
+
+            if ($cells.length === 1 && $cells.first().attr('colspan')) {
+                $(this).remove();
+            }
+        });
+    }
+
     function initMasterDataTable(tableSelector, options = {}) {
         const {
             searchInput,
@@ -51,6 +61,8 @@
             return $table.DataTable ? $table.DataTable() : null;
         }
 
+        removePlaceholderRows($table);
+
         const hasActionColumn = $table.find('thead th').last().text().trim().toLowerCase() === 'aksi';
         const defaultColumnDefs = hasActionColumn
             ? [{ orderable: false, searchable: false, targets: -1 }]
@@ -61,7 +73,6 @@
             pageLength,
             lengthChange: false,
             autoWidth: false,
-            responsive: true,
             order,
             language: DEFAULT_LANGUAGE,
             columnDefs: [...defaultColumnDefs, ...columnDefs],

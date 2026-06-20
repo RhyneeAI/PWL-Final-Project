@@ -10,7 +10,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-3xl font-semibold text-gray-800 dark:text-white">Kategori</h1>
-                <p class="text-gray-500 dark:text-gray-400">Kelola kategori produk per cabang.</p>
+                <p class="text-gray-500 dark:text-gray-400">Kelola kategori produk yang berlaku untuk semua cabang.</p>
             </div>
 
             <a href="{{ route('categories.create') }}"
@@ -21,11 +21,11 @@
 
         @include('partials.master-data.table-toolbar', [
             'searchId' => 'search-category',
-            'searchPlaceholder' => 'Cari nama kategori atau cabang...',
+            'searchPlaceholder' => 'Cari nama kategori atau deskripsi...',
             'filters' => [
                 ['label' => 'Semua', 'column' => '', 'value' => ''],
-                ['label' => 'Aktif', 'column' => 4, 'value' => 'Aktif'],
-                ['label' => 'Nonaktif', 'column' => 4, 'value' => 'Nonaktif'],
+                ['label' => 'Aktif', 'column' => 3, 'value' => 'Aktif'],
+                ['label' => 'Nonaktif', 'column' => 3, 'value' => 'Nonaktif'],
             ],
         ])
 
@@ -35,7 +35,6 @@
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800 text-left text-xs text-gray-500 uppercase">
                             <th class="px-6 py-4">Nama Kategori</th>
-                            <th class="px-6 py-4">Cabang</th>
                             <th class="px-6 py-4">Deskripsi</th>
                             <th class="px-6 py-4">Jumlah Produk</th>
                             <th class="px-6 py-4">Status</th>
@@ -43,10 +42,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($categories as $category)
+                        @foreach ($categories as $category)
                             <tr>
                                 <td class="px-6 py-4 font-medium">{{ $category->name }}</td>
-                                <td class="px-6 py-4">{{ $category->branch->name }}</td>
                                 <td class="px-6 py-4">{{ $category->description ?? '-' }}</td>
                                 <td class="px-6 py-4">{{ $category->products_count }}</td>
                                 <td class="px-6 py-4">
@@ -69,11 +67,7 @@
                                     </div>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">Belum ada data kategori.</td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>

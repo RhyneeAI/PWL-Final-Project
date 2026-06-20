@@ -24,7 +24,7 @@ class ProductController extends Controller
     public function create(): View
     {
         $branches = Branch::query()->where('is_active', true)->orderBy('name')->get();
-        $categories = Category::query()->with('branch')->where('is_active', true)->orderBy('name')->get();
+        $categories = Category::query()->where('is_active', true)->orderBy('name')->get();
 
         return view('master-data.product.create', compact('branches', 'categories'));
     }
@@ -45,7 +45,7 @@ class ProductController extends Controller
     public function edit(Product $product): View
     {
         $branches = Branch::query()->where('is_active', true)->orderBy('name')->get();
-        $categories = Category::query()->with('branch')->where('is_active', true)->orderBy('name')->get();
+        $categories = Category::query()->where('is_active', true)->orderBy('name')->get();
 
         return view('master-data.product.edit', compact('product', 'branches', 'categories'));
     }

@@ -29,7 +29,7 @@
                     <option value="Kantor Pusat">Kantor Pusat</option>
                 @endif
                 @foreach ($branches as $branch)
-                    <option value="{{ $branch->name }}">{{ $branch->name }}</option>
+                    <option value="{{ $branch->name }}" data-branch-id="{{ $branch->id }}">{{ $branch->name }}</option>
                 @endforeach
             </select>
         @endif

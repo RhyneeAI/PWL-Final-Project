@@ -30,7 +30,7 @@
                     <select name="category_id" class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
                         <option value="">— Tanpa Kategori —</option>
                         @foreach ($categories as $category)
-                            <option value="{{ $category->id }}" @selected(old('category_id', $product->category_id) == $category->id)>{{ $category->name }} ({{ $category->branch->name }})</option>
+                            <option value="{{ $category->id }}" @selected(old('category_id', $product->category_id) == $category->id)>{{ $category->name }}</option>
                         @endforeach
                     </select>
                 </div>

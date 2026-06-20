@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CategoryRequest;
-use App\Models\Branch;
 use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -13,9 +12,8 @@ class CategoryController extends Controller
     public function index(): View
     {
         $categories = Category::query()
-            ->with('branch')
             ->withCount('products')
-            ->latest()
+            ->orderBy('name')
             ->get();
 
         return view('master-data.category.index', compact('categories'));
@@ -23,9 +21,7 @@ class CategoryController extends Controller
 
     public function create(): View
     {
-        $branches = Branch::query()->where('is_active', true)->orderBy('name')->get();
-
-        return view('master-data.category.create', compact('branches'));
+        return view('master-data.category.create');
     }
 
     public function store(CategoryRequest $request): RedirectResponse
@@ -42,8 +38,6 @@ class CategoryController extends Controller
 
     public function edit(Category $category): View
     {
-        $category->load('branch');
-
         return view('master-data.category.edit', compact('category'));
     }
 

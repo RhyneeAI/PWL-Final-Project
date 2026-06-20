@@ -17,15 +17,10 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cabang</label>
-                    <input type="text" value="{{ $category->branch->name }}" disabled
-                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
-                </div>
-
-                <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nama Kategori</label>
                     <input type="text" name="name" value="{{ old('name', $category->name) }}"
-                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+                        placeholder="Makanan"
+                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
                 </div>
 
                 <div>
@@ -40,7 +35,8 @@
             <div class="mt-6">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Deskripsi</label>
                 <textarea name="description" rows="4"
-                    class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">{{ old('description', $category->description) }}</textarea>
+                    placeholder="Deskripsi kategori..."
+                    class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">{{ old('description', $category->description) }}</textarea>
             </div>
 
             <div class="flex justify-end gap-3 mt-8">
