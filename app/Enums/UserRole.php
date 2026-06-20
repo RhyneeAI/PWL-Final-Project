@@ -83,4 +83,47 @@ enum UserRole: string
     {
         return in_array($this, [self::Owner, self::Manager]);
     }
+
+    /**
+     * Role yang boleh ditetapkan oleh pengguna dengan role tertentu.
+     *
+     * @return list<self>
+     */
+    public static function assignableBy(self $actor): array
+    {
+        return match ($actor) {
+            self::Owner => self::cases(),
+            self::Manager => [self::Manager, self::Cashier, self::Warehouse],
+            default => [],
+        };
+    }
+
+    public static function assignableValuesBy(self $actor): array
+    {
+        return array_map(fn (self $role) => $role->value, self::assignableBy($actor));
+    }
+
+    public function canBeAssignedBy(self $actor): bool
+    {
+        return in_array($this, self::assignableBy($actor), true);
+    }
+
+    public function hierarchyLevel(): int
+    {
+        return match ($this) {
+            self::Owner => 4,
+            self::Manager => 3,
+            self::Cashier, self::Warehouse => 2,
+        };
+    }
+
+    public function isAbove(self $other): bool
+    {
+        return $this->hierarchyLevel() > $other->hierarchyLevel();
+    }
+
+    public static function canManageAccount(self $actor, self $target): bool
+    {
+        return $actor->hierarchyLevel() >= $target->hierarchyLevel();
+    }
 }

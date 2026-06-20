@@ -2,59 +2,74 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRole;
+use App\Http\Requests\UserRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(): View
     {
-        $users = User::all();
+        $users = User::query()->latest()->get();
 
         return view('master-data.user.index', compact('users'));
     }
 
-    public function create()
+    public function create(): View
     {
-        return view('master-data.user.create');
+        $assignableRoles = UserRole::assignableBy(auth()->user()->role);
+
+        return view('master-data.user.create', compact('assignableRoles'));
     }
 
-    public function store(Request $request)
+    public function store(UserRequest $request): RedirectResponse
     {
-        User::create([
-            'name' => $request->name,
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => $request->password,
-            'role' => $request->role,
-            'is_active' => $request->is_active,
-        ]);
+        User::create($request->validated());
 
-        return redirect()->route('users.index');
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'Pengguna berhasil ditambahkan.');
     }
 
-    public function edit(User $user)
+    public function edit(User $user): View
     {
-        return view('master-data.user.edit', compact('user'));
+        abort_unless($user->canBeManagedBy(auth()->user()), 403);
+
+        $assignableRoles = UserRole::assignableBy(auth()->user()->role);
+        $isEditingSelf = auth()->id() === $user->id;
+
+        return view('master-data.user.edit', compact(
+            'user',
+            'assignableRoles',
+            'isEditingSelf',
+        ));
     }
 
-    public function update(Request $request, User $user)
+    public function update(UserRequest $request, User $user): RedirectResponse
     {
-        $user->update([
-            'name' => $request->name,
-            'username' => $request->username,
-            'email' => $request->email,
-            'role' => $request->role,
-            'is_active' => $request->is_active,
-        ]);
+        $user->update($request->validatedPayload($user));
 
-        return redirect()->route('users.index');
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'Pengguna berhasil diperbarui.');
     }
 
-    public function destroy(User $user)
+    public function destroy(User $user): RedirectResponse
     {
+        if (auth()->id() === $user->id) {
+            return redirect()
+                ->route('users.index')
+                ->with('error', 'Tidak dapat menghapus akun sendiri.');
+        }
+
+        abort_unless($user->canBeManagedBy(auth()->user()), 403);
+
         $user->delete();
 
-        return redirect()->route('users.index');
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'Pengguna berhasil dihapus.');
     }
 }

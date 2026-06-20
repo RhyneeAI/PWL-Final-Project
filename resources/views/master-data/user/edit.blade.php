@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto">
+    @include('partials.session-alert')
     <div class="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-8">
 
         <div class="mb-8">
@@ -12,7 +13,11 @@
             </h1>
 
             <p class="text-gray-500 dark:text-gray-400 mt-1">
-                Perbarui data pengguna.
+                @if ($isEditingSelf)
+                    Perbarui data akun Anda.
+                @else
+                    Perbarui role dan status pengguna. Data profil tidak dapat diubah.
+                @endif
             </p>
         </div>
 
@@ -27,10 +32,18 @@
                         Nama
                     </label>
 
-                    <input type="text"
-                        name="name"
-                        value="{{ old('name', $user->name) }}"
-                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+                    @if ($isEditingSelf)
+                        <input type="text"
+                            name="name"
+                            value="{{ old('name', $user->name) }}"
+                            placeholder="Nama lengkap pengguna"
+                            class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
+                    @else
+                        <input type="text"
+                            value="{{ $user->name }}"
+                            readonly
+                            class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed">
+                    @endif
                 </div>
 
                 <div>
@@ -38,10 +51,18 @@
                         Username
                     </label>
 
-                    <input type="text"
-                        name="username"
-                        value="{{ old('username', $user->username) }}"
-                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+                    @if ($isEditingSelf)
+                        <input type="text"
+                            name="username"
+                            value="{{ old('username', $user->username) }}"
+                            placeholder="username"
+                            class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
+                    @else
+                        <input type="text"
+                            value="{{ $user->username }}"
+                            readonly
+                            class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed">
+                    @endif
                 </div>
 
                 <div>
@@ -49,11 +70,32 @@
                         Email
                     </label>
 
-                    <input type="email"
-                        name="email"
-                        value="{{ old('email', $user->email) }}"
-                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+                    @if ($isEditingSelf)
+                        <input type="email"
+                            name="email"
+                            value="{{ old('email', $user->email) }}"
+                            placeholder="pengguna@email.com"
+                            class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
+                    @else
+                        <input type="email"
+                            value="{{ $user->email }}"
+                            readonly
+                            class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed">
+                    @endif
                 </div>
+
+                @if ($isEditingSelf)
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Password Baru
+                        </label>
+
+                        <input type="password"
+                            name="password"
+                            placeholder="Kosongkan jika tidak diubah"
+                            class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
+                    </div>
+                @endif
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -63,10 +105,11 @@
                     <select name="role"
                         class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
 
-                        <option value="owner" {{ $user->role->value == 'owner' ? 'selected' : '' }}>Owner</option>
-                        <option value="manager" {{ $user->role->value == 'manager' ? 'selected' : '' }}>Manager</option>
-                        <option value="cashier" {{ $user->role->value == 'cashier' ? 'selected' : '' }}>Kasir</option>
-                        <option value="warehouse" {{ $user->role->value == 'warehouse' ? 'selected' : '' }}>Pegawai Gudang</option>
+                        @foreach ($assignableRoles as $role)
+                            <option value="{{ $role->value }}" @selected(old('role', $user->role->value) === $role->value)>
+                                {{ $role->label() }}
+                            </option>
+                        @endforeach
 
                     </select>
                 </div>
@@ -79,11 +122,11 @@
                     <select name="is_active"
                         class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
 
-                        <option value="1" {{ $user->is_active ? 'selected' : '' }}>
+                        <option value="1" @selected(old('is_active', $user->is_active ? '1' : '0') == '1')>
                             Aktif
                         </option>
 
-                        <option value="0" {{ !$user->is_active ? 'selected' : '' }}>
+                        <option value="0" @selected(old('is_active', $user->is_active ? '1' : '0') == '0')>
                             Nonaktif
                         </option>
 

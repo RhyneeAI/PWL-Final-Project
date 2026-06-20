@@ -92,4 +92,13 @@ class User extends Authenticatable
 
         return $this->branches()->where('branch_id', $branchId)->exists();
     }
+
+    public function canBeManagedBy(User $actor): bool
+    {
+        if ($actor->id === $this->id) {
+            return true;
+        }
+
+        return UserRole::canManageAccount($actor->role, $this->role);
+    }
 }

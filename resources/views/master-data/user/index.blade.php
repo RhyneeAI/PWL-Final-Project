@@ -50,28 +50,34 @@
                         <td class="px-6 py-4">{{ $user->role->label() }}</td>
 
                         <td class="px-6 py-4 text-center whitespace-nowrap">
-                            <div class="inline-flex items-center justify-center gap-2">
+                            @if ($user->canBeManagedBy(auth()->user()))
+                                <div class="inline-flex items-center justify-center gap-2">
 
-                                <a href="{{ route('users.edit', $user->id) }}"
-                                class="btn-action btn-action-edit">
-                                    <i class="fas fa-pen-to-square"></i>
-                                </a>
+                                    <a href="{{ route('users.edit', $user->id) }}"
+                                    class="btn-action btn-action-edit">
+                                        <i class="fas fa-pen-to-square"></i>
+                                    </a>
 
-                                <form action="{{ route('users.destroy', $user->id) }}"
-                                    method="POST"
-                                    onsubmit="return confirm('Yakin ingin menghapus pengguna ini?')">
+                                    @if (auth()->id() !== $user->id)
+                                        <form action="{{ route('users.destroy', $user->id) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('Yakin ingin menghapus pengguna ini?')">
 
-                                    @csrf
-                                    @method('DELETE')
+                                            @csrf
+                                            @method('DELETE')
 
-                                    <button type="submit"
-                                            class="btn-action btn-action-delete">
-                                        <i class="fas fa-trash-can"></i>
-                                    </button>
+                                            <button type="submit"
+                                                    class="btn-action btn-action-delete">
+                                                <i class="fas fa-trash-can"></i>
+                                            </button>
 
-                                </form>
+                                        </form>
+                                    @endif
 
-                            </div>
+                                </div>
+                            @else
+                                <span class="text-xs text-gray-400">—</span>
+                            @endif
                         </td>
                     </tr>
                     @endforeach
