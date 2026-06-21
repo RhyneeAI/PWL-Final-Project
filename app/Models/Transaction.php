@@ -60,14 +60,15 @@ class Transaction extends Model
     {
         $branch = Branch::findOrFail($branchId);
         $prefix = $branch->transactionCodePrefix();
+        $date = now()->format('Ymd');
 
         $lastNumber = static::query()
             ->where('branch_id', $branchId)
-            ->where('code', 'like', $prefix . '-%')
+            ->where('code', 'like', $prefix . '-' . $date . '-%')
             ->pluck('code')
-            ->map(fn (string $code) => (int) substr($code, strlen($prefix) + 1))
+            ->map(fn (string $code) => (int) substr($code, strlen($prefix) + 10))
             ->max() ?? 0;
 
-        return $prefix . '-' . str_pad((string) ($lastNumber + 1), 3, '0', STR_PAD_LEFT);
+        return $prefix . '-' . $date . '-' . str_pad((string) ($lastNumber + 1), 4, '0', STR_PAD_LEFT);
     }
 }

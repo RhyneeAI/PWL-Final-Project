@@ -131,7 +131,7 @@
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800 text-left text-xs text-gray-500 uppercase">
                             <th class="px-4 py-3">Tanggal</th>
-                            <th class="px-4 py-3">Tipe</th>
+                            <th class="px-6 py-3">Tipe</th>
                             <th class="px-4 py-3">Referensi</th>
                             <th class="px-4 py-3">Perubahan</th>
                             <th class="px-4 py-3">Stok Sebelum</th>
@@ -143,7 +143,7 @@
                         @foreach ($mutations as $mutation)
                             <tr>
                                 <td class="px-4 py-3 whitespace-nowrap">{{ $mutation->mutation_date->format('d/m/Y') }}</td>
-                                <td class="px-4 py-3">
+                                <td class="px-6 py-3 whitespace-nowrap">
                                     <span @class([
                                         'status-badge',
                                         'status-badge-active' => $mutation->isStockIncrease(),
