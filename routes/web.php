@@ -36,7 +36,7 @@ Route::middleware(['auth', 'active'])->group(function () {
     });
 
     // Owner + Manager
-    Route::middleware('role:owner,manager')->group(function () {
+    Route::middleware('role:owner,supervisor')->group(function () {
         Route::patch('users/{user}/active', [UserController::class, 'updateActive'])->name('users.update-active');
         Route::resource('users', UserController::class)->except(['show']);
 
@@ -53,29 +53,29 @@ Route::middleware(['auth', 'active'])->group(function () {
     });
 
     // Produk — index & detail untuk semua role operasional
-    Route::middleware('role:owner,manager,cashier,warehouse')->group(function () {
+    Route::middleware('role:owner,supervisor,cashier,warehouse')->group(function () {
         Route::resource('products', ProductController::class)->only(['index', 'show']);
     });
 
     // Produk — CRUD untuk owner & manager
-    Route::middleware('role:owner,manager')->group(function () {
+    Route::middleware('role:owner,supervisor')->group(function () {
         Route::patch('products/{product}/active', [ProductController::class, 'updateActive'])->name('products.update-active');
         Route::resource('products', ProductController::class)->except(['index', 'show']);
     });
 
     // Supplier — index untuk owner, manager & gudang
-    Route::middleware('role:owner,manager,warehouse')->group(function () {
+    Route::middleware('role:owner,supervisor,warehouse')->group(function () {
         Route::resource('suppliers', SupplierController::class)->only(['index']);
     });
 
     // Supplier — CRUD untuk owner & manager
-    Route::middleware('role:owner,manager')->group(function () {
+    Route::middleware('role:owner,supervisor')->group(function () {
         Route::patch('suppliers/{supplier}/active', [SupplierController::class, 'updateActive'])->name('suppliers.update-active');
         Route::resource('suppliers', SupplierController::class)->except(['index', 'show']);
     });
 
     // Stok — Stok Masuk
-    Route::middleware('role:owner,manager,warehouse')->group(function () {
+    Route::middleware('role:owner,supervisor,warehouse')->group(function () {
         Route::get('/stock-mutations', [StockInController::class, 'index'])->name('stock-mutation.index');
         Route::get('/stock-mutations/create', [StockInController::class, 'create'])->name('stock-mutation.create');
         Route::post('/stock-mutations', [StockInController::class, 'store'])->name('stock-mutation.store');
@@ -83,7 +83,7 @@ Route::middleware(['auth', 'active'])->group(function () {
     });
 
     // Stok — Stok Keluar
-    Route::middleware('role:owner,manager,warehouse')->group(function () {
+    Route::middleware('role:owner,supervisor,warehouse')->group(function () {
         Route::get('/stock-out', [StockOutController::class, 'index'])->name('stock-out.index');
         Route::get('/stock-out/create', [StockOutController::class, 'create'])->name('stock-out.create');
         Route::post('/stock-out', [StockOutController::class, 'store'])->name('stock-out.store');
@@ -91,7 +91,7 @@ Route::middleware(['auth', 'active'])->group(function () {
     });
 
     // Transaksi Penjualan
-    Route::middleware('role:owner,manager,cashier')->group(function () {
+    Route::middleware('role:owner,supervisor,cashier')->group(function () {
         Route::get('/transactions', [TransactionController::class, 'index'])->name('transaction.index');
         Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transaction.create');
         Route::post('/transactions', [TransactionController::class, 'store'])->name('transaction.store');

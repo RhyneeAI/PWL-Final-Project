@@ -61,12 +61,12 @@ it('owner dapat membuat kasir dengan cabang tertentu', function () {
         ->and($user?->primaryBranchId())->toBe($branch->id);
 });
 
-it('manager tidak dapat membuat pengguna dengan role owner', function () {
-    $manager = User::factory()->create(['role' => UserRole::Manager]);
+it('supervisor tidak dapat membuat pengguna dengan role owner', function () {
+    $supervisor = User::factory()->create(['role' => UserRole::Supervisor]);
     $branch = createBranch();
-    $manager->branches()->sync([$branch->id]);
+    $supervisor->branches()->sync([$branch->id]);
 
-    $this->actingAs($manager)
+    $this->actingAs($supervisor)
         ->post(route('users.store'), [
             'name' => 'Owner Ilegal',
             'username' => 'ownerilegal',
@@ -80,12 +80,12 @@ it('manager tidak dapat membuat pengguna dengan role owner', function () {
     expect(User::where('username', 'ownerilegal')->exists())->toBeFalse();
 });
 
-it('manager dapat membuat pengguna dengan role manager kasir atau gudang', function () {
-    $manager = User::factory()->create(['role' => UserRole::Manager]);
+it('supervisor dapat membuat pengguna dengan role supervisor kasir atau gudang', function () {
+    $supervisor = User::factory()->create(['role' => UserRole::Supervisor]);
     $branch = createBranch();
-    $manager->branches()->sync([$branch->id]);
+    $supervisor->branches()->sync([$branch->id]);
 
-    $this->actingAs($manager)
+    $this->actingAs($supervisor)
         ->post(route('users.store'), [
             'name' => 'Kasir Baru',
             'username' => 'kasirbaru',
@@ -102,13 +102,13 @@ it('manager dapat membuat pengguna dengan role manager kasir atau gudang', funct
         ->and($kasir?->primaryBranchId())->toBe($branch->id);
 });
 
-it('manager tidak dapat mengirim cabang saat membuat pengguna', function () {
-    $manager = User::factory()->create(['role' => UserRole::Manager]);
+it('supervisor tidak dapat mengirim cabang saat membuat pengguna', function () {
+    $supervisor = User::factory()->create(['role' => UserRole::Supervisor]);
     $branch = createBranch('MyFanel Bandung');
     $otherBranch = createBranch('MyFanel Jakarta');
-    $manager->branches()->sync([$branch->id]);
+    $supervisor->branches()->sync([$branch->id]);
 
-    $this->actingAs($manager)
+    $this->actingAs($supervisor)
         ->post(route('users.store'), [
             'name' => 'Kasir Jakarta',
             'username' => 'kasirjkt',
@@ -121,10 +121,10 @@ it('manager tidak dapat mengirim cabang saat membuat pengguna', function () {
         ->assertSessionHasErrors('branch_id');
 });
 
-it('manager tidak dapat mengubah profil pengguna lain selain role dan status', function () {
-    $manager = User::factory()->create(['role' => UserRole::Manager]);
+it('supervisor tidak dapat mengubah profil pengguna lain selain role dan status', function () {
+    $supervisor = User::factory()->create(['role' => UserRole::Supervisor]);
     $branch = createBranch();
-    $manager->branches()->sync([$branch->id]);
+    $supervisor->branches()->sync([$branch->id]);
     $kasir = User::factory()->create([
         'role' => UserRole::Cashier,
         'name' => 'Kasir Lama',
@@ -133,7 +133,7 @@ it('manager tidak dapat mengubah profil pengguna lain selain role dan status', f
     ]);
     $kasir->branches()->sync([$branch->id]);
 
-    $this->actingAs($manager)
+    $this->actingAs($supervisor)
         ->put(route('users.update', $kasir), [
             'role' => UserRole::Warehouse->value,
             'is_active' => false,
@@ -150,15 +150,15 @@ it('manager tidak dapat mengubah profil pengguna lain selain role dan status', f
         ->and($kasir->primaryBranchId())->toBe($branch->id);
 });
 
-it('manager tidak dapat mengubah akun owner', function () {
-    $manager = User::factory()->create(['role' => UserRole::Manager]);
+it('supervisor tidak dapat mengubah akun owner', function () {
+    $supervisor = User::factory()->create(['role' => UserRole::Supervisor]);
     $owner = User::factory()->create(['role' => UserRole::Owner, 'is_active' => true]);
 
-    $this->actingAs($manager)
+    $this->actingAs($supervisor)
         ->get(route('users.edit', $owner))
         ->assertForbidden();
 
-    $this->actingAs($manager)
+    $this->actingAs($supervisor)
         ->put(route('users.update', $owner), [
             'is_active' => false,
         ])
@@ -167,11 +167,11 @@ it('manager tidak dapat mengubah akun owner', function () {
     expect($owner->fresh()->is_active)->toBeTrue();
 });
 
-it('manager tidak melihat aksi edit dan hapus untuk owner di halaman index', function () {
-    $manager = User::factory()->create(['role' => UserRole::Manager]);
+it('supervisor tidak melihat aksi edit dan hapus untuk owner di halaman index', function () {
+    $supervisor = User::factory()->create(['role' => UserRole::Supervisor]);
     User::factory()->create(['role' => UserRole::Owner, 'username' => 'ownerutama']);
 
-    $this->actingAs($manager)
+    $this->actingAs($supervisor)
         ->get(route('users.index'))
         ->assertOk()
         ->assertSee('ownerutama')
@@ -203,27 +203,27 @@ it('owner dapat mengubah profil sendiri', function () {
         ->and($owner->email)->toBe('baru@example.com');
 });
 
-it('halaman create manager tidak menampilkan opsi role owner', function () {
-    $manager = User::factory()->create(['role' => UserRole::Manager]);
+it('halaman create supervisor tidak menampilkan opsi role owner', function () {
+    $supervisor = User::factory()->create(['role' => UserRole::Supervisor]);
     $branch = createBranch();
-    $manager->branches()->sync([$branch->id]);
+    $supervisor->branches()->sync([$branch->id]);
 
-    $this->actingAs($manager)
+    $this->actingAs($supervisor)
         ->get(route('users.create'))
         ->assertOk()
         ->assertDontSee('value="owner"', false)
         ->assertDontSee('name="branch_id"', false)
-        ->assertSee('value="manager"', false)
+        ->assertSee('value="supervisor"', false)
         ->assertSee('value="cashier"', false)
         ->assertSee('value="warehouse"', false);
 });
 
-it('halaman index manager tidak menampilkan filter cabang', function () {
-    $manager = User::factory()->create(['role' => UserRole::Manager]);
+it('halaman index supervisor tidak menampilkan filter cabang', function () {
+    $supervisor = User::factory()->create(['role' => UserRole::Supervisor]);
     $branch = createBranch();
-    $manager->branches()->sync([$branch->id]);
+    $supervisor->branches()->sync([$branch->id]);
 
-    $this->actingAs($manager)
+    $this->actingAs($supervisor)
         ->get(route('users.index'))
         ->assertOk()
         ->assertDontSee('id="filter-user-branch"', false)
@@ -259,21 +259,21 @@ it('owner dapat mengubah status aktif pengguna dari tabel', function () {
 });
 
 it('pengguna tidak dapat mengubah status akun sendiri dari tabel', function () {
-    $manager = User::factory()->create(['role' => UserRole::Manager, 'is_active' => true]);
+    $supervisor = User::factory()->create(['role' => UserRole::Supervisor, 'is_active' => true]);
     $branch = createBranch();
-    $manager->branches()->sync([$branch->id]);
+    $supervisor->branches()->sync([$branch->id]);
 
-    $this->actingAs($manager)
+    $this->actingAs($supervisor)
         ->get(route('users.index'))
         ->assertOk()
-        ->assertDontSee('data-url="' . route('users.update-active', $manager) . '"', false);
+        ->assertDontSee('data-url="' . route('users.update-active', $supervisor) . '"', false);
 
-    $this->actingAs($manager)
-        ->patchJson(route('users.update-active', $manager), ['is_active' => false])
+    $this->actingAs($supervisor)
+        ->patchJson(route('users.update-active', $supervisor), ['is_active' => false])
         ->assertUnprocessable()
         ->assertJson(['message' => 'Tidak dapat mengubah status akun sendiri.']);
 
-    expect($manager->fresh()->is_active)->toBeTrue();
+    expect($supervisor->fresh()->is_active)->toBeTrue();
 });
 
 it('role non owner wajib memilih cabang saat dibuat', function () {

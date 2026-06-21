@@ -42,8 +42,8 @@ it('owner dapat login dengan kredensial valid', function () {
     $this->assertAuthenticatedAs($user);
 });
 
-it('manager dapat login dengan kredensial valid', function () {
-    $user = makeUser(['role' => UserRole::Manager]);
+it('supervisor dapat login dengan kredensial valid', function () {
+    $user = makeUser(['role' => UserRole::Supervisor]);
 
     $this->post(route('login'), [
         'username' => $user->username,

@@ -8,8 +8,8 @@ it('owner memiliki label yang benar', function () {
     expect(UserRole::Owner->label())->toBe('Owner');
 });
 
-it('manager memiliki label Manager', function () {
-    expect(UserRole::Manager->label())->toBe('Manager');
+it('manager memiliki label Supervisor', function () {
+    expect(UserRole::Supervisor->label())->toBe('Supervisor');
 });
 
 it('cashier memiliki label yang benar', function () {
@@ -23,7 +23,7 @@ it('warehouse memiliki label Pegawai Gudang', function () {
 it('role memiliki urutan tampilan owner manager gudang kasir', function () {
     expect(UserRole::displayOrder())->toBe([
         UserRole::Owner,
-        UserRole::Manager,
+        UserRole::Supervisor,
         UserRole::Warehouse,
         UserRole::Cashier,
     ]);
@@ -33,7 +33,7 @@ it('role memiliki urutan tampilan owner manager gudang kasir', function () {
 
 it('hanya owner yang dapat mengakses semua cabang', function () {
     expect(UserRole::Owner->canAccessAllBranches())->toBeTrue();
-    expect(UserRole::Manager->canAccessAllBranches())->toBeFalse();
+    expect(UserRole::Supervisor->canAccessAllBranches())->toBeFalse();
     expect(UserRole::Cashier->canAccessAllBranches())->toBeFalse();
     expect(UserRole::Warehouse->canAccessAllBranches())->toBeFalse();
 });
@@ -42,7 +42,7 @@ it('hanya owner yang dapat mengakses semua cabang', function () {
 
 it('hanya owner yang dapat mengelola cabang', function () {
     expect(UserRole::Owner->canManageBranches())->toBeTrue();
-    expect(UserRole::Manager->canManageBranches())->toBeFalse();
+    expect(UserRole::Supervisor->canManageBranches())->toBeFalse();
     expect(UserRole::Cashier->canManageBranches())->toBeFalse();
 });
 
@@ -50,7 +50,7 @@ it('hanya owner yang dapat mengelola cabang', function () {
 
 it('owner dan manager dapat mengelola user', function () {
     expect(UserRole::Owner->canManageUsers())->toBeTrue();
-    expect(UserRole::Manager->canManageUsers())->toBeTrue();
+    expect(UserRole::Supervisor->canManageUsers())->toBeTrue();
     expect(UserRole::Cashier->canManageUsers())->toBeFalse();
     expect(UserRole::Warehouse->canManageUsers())->toBeFalse();
 });
@@ -67,8 +67,8 @@ it('kasir dan gudang dapat melihat produk tanpa kelola', function () {
 it('owner dan manager dapat melihat dan kelola produk', function () {
     expect(UserRole::Owner->canViewProducts())->toBeTrue();
     expect(UserRole::Owner->canManageProducts())->toBeTrue();
-    expect(UserRole::Manager->canViewProducts())->toBeTrue();
-    expect(UserRole::Manager->canManageProducts())->toBeTrue();
+    expect(UserRole::Supervisor->canViewProducts())->toBeTrue();
+    expect(UserRole::Supervisor->canManageProducts())->toBeTrue();
 });
 
 it('gudang dapat melihat supplier tanpa kelola', function () {
@@ -83,7 +83,7 @@ it('kasir tidak dapat akses supplier', function () {
 
 it('owner dan manager dapat kelola supplier', function () {
     expect(UserRole::Owner->canManageSuppliers())->toBeTrue();
-    expect(UserRole::Manager->canManageSuppliers())->toBeTrue();
+    expect(UserRole::Supervisor->canManageSuppliers())->toBeTrue();
 });
 
 // ─── canViewTransactions ──────────────────────────────────────────────────────
@@ -109,7 +109,7 @@ it('pegawai gudang dapat mengelola stok', function () {
 
 it('hanya owner dan manager yang dapat mencetak laporan', function () {
     expect(UserRole::Owner->canPrintReport())->toBeTrue();
-    expect(UserRole::Manager->canPrintReport())->toBeTrue();
+    expect(UserRole::Supervisor->canPrintReport())->toBeTrue();
     expect(UserRole::Cashier->canPrintReport())->toBeFalse();
     expect(UserRole::Warehouse->canPrintReport())->toBeFalse();
 });
@@ -118,6 +118,6 @@ it('hanya owner dan manager yang dapat mencetak laporan', function () {
 
 it('hanya owner dan manager yang dapat mengelola pengaturan', function () {
     expect(UserRole::Owner->canManageSettings())->toBeTrue();
-    expect(UserRole::Manager->canManageSettings())->toBeTrue();
+    expect(UserRole::Supervisor->canManageSettings())->toBeTrue();
     expect(UserRole::Cashier->canManageSettings())->toBeFalse();
 });
