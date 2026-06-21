@@ -62,7 +62,7 @@
                                 <td class="px-6 py-4 font-medium">{{ $product->code }}</td>
                                 <td class="px-6 py-4">{{ $product->name }}</td>
                                 <td class="px-6 py-4">{{ $product->category?->name ?? '-' }}</td>
-                                <td class="px-6 py-4">{{ $product->branch->name }}</td>
+                                <td class="px-6 py-4">{{ $product->branch?->name ?? '-' }}</td>
                                 <td class="px-6 py-4">Rp {{ number_format($product->sell_price, 0, ',', '.') }}</td>
                                 <td class="px-6 py-4 {{ $product->isLowStock() ? 'text-red-500 font-medium' : '' }}">{{ $product->stock }}</td>
                                 <td class="px-6 py-4" data-order="{{ $product->is_active ? 1 : 0 }}">

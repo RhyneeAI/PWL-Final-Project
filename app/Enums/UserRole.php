@@ -5,7 +5,7 @@ namespace App\Enums;
 enum UserRole: string
 {
     case Owner     = 'owner';
-    case Manager   = 'manager';
+    case Supervisor   = 'supervisor';
     case Cashier   = 'cashier';
     case Warehouse = 'warehouse';
 
@@ -13,7 +13,7 @@ enum UserRole: string
     {
         return match ($this) {
             self::Owner     => 'Owner',
-            self::Manager   => 'Manager',
+            self::Supervisor   => 'Supervisor',
             self::Cashier   => 'Kasir',
             self::Warehouse => 'Pegawai Gudang',
         };
@@ -23,7 +23,7 @@ enum UserRole: string
     {
         return match ($this) {
             self::Owner => 0,
-            self::Manager => 1,
+            self::Supervisor => 1,
             self::Warehouse => 2,
             self::Cashier => 3,
         };
@@ -63,57 +63,57 @@ enum UserRole: string
 
     public function canManageUsers(): bool
     {
-        return in_array($this, [self::Owner, self::Manager]);
+        return in_array($this, [self::Owner, self::Supervisor]);
     }
 
     public function canManageCategories(): bool
     {
-        return in_array($this, [self::Owner, self::Manager]);
+        return in_array($this, [self::Owner, self::Supervisor]);
     }
 
     public function canManageProducts(): bool
     {
-        return in_array($this, [self::Owner, self::Manager]);
+        return in_array($this, [self::Owner, self::Supervisor]);
     }
 
     public function canViewProducts(): bool
     {
-        return in_array($this, [self::Owner, self::Manager, self::Cashier, self::Warehouse]);
+        return in_array($this, [self::Owner, self::Supervisor, self::Cashier, self::Warehouse]);
     }
 
     public function canManageSuppliers(): bool
     {
-        return in_array($this, [self::Owner, self::Manager]);
+        return in_array($this, [self::Owner, self::Supervisor]);
     }
 
     public function canViewSuppliers(): bool
     {
-        return in_array($this, [self::Owner, self::Manager, self::Warehouse]);
+        return in_array($this, [self::Owner, self::Supervisor, self::Warehouse]);
     }
 
     public function canManageTransactions(): bool
     {
-        return in_array($this, [self::Owner, self::Manager, self::Cashier]);
+        return in_array($this, [self::Owner, self::Supervisor, self::Cashier]);
     }
 
     public function canViewTransactions(): bool
     {
-        return in_array($this, [self::Owner, self::Manager, self::Cashier]);
+        return in_array($this, [self::Owner, self::Supervisor, self::Cashier]);
     }
 
     public function canManageStock(): bool
     {
-        return in_array($this, [self::Owner, self::Manager, self::Warehouse]);
+        return in_array($this, [self::Owner, self::Supervisor, self::Warehouse]);
     }
 
     public function canPrintReport(): bool
     {
-        return in_array($this, [self::Owner, self::Manager]);
+        return in_array($this, [self::Owner, self::Supervisor]);
     }
 
     public function canManageSettings(): bool
     {
-        return in_array($this, [self::Owner, self::Manager]);
+        return in_array($this, [self::Owner, self::Supervisor]);
     }
 
     /**
@@ -125,7 +125,7 @@ enum UserRole: string
     {
         $roles = match ($actor) {
             self::Owner => self::cases(),
-            self::Manager => [self::Manager, self::Cashier, self::Warehouse],
+            self::Supervisor => [self::Supervisor, self::Cashier, self::Warehouse],
             default => [],
         };
 
@@ -146,7 +146,7 @@ enum UserRole: string
     {
         return match ($this) {
             self::Owner => 4,
-            self::Manager => 3,
+            self::Supervisor => 3,
             self::Cashier, self::Warehouse => 2,
         };
     }

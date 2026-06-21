@@ -83,9 +83,9 @@
                             <td class="px-4 py-3">{{ $trx->code }}</td>
                             <td class="px-4 py-3">{{ $trx->transaction_date->format('d/m/Y') }}</td>
                             @if ($canSelectBranch)
-                                <td class="px-4 py-3">{{ $trx->branch->name }}</td>
+                                <td class="px-4 py-3">{{ $trx->branch?->name ?? '-' }}</td>
                             @endif
-                            <td class="px-4 py-3">{{ $trx->user->name }}</td>
+                            <td class="px-4 py-3">{{ $trx->user?->name ?? '-' }}</td>
                             <td class="px-4 py-3"></td>
                             <td class="px-4 py-3"></td>
                             <td class="px-4 py-3"></td>

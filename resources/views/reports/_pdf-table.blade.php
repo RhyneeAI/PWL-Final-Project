@@ -17,7 +17,7 @@
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $trx->code }}</td>
                 <td>{{ $trx->transaction_date->format('d/m/Y') }}</td>
-                <td>{{ $trx->user->name }}</td>
+                <td>{{ $trx->user?->name ?? '-' }}</td>
                 <td></td>
                 <td></td>
                 <td></td>

@@ -33,7 +33,7 @@ it('owner dapat akses semua route yang dilindungi role', function () {
 // ─── Manager ──────────────────────────────────────────────────────────────────
 
 it('manager tidak dapat akses cabang tapi dapat akses master data lain', function () {
-    $user = makeRoleUser(UserRole::Manager);
+    $user = makeRoleUser(UserRole::Supervisor);
 
     $this->actingAs($user)->get(route('branches.index'))->assertForbidden();
     $this->actingAs($user)->get(route('users.index'))->assertOk();

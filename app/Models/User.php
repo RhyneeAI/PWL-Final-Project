@@ -60,9 +60,14 @@ class User extends Authenticatable
         return $this->role === UserRole::Owner;
     }
 
+    public function isSupervisor(): bool
+    {
+        return $this->role === UserRole::Supervisor;
+    }
+
     public function isManager(): bool
     {
-        return $this->role === UserRole::Manager;
+        return $this->isSupervisor();
     }
 
     public function isCashier(): bool

@@ -49,14 +49,14 @@
                                 <td class="px-6 py-4 font-medium">{{ $trx->code }}</td>
                                 <td class="px-6 py-4">{{ $trx->transaction_date->format('d/m/Y') }}</td>
                                 @if ($canSelectBranch)
-                                    <td class="px-6 py-4">{{ $trx->branch->name }}</td>
+                                    <td class="px-6 py-4">{{ $trx->branch?->name ?? '-' }}</td>
                                 @endif
                                 <td class="px-6 py-4">-</td>
                                 <td class="px-6 py-4">Rp {{ number_format($trx->total, 0, ',', '.') }}</td>
                                 <td class="px-6 py-4">
                                     <span class="badge-{{ $trx->status->badgeColor() }}">{{ $trx->status->label() }}</span>
                                 </td>
-                                <td class="px-6 py-4">{{ $trx->user->name }}</td>
+                                <td class="px-6 py-4">{{ $trx->user?->name ?? '-' }}</td>
                                 <td class="px-6 py-4 text-center whitespace-nowrap">
                                     <a href="{{ route('transaction.show', $trx) }}"
                                         class="btn-action btn-action-show" title="Detail">

@@ -30,11 +30,11 @@
                 </div>
                 <div>
                     <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Cabang</p>
-                    <p class="font-semibold text-gray-800 dark:text-white">{{ $transaction->branch->name }}</p>
+                    <p class="font-semibold text-gray-800 dark:text-white">{{ $transaction->branch?->name ?? '-' }}</p>
                 </div>
                 <div>
                     <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Kasir</p>
-                    <p class="font-semibold text-gray-800 dark:text-white">{{ $transaction->user->name }}</p>
+                    <p class="font-semibold text-gray-800 dark:text-white">{{ $transaction->user?->name ?? '-' }}</p>
                 </div>
                 <div>
                     <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Status</p>

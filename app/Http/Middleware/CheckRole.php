@@ -12,7 +12,7 @@ class CheckRole
     /**
      * Penggunaan di route:
      *   ->middleware('role:owner')
-     *   ->middleware('role:owner,manager')    ← multiple roles (OR)
+     *   ->middleware('role:owner,supervisor')    ← multiple roles (OR)
      */
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {

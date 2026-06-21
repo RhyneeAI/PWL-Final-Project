@@ -1,4 +1,5 @@
 @extends('layouts.main')
+@php use App\Enums\StockMutationType; @endphp
 @section('title', 'Detail Produk')
 
 @section('content')
@@ -45,7 +46,7 @@
             </div>
             <div>
                 <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Cabang</p>
-                <p class="font-semibold text-gray-800 dark:text-white">{{ $product->branch->name }}</p>
+                <p class="font-semibold text-gray-800 dark:text-white">{{ $product->branch?->name ?? '-' }}</p>
             </div>
             <div>
                 <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Satuan</p>
@@ -130,7 +131,7 @@
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800 text-left text-xs text-gray-500 uppercase">
                             <th class="px-4 py-3">Tanggal</th>
-                            <th class="px-4 py-3">Tipe</th>
+                            <th class="px-6 py-3">Tipe</th>
                             <th class="px-4 py-3">Referensi</th>
                             <th class="px-4 py-3">Perubahan</th>
                             <th class="px-4 py-3">Stok Sebelum</th>
@@ -142,7 +143,7 @@
                         @foreach ($mutations as $mutation)
                             <tr>
                                 <td class="px-4 py-3 whitespace-nowrap">{{ $mutation->mutation_date->format('d/m/Y') }}</td>
-                                <td class="px-4 py-3">
+                                <td class="px-6 py-3 whitespace-nowrap">
                                     <span @class([
                                         'status-badge',
                                         'status-badge-active' => $mutation->isStockIncrease(),
@@ -152,7 +153,7 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-3">
-                                    @if ($mutation->type === \App\Enums\StockMutationType::AdjustIn && $mutation->reference_code)
+                                    @if ($mutation->type === StockMutationType::AdjustIn && $mutation->reference_code)
                                         @if ($canViewStockIn)
                                             <a href="{{ route('stock-mutation.show', $mutation->reference_code) }}"
                                                 class="text-blue-600 dark:text-blue-400 hover:underline">

@@ -115,7 +115,7 @@
                         @forelse ($recentTransactions as $trx)
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                                 <td class="px-6 py-5 text-sm font-medium text-gray-900 dark:text-white">{{ $trx->code }}</td>
-                                <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">{{ $trx->branch->name }}</td>
+                                <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">{{ $trx->branch?->name ?? '-' }}</td>
                                 <td class="px-6 py-5 text-sm text-gray-500 dark:text-gray-400">{{ $trx->transaction_date->format('d M Y') }}</td>
                                 <td class="px-6 py-5 text-sm font-medium text-right text-gray-900 dark:text-white">Rp {{ number_format($trx->total, 0, ',', '.') }}</td>
                                 <td class="px-6 py-5 text-center">
