@@ -67,13 +67,14 @@ class ReportController extends Controller
 
         $transactions = $this->filteredTransactions($startDate, $endDate, $branchId);
 
-        $filename = 'laporan-penjualan-' . $startDate . '-sampai-' . $endDate . '.xlsx';
+        $grandTotal = $transactions->sum('total');
+        $filename = 'laporan-penjualan-' . $startDate . '-sampai-' . $endDate . '.xls';
 
         $groupByBranch = auth()->user()->isOwner() && ! $branchId;
 
-        $export = new TransactionExport($transactions, $groupByBranch);
-        $export->download($filename);
-        exit;
+        $export = new TransactionExport($transactions, $groupByBranch, $grandTotal, $startDate, $endDate);
+
+        return $export->download($filename);
     }
 
     private function filteredTransactions(string $startDate, string $endDate, ?string $branchId)
