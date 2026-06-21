@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StockInController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -48,9 +49,9 @@ Route::middleware(['auth', 'active'])->group(function () {
         })->name('settings.index');
     });
 
-    // Produk — index untuk semua role operasional
+    // Produk — index & detail untuk semua role operasional
     Route::middleware('role:owner,manager,cashier,warehouse')->group(function () {
-        Route::resource('products', ProductController::class)->only(['index']);
+        Route::resource('products', ProductController::class)->only(['index', 'show']);
     });
 
     // Produk — CRUD untuk owner & manager
@@ -72,9 +73,10 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     // Stok
     Route::middleware('role:owner,manager,warehouse')->group(function () {
-        Route::get('/stock-mutations', function () {
-            return view('transaksi.stock-in.index');
-        })->name('stock-mutation.index');
+        Route::get('/stock-mutations', [StockInController::class, 'index'])->name('stock-mutation.index');
+        Route::get('/stock-mutations/create', [StockInController::class, 'create'])->name('stock-mutation.create');
+        Route::post('/stock-mutations', [StockInController::class, 'store'])->name('stock-mutation.store');
+        Route::get('/stock-mutations/{referenceCode}', [StockInController::class, 'show'])->name('stock-mutation.show');
     });
 
     // Transaksi

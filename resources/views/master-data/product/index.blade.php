@@ -53,9 +53,7 @@
                             <th class="px-6 py-4">Harga Jual</th>
                             <th class="px-6 py-4">Stok</th>
                             <th class="px-6 py-4">Status</th>
-                            @if ($canManage)
-                                <th class="px-6 py-4 text-center">Aksi</th>
-                            @endif
+                            <th class="px-6 py-4 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -74,9 +72,12 @@
                                         'editable' => $canManage,
                                     ])
                                 </td>
-                                @if ($canManage)
-                                    <td class="px-6 py-4 text-center whitespace-nowrap">
-                                        <div class="inline-flex items-center justify-center gap-2">
+                                <td class="px-6 py-4 text-center whitespace-nowrap">
+                                    <div class="inline-flex items-center justify-center gap-2">
+                                        <a href="{{ route('products.show', $product) }}" class="btn-action btn-action-show" title="Detail">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        @if ($canManage)
                                             <a href="{{ route('products.edit', $product) }}" class="btn-action btn-action-edit" title="Edit">
                                                 <i class="fas fa-pen-to-square"></i>
                                             </a>
@@ -87,9 +88,9 @@
                                                     <i class="fas fa-trash-can"></i>
                                                 </button>
                                             </form>
-                                        </div>
-                                    </td>
-                                @endif
+                                        @endif
+                                    </div>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
