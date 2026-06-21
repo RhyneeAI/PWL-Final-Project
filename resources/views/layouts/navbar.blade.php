@@ -91,7 +91,7 @@
                         <p class="font-medium text-gray-800 dark:text-white">{{ $user->name }}</p>
                         <p class="text-sm text-gray-500 dark:text-gray-400">{{ $user->email }}</p>
                     </div>
-                    <a href="#" class="dropdown-item flex items-center gap-x-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <a href="{{ route('profile.edit') }}" class="dropdown-item flex items-center gap-x-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
                         <i class="fas fa-user w-5"></i>
                         Profil Saya
                     </a>
