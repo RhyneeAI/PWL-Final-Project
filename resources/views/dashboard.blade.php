@@ -105,10 +105,10 @@
                         <tr class="bg-gray-50 dark:bg-gray-800">
                             <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Order ID</th>
                             <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Cabang</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Produk</th>
                             <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tanggal</th>
                             <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total</th>
                             <th class="px-6 py-4 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-4 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
@@ -116,7 +116,6 @@
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                                 <td class="px-6 py-5 text-sm font-medium text-gray-900 dark:text-white">{{ $trx->code }}</td>
                                 <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">{{ $trx->branch->name }}</td>
-                                <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">{{ $trx->items->first()?->product_name ?? '-' }}</td>
                                 <td class="px-6 py-5 text-sm text-gray-500 dark:text-gray-400">{{ $trx->transaction_date->format('d M Y') }}</td>
                                 <td class="px-6 py-5 text-sm font-medium text-right text-gray-900 dark:text-white">Rp {{ number_format($trx->total, 0, ',', '.') }}</td>
                                 <td class="px-6 py-5 text-center">
@@ -128,6 +127,11 @@
                                             @default bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400
                                         @endswitch
                                     ">{{ $trx->status->label() }}</span>
+                                </td>
+                                <td class="px-6 py-5 text-center">
+                                    <a href="{{ route('transaction.show', $trx) }}" class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" title="Lihat detail">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
                                 </td>
                             </tr>
                         @empty
