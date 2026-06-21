@@ -5,6 +5,7 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StockInController;
+use App\Http\Controllers\StockOutController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -71,12 +72,20 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::resource('suppliers', SupplierController::class)->except(['index', 'show']);
     });
 
-    // Stok
+    // Stok — Stok Masuk
     Route::middleware('role:owner,manager,warehouse')->group(function () {
         Route::get('/stock-mutations', [StockInController::class, 'index'])->name('stock-mutation.index');
         Route::get('/stock-mutations/create', [StockInController::class, 'create'])->name('stock-mutation.create');
         Route::post('/stock-mutations', [StockInController::class, 'store'])->name('stock-mutation.store');
         Route::get('/stock-mutations/{referenceCode}', [StockInController::class, 'show'])->name('stock-mutation.show');
+    });
+
+    // Stok — Stok Keluar
+    Route::middleware('role:owner,manager,warehouse')->group(function () {
+        Route::get('/stock-out', [StockOutController::class, 'index'])->name('stock-out.index');
+        Route::get('/stock-out/create', [StockOutController::class, 'create'])->name('stock-out.create');
+        Route::post('/stock-out', [StockOutController::class, 'store'])->name('stock-out.store');
+        Route::get('/stock-out/{referenceCode}', [StockOutController::class, 'show'])->name('stock-out.show');
     });
 
     // Transaksi

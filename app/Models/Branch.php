@@ -101,4 +101,14 @@ class Branch extends Model
 
         return 'STM' . $initials;
     }
+
+    public function stockOutCodePrefix(): string
+    {
+        $initials = collect(preg_split('/\s+/', trim($this->name)))
+            ->filter()
+            ->map(fn (string $word) => mb_strtoupper(mb_substr($word, 0, 1)))
+            ->implode('');
+
+        return 'STO' . $initials;
+    }
 }
