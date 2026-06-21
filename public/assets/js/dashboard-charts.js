@@ -1,7 +1,6 @@
 (function (window, $) {
     'use strict';
 
-    const MONTH_NAMES_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
     const MONTH_NAMES_FULL = [
         'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
         'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
@@ -32,62 +31,6 @@
             ordersLine: dark ? '#34D399' : '#059669',
             ordersFill: dark ? 'rgba(52, 211, 153, 0.12)' : 'rgba(5, 150, 105, 0.08)',
         };
-    }
-
-    function seededRandom(seed) {
-        const x = Math.sin(seed * 12.9898 + seed * 78.233) * 43758.5453;
-        return x - Math.floor(x);
-    }
-
-    function daysInMonth(year, month) {
-        return new Date(year, month, 0).getDate();
-    }
-
-    function generateDailyData(year, month) {
-        const days = daysInMonth(year, month);
-        const labels = Array.from({ length: days }, (_, i) => String(i + 1));
-        const revenue = [];
-        const orders = [];
-        const baseSeed = year * 100 + month;
-
-        for (let day = 1; day <= days; day++) {
-            const seed = baseSeed * 100 + day;
-            revenue.push(Math.floor(3500000 + seededRandom(seed) * 6000000));
-            orders.push(Math.floor(18 + seededRandom(seed + 1) * 45));
-        }
-
-        return {
-            labels,
-            revenue,
-            orders,
-            subtitle: 'Per hari · ' + MONTH_NAMES_FULL[month - 1] + ' ' + year,
-        };
-    }
-
-    function generateYearlyData(year) {
-        const revenue = [];
-        const orders = [];
-
-        for (let month = 1; month <= 12; month++) {
-            const seed = year * 100 + month;
-            revenue.push(Math.floor(85000000 + seededRandom(seed) * 75000000));
-            orders.push(Math.floor(550 + seededRandom(seed + 1) * 400));
-        }
-
-        return {
-            labels: MONTH_NAMES_SHORT,
-            revenue,
-            orders,
-            subtitle: 'Per bulan · ' + year,
-        };
-    }
-
-    function getChartData() {
-        if (state.period === 'year') {
-            return generateYearlyData(state.year);
-        }
-
-        return generateDailyData(state.year, state.month);
     }
 
     function formatCurrency(value) {
@@ -205,35 +148,46 @@
         $('#chart-filter-month').toggleClass('hidden', state.period === 'year');
     }
 
+    function fetchChartData() {
+        const params = {
+            period: state.period,
+            year: state.year,
+            month: state.month,
+        };
+
+        return $.getJSON('/dashboard/chart-data', params);
+    }
+
     function updateCharts() {
-        const data = getChartData();
         const colors = chartColors();
 
-        $('#revenue-chart-subtitle, #orders-chart-subtitle').text(data.subtitle);
+        fetchChartData().done(function (data) {
+            $('#revenue-chart-subtitle, #orders-chart-subtitle').text(data.subtitle);
 
-        if (revenueChart) {
-            revenueChart.data.labels = data.labels;
-            revenueChart.data.datasets[0].data = data.revenue;
-            revenueChart.data.datasets[0].borderColor = colors.revenueLine;
-            revenueChart.data.datasets[0].backgroundColor = colors.revenueFill;
-            revenueChart.data.datasets[0].pointBackgroundColor = colors.revenueLine;
-            revenueChart.options = buildChartOptions(colors, function (v, compact) {
-                return compact ? compactCurrency(v) : formatCurrency(v);
-            });
-            revenueChart.update();
-        }
+            if (revenueChart) {
+                revenueChart.data.labels = data.labels;
+                revenueChart.data.datasets[0].data = data.revenue;
+                revenueChart.data.datasets[0].borderColor = colors.revenueLine;
+                revenueChart.data.datasets[0].backgroundColor = colors.revenueFill;
+                revenueChart.data.datasets[0].pointBackgroundColor = colors.revenueLine;
+                revenueChart.options = buildChartOptions(colors, function (v, compact) {
+                    return compact ? compactCurrency(v) : formatCurrency(v);
+                });
+                revenueChart.update();
+            }
 
-        if (ordersChart) {
-            ordersChart.data.labels = data.labels;
-            ordersChart.data.datasets[0].data = data.orders;
-            ordersChart.data.datasets[0].borderColor = colors.ordersLine;
-            ordersChart.data.datasets[0].backgroundColor = colors.ordersFill;
-            ordersChart.data.datasets[0].pointBackgroundColor = colors.ordersLine;
-            ordersChart.options = buildChartOptions(colors, function (v, compact) {
-                return compact ? v : v + ' order';
-            });
-            ordersChart.update();
-        }
+            if (ordersChart) {
+                ordersChart.data.labels = data.labels;
+                ordersChart.data.datasets[0].data = data.orders;
+                ordersChart.data.datasets[0].borderColor = colors.ordersLine;
+                ordersChart.data.datasets[0].backgroundColor = colors.ordersFill;
+                ordersChart.data.datasets[0].pointBackgroundColor = colors.ordersLine;
+                ordersChart.options = buildChartOptions(colors, function (v, compact) {
+                    return compact ? v : v + ' order';
+                });
+                ordersChart.update();
+            }
+        });
     }
 
     function initDashboardCharts() {
@@ -245,27 +199,28 @@
         syncFilterControls();
 
         const colors = chartColors();
-        const initialData = getChartData();
 
-        revenueChart = createLineChart('revenue-chart', {
-            labels: initialData.labels,
-            values: initialData.revenue,
-            lineColor: colors.revenueLine,
-            fillColor: colors.revenueFill,
-        }, colors, buildChartOptions(colors, function (v, compact) {
-            return compact ? compactCurrency(v) : formatCurrency(v);
-        }));
+        fetchChartData().done(function (initialData) {
+            revenueChart = createLineChart('revenue-chart', {
+                labels: initialData.labels,
+                values: initialData.revenue,
+                lineColor: colors.revenueLine,
+                fillColor: colors.revenueFill,
+            }, colors, buildChartOptions(colors, function (v, compact) {
+                return compact ? compactCurrency(v) : formatCurrency(v);
+            }));
 
-        ordersChart = createLineChart('orders-chart', {
-            labels: initialData.labels,
-            values: initialData.orders,
-            lineColor: colors.ordersLine,
-            fillColor: colors.ordersFill,
-        }, colors, buildChartOptions(colors, function (v, compact) {
-            return compact ? v : v + ' order';
-        }));
+            ordersChart = createLineChart('orders-chart', {
+                labels: initialData.labels,
+                values: initialData.orders,
+                lineColor: colors.ordersLine,
+                fillColor: colors.ordersFill,
+            }, colors, buildChartOptions(colors, function (v, compact) {
+                return compact ? v : v + ' order';
+            }));
 
-        $('#revenue-chart-subtitle, #orders-chart-subtitle').text(initialData.subtitle);
+            $('#revenue-chart-subtitle, #orders-chart-subtitle').text(initialData.subtitle);
+        });
 
         $('.chart-period-btn').on('click', function () {
             state.period = $(this).data('period');
