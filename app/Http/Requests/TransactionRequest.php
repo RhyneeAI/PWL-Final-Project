@@ -37,11 +37,11 @@ class TransactionRequest extends FormRequest
             $merged['items'] = $items;
         }
 
-        if ($this->has('discount')) {
+        if ($this->filled('discount')) {
             $merged['discount'] = $this->normalizeFormattedNumber($this->input('discount'));
         }
 
-        if ($this->has('paid_amount')) {
+        if ($this->filled('paid_amount')) {
             $merged['paid_amount'] = $this->normalizeFormattedNumber($this->input('paid_amount'));
         }
 
@@ -63,7 +63,7 @@ class TransactionRequest extends FormRequest
             ],
             'transaction_date' => ['required', 'date', "after_or_equal:{$minDate}", "before_or_equal:{$maxDate}"],
             'discount' => ['nullable', 'numeric', 'min:0'],
-            'paid_amount' => ['required', 'numeric', 'min:0'],
+            'paid_amount' => ['required', 'numeric', 'min:1'],
             'payment_method' => ['required', 'in:cash,transfer,qris'],
             'notes' => ['nullable', 'string'],
             'items' => ['required', 'array', 'min:1'],
