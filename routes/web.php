@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StockInController;
 use App\Http\Controllers\StockOutController;
 use App\Http\Controllers\SupplierController;
@@ -42,9 +43,9 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::patch('categories/{category}/active', [CategoryController::class, 'updateActive'])->name('categories.update-active');
         Route::resource('categories', CategoryController::class)->except(['show']);
 
-        Route::get('/reports', function () {
-            return view('reports.index');
-        })->name('report.index');
+        Route::get('/reports', [ReportController::class, 'index'])->name('report.index');
+        Route::get('/reports/pdf', [ReportController::class, 'pdf'])->name('report.pdf');
+        Route::get('/reports/excel', [ReportController::class, 'excel'])->name('report.excel');
 
         Route::get('/settings', function () {
             return view('settings.index');
