@@ -1,3 +1,5 @@
+@php use App\Models\Supplier; @endphp
+
 @extends('layouts.main')
 
 @section('title', 'Tambah Supplier')
@@ -28,7 +30,7 @@
                             @foreach ($branches as $branch)
                                 <option
                                     value="{{ $branch->id }}"
-                                    data-next-code="{{ \App\Models\Supplier::generateNextCode($branch->id) }}"
+                                    data-next-code="{{ Supplier::generateNextCode($branch->id) }}"
                                     @selected(old('branch_id', $selectedBranchId) == $branch->id)
                                 >
                                     {{ $branch->name }}

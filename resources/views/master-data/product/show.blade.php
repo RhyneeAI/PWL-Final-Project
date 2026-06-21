@@ -1,4 +1,5 @@
 @extends('layouts.main')
+@php use App\Enums\StockMutationType; @endphp
 @section('title', 'Detail Produk')
 
 @section('content')
@@ -152,7 +153,7 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-3">
-                                    @if ($mutation->type === \App\Enums\StockMutationType::AdjustIn && $mutation->reference_code)
+                                    @if ($mutation->type === StockMutationType::AdjustIn && $mutation->reference_code)
                                         @if ($canViewStockIn)
                                             <a href="{{ route('stock-mutation.show', $mutation->reference_code) }}"
                                                 class="text-blue-600 dark:text-blue-400 hover:underline">

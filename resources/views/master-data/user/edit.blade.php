@@ -1,4 +1,5 @@
 @extends('layouts.main')
+@php use App\Enums\UserRole; @endphp
 
 @section('title', 'Edit Pengguna')
 
@@ -134,7 +135,7 @@
                         </label>
 
                         @if ($isEditingSelf)
-                            <div id="user-branch-field" @class(['hidden' => $user->role === \App\Enums\UserRole::Owner])>
+                            <div id="user-branch-field" @class(['hidden' => $user->role === UserRole::Owner])>
                                 <select name="branch_id"
                                     class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
                                     @foreach ($branches as $branch)
@@ -144,7 +145,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div id="user-head-office-field" @class(['hidden' => $user->role !== \App\Enums\UserRole::Owner])>
+                            <div id="user-head-office-field" @class(['hidden' => $user->role !== UserRole::Owner])>
                                 <input type="text"
                                     value="Kantor Pusat"
                                     readonly

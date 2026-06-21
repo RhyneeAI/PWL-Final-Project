@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\UserRole;
+use App\Models\Branch;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -59,7 +60,7 @@ class UserSeeder extends Seeder
                 $data + ['password' => Hash::make('password'), 'is_active' => true]
             );
 
-            $branch = \App\Models\Branch::where('code', $branchCode)->first();
+            $branch = Branch::where('code', $branchCode)->first();
             if ($branch) {
                 $user->branches()->syncWithoutDetaching([$branch->id]);
             }
