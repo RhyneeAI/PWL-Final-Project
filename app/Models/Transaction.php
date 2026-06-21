@@ -55,4 +55,19 @@ class Transaction extends Model
     {
         return $this->hasMany(StockMutation::class);
     }
+
+    public static function generateNextTransactionCode(int $branchId): string
+    {
+        $branch = Branch::findOrFail($branchId);
+        $prefix = $branch->transactionCodePrefix();
+
+        $lastNumber = static::query()
+            ->where('branch_id', $branchId)
+            ->where('code', 'like', $prefix . '-%')
+            ->pluck('code')
+            ->map(fn (string $code) => (int) substr($code, strlen($prefix) + 1))
+            ->max() ?? 0;
+
+        return $prefix . '-' . str_pad((string) ($lastNumber + 1), 3, '0', STR_PAD_LEFT);
+    }
 }

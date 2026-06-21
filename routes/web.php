@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StockInController;
 use App\Http\Controllers\StockOutController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -88,11 +89,12 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::get('/stock-out/{referenceCode}', [StockOutController::class, 'show'])->name('stock-out.show');
     });
 
-    // Transaksi
+    // Transaksi Penjualan
     Route::middleware('role:owner,manager,cashier')->group(function () {
-        Route::get('/transactions', function () {
-            return view('transaksi.transaction.index');
-        })->name('transaction.index');
+        Route::get('/transactions', [TransactionController::class, 'index'])->name('transaction.index');
+        Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transaction.create');
+        Route::post('/transactions', [TransactionController::class, 'store'])->name('transaction.store');
+        Route::get('/transactions/{transaction}', [TransactionController::class, 'show'])->name('transaction.show');
     });
 });
 

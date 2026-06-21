@@ -111,4 +111,14 @@ class Branch extends Model
 
         return 'STO' . $initials;
     }
+
+    public function transactionCodePrefix(): string
+    {
+        $initials = collect(preg_split('/\s+/', trim($this->name)))
+            ->filter()
+            ->map(fn (string $word) => mb_strtoupper(mb_substr($word, 0, 1)))
+            ->implode('');
+
+        return 'TRX' . $initials;
+    }
 }
