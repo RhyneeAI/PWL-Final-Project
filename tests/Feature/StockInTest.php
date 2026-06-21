@@ -79,7 +79,7 @@ it('owner dapat mencatat stok masuk dan memperbarui stok produk', function () {
         ->post(route('stock-mutation.store'), [
             'branch_id' => $branch->id,
             'supplier_id' => $supplier->id,
-            'mutation_date' => now()->format('Y-m-d\TH:i'),
+            'mutation_date' => now()->format('Y-m-d'),
             'notes' => 'Pembelian awal',
             'items' => [
                 [
@@ -116,7 +116,7 @@ it('warehouse otomatis menggunakan cabang sendiri saat stok masuk', function () 
     $this->actingAs($warehouse)
         ->post(route('stock-mutation.store'), [
             'supplier_id' => $supplier->id,
-            'mutation_date' => now()->format('Y-m-d\TH:i'),
+            'mutation_date' => now()->format('Y-m-d'),
             'items' => [
                 [
                     'product_id' => $product->id,
@@ -140,7 +140,7 @@ it('halaman detail stok masuk menampilkan item pembelian', function () {
         ->post(route('stock-mutation.store'), [
             'branch_id' => $branch->id,
             'supplier_id' => $supplier->id,
-            'mutation_date' => now()->format('Y-m-d\TH:i'),
+            'mutation_date' => now()->format('Y-m-d'),
             'items' => [
                 [
                     'product_id' => $product->id,
@@ -170,7 +170,7 @@ it('index stok masuk menampilkan tombol aksi detail tanpa edit', function () {
         ->post(route('stock-mutation.store'), [
             'branch_id' => $branch->id,
             'supplier_id' => $supplier->id,
-            'mutation_date' => now()->format('Y-m-d\TH:i'),
+            'mutation_date' => now()->format('Y-m-d'),
             'items' => [
                 [
                     'product_id' => $product->id,

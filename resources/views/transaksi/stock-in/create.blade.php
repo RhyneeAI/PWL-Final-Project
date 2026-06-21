@@ -37,9 +37,11 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal Transaksi</label>
-                    <input type="datetime-local" name="mutation_date" required
-                        value="{{ old('mutation_date', now()->format('Y-m-d\TH:i')) }}"
-                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+                    @include('partials.date-input', [
+                        'name' => 'mutation_date',
+                        'value' => old('mutation_date', now()->format('Y-m-d')),
+                        'required' => true,
+                    ])
                 </div>
 
                 <div>
@@ -109,6 +111,8 @@
     @include('transaksi.stock-in.partials.item-row', ['index' => '__INDEX__', 'item' => ['product_id' => '', 'quantity' => '', 'buy_price' => ''], 'products' => $products])
 </template>
 @endsection
+
+@include('partials.date-picker-assets')
 
 @push('scripts')
     <script>

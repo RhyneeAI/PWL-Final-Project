@@ -92,11 +92,17 @@
 
             <form method="GET" action="{{ route('products.show', $product) }}"
                 class="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2">
-                <input type="date" name="date_from" value="{{ $dateFrom }}"
-                    class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white">
+                @include('partials.date-input', [
+                    'name' => 'date_from',
+                    'value' => $dateFrom,
+                    'inputClass' => 'rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white w-full sm:w-auto min-w-[9rem]',
+                ])
                 <span class="text-gray-400 text-sm text-center sm:px-1">s/d</span>
-                <input type="date" name="date_to" value="{{ $dateTo }}"
-                    class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white">
+                @include('partials.date-input', [
+                    'name' => 'date_to',
+                    'value' => $dateTo,
+                    'inputClass' => 'rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white w-full sm:w-auto min-w-[9rem]',
+                ])
                 <button type="submit"
                     class="px-4 py-2 rounded-xl bg-blue-500 hover:bg-blue-600 text-white text-sm">
                     Filter
@@ -135,7 +141,7 @@
                     <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                         @foreach ($mutations as $mutation)
                             <tr>
-                                <td class="px-4 py-3 whitespace-nowrap">{{ $mutation->mutation_date->format('d M Y') }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap">{{ $mutation->mutation_date->format('d/m/Y') }}</td>
                                 <td class="px-4 py-3">
                                     <span @class([
                                         'status-badge',
@@ -170,7 +176,7 @@
                                 <td class="px-4 py-3">{{ number_format($mutation->quantity_after, 0, ',', '.') }}</td>
                                 <td class="px-4 py-3">
                                     @if ($mutation->supplier)
-                                        Supplier: {{ $mutation->supplier->name }}
+                                        {{ $mutation->supplier->name }}
                                     @elseif ($mutation->notes)
                                         {{ $mutation->notes }}
                                     @else
@@ -192,4 +198,5 @@
         @endif
     </div>
 </div>
+@include('partials.date-picker-assets')
 @endsection

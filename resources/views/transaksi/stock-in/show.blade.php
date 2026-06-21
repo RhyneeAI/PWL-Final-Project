@@ -24,7 +24,7 @@
             </div>
             <div>
                 <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Tanggal</p>
-                <p class="font-semibold text-gray-800 dark:text-white">{{ $header->mutation_date->format('d M Y H:i') }}</p>
+                <p class="font-semibold text-gray-800 dark:text-white">{{ $header->mutation_date->format('d/m/Y') }}</p>
             </div>
             <div>
                 <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Cabang</p>

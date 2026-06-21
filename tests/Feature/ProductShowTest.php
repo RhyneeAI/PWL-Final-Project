@@ -143,5 +143,5 @@ it('histori mutasi produk mendukung filter tanggal dan pagination', function () 
         ]))
         ->assertOk()
         ->assertSee('Menampilkan 1–1 dari 1 mutasi')
-        ->assertSee(now()->startOfMonth()->addDays(4)->format('d M Y'));
+        ->assertSee(now()->startOfMonth()->addDays(4)->format('d/m/Y'));
 });

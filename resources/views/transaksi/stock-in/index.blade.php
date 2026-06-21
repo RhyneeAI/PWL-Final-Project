@@ -53,7 +53,7 @@
                             @endphp
                             <tr>
                                 <td class="px-6 py-4 font-medium">{{ $stockIn->reference_code }}</td>
-                                <td class="px-6 py-4">{{ \Illuminate\Support\Carbon::parse($stockIn->mutation_date)->format('d M Y H:i') }}</td>
+                                <td class="px-6 py-4">{{ \Illuminate\Support\Carbon::parse($stockIn->mutation_date)->format('d/m/Y') }}</td>
                                 @if ($canSelectBranch)
                                     <td class="px-6 py-4">{{ $branch?->name ?? '-' }}</td>
                                 @endif
