@@ -25,15 +25,15 @@ class TransactionController extends Controller
             ->with(['branch', 'user'])
             ->when(! $user->isOwner(), fn ($query) => $query->whereIn('branch_id', $user->accessibleBranchIds()))
             ->orderByDesc('transaction_date')
-            ->paginate(10);
+            ->get();
 
-        $filterBranches = $canSelectBranch
+        $branches = $canSelectBranch
             ? Branch::query()->where('is_active', true)->orderBy('name')->get()
             : collect();
 
         return view('transaksi.transaction.index', [
             'transactions' => $transactions,
-            'branches' => $filterBranches,
+            'branches' => $branches,
             'canSelectBranch' => $canSelectBranch,
         ]);
     }

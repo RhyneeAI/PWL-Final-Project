@@ -19,6 +19,13 @@
             </a>
         </div>
 
+        @include('partials.master-data.table-toolbar', [
+            'searchId' => 'search-transaction',
+            'searchPlaceholder' => 'Cari no transaksi atau pelanggan...',
+            'branchFilterId' => $canSelectBranch ? 'filter-transaction-branch' : null,
+            'branches' => $branches,
+        ])
+
         <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
             <div class="overflow-x-auto">
                 <table id="transaction-table" class="master-data-table w-full min-w-full">
@@ -44,7 +51,7 @@
                                 @if ($canSelectBranch)
                                     <td class="px-6 py-4">{{ $trx->branch->name }}</td>
                                 @endif
-                                <td class="px-6 py-4">{{ $trx->customer_name ?? '-' }}</td>
+                                <td class="px-6 py-4">-</td>
                                 <td class="px-6 py-4">Rp {{ number_format($trx->total, 0, ',', '.') }}</td>
                                 <td class="px-6 py-4">
                                     <span class="badge-{{ $trx->status->badgeColor() }}">{{ $trx->status->label() }}</span>
@@ -67,10 +74,6 @@
                     </tbody>
                 </table>
             </div>
-
-            <div class="mt-4">
-                {{ $transactions->links() }}
-            </div>
         </div>
     </div>
 @endsection
@@ -81,4 +84,24 @@
         .badge-amber { background: #fef3c7; color: #92400e; padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
         .badge-red { background: #fee2e2; color: #991b1b; padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
     </style>
+@endpush
+
+@push('scripts')
+    <script>
+        $(function () {
+            const options = {
+                searchInput: '#search-transaction',
+                order: [[1, 'desc']],
+            };
+
+            @if ($canSelectBranch)
+                options.branchFilter = {
+                    select: '#filter-transaction-branch',
+                    column: 2,
+                };
+            @endif
+
+            initMasterDataTable('#transaction-table', options);
+        });
+    </script>
 @endpush
