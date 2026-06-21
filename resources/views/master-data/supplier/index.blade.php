@@ -61,7 +61,7 @@
                         @forelse ($suppliers as $supplier)
                             <tr>
                                 <td class="px-6 py-4 font-medium">{{ $supplier->code }}</td>
-                                <td class="px-6 py-4">{{ $supplier->branch->name }}</td>
+                                <td class="px-6 py-4">{{ $supplier->branch?->name ?? '-' }}</td>
                                 <td class="px-6 py-4">{{ $supplier->name }}</td>
                                 <td class="px-6 py-4">{{ $supplier->phone ?? '-' }}</td>
                                 <td class="px-6 py-4">{{ $supplier->email ?? '-' }}</td>

@@ -28,11 +28,11 @@
             </div>
             <div>
                 <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Cabang</p>
-                <p class="font-semibold text-gray-800 dark:text-white">{{ $header->branch->name }}</p>
+                <p class="font-semibold text-gray-800 dark:text-white">{{ $header->branch?->name ?? '-' }}</p>
             </div>
             <div>
                 <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Petugas</p>
-                <p class="font-semibold text-gray-800 dark:text-white">{{ $header->user->name }}</p>
+                <p class="font-semibold text-gray-800 dark:text-white">{{ $header->user?->name ?? '-' }}</p>
             </div>
             <div>
                 <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Total Qty Keluar</p>
@@ -64,10 +64,10 @@
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                     @foreach ($items as $item)
                         <tr>
-                            <td class="px-4 py-3 font-medium">{{ $item->product->code }}</td>
-                            <td class="px-4 py-3">{{ $item->product->name }}</td>
+                            <td class="px-4 py-3 font-medium">{{ $item->product?->code ?? '-' }}</td>
+                            <td class="px-4 py-3">{{ $item->product?->name ?? '-' }}</td>
                             <td class="px-4 py-3 text-red-600 dark:text-red-400 font-medium">
-                                -{{ number_format(abs($item->quantity_change), 0, ',', '.') }} {{ $item->product->unit->label() }}
+                                -{{ number_format(abs($item->quantity_change), 0, ',', '.') }} {{ $item->product?->unit?->label() ?? '-' }}
                             </td>
                             <td class="px-4 py-3">{{ number_format($item->quantity_before, 0, ',', '.') }}</td>
                             <td class="px-4 py-3">{{ number_format($item->quantity_after, 0, ',', '.') }}</td>
