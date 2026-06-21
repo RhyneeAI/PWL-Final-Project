@@ -14,26 +14,17 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
                 <p class="text-sm text-gray-500 dark:text-gray-400">Total Order</p>
-                <p class="text-4xl font-semibold text-gray-800 dark:text-white mt-2">1.248</p>
-                <p class="text-emerald-500 text-sm mt-4 flex items-center gap-x-1">
-                    <i class="fas fa-arrow-up text-xs"></i> 8,2% dari bulan lalu
-                </p>
+                <p class="text-4xl font-semibold text-gray-800 dark:text-white mt-2">{{ number_format($totalOrders, 0, ',', '.') }}</p>
             </div>
 
             <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
                 <p class="text-sm text-gray-500 dark:text-gray-400">Total Produk</p>
-                <p class="text-4xl font-semibold text-gray-800 dark:text-white mt-2">974</p>
-                <p class="text-emerald-500 text-sm mt-4 flex items-center gap-x-1">
-                    <i class="fas fa-arrow-up text-xs"></i> 5,3% dari bulan lalu
-                </p>
+                <p class="text-4xl font-semibold text-gray-800 dark:text-white mt-2">{{ number_format($totalProducts, 0, ',', '.') }}</p>
             </div>
 
             <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 lg:col-span-2">
                 <p class="text-sm text-gray-500 dark:text-gray-400">Total Pendapatan</p>
-                <p class="text-5xl font-semibold text-gray-800 dark:text-white mt-3">Rp 2.120.400</p>
-                <p class="text-emerald-500 text-sm mt-5 flex items-center gap-x-1">
-                    <i class="fas fa-arrow-up text-xs"></i> 5,3% dari bulan lalu
-                </p>
+                <p class="text-5xl font-semibold text-gray-800 dark:text-white mt-3">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</p>
             </div>
         </div>
 
@@ -113,7 +104,7 @@
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800">
                             <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Order ID</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pelanggan</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Cabang</th>
                             <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Produk</th>
                             <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tanggal</th>
                             <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total</th>
@@ -121,46 +112,29 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                            <td class="px-6 py-5 text-sm font-medium text-gray-900 dark:text-white">#ORD-7842</td>
-                            <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">Xylo Forbatz</td>
-                            <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">Wireless Headphone</td>
-                            <td class="px-6 py-5 text-sm text-gray-500 dark:text-gray-400">27 Mar 2026</td>
-                            <td class="px-6 py-5 text-sm font-medium text-right text-gray-900 dark:text-white">Rp 1.250.070</td>
-                            <td class="px-6 py-5 text-center">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-400">Selesai</span>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                            <td class="px-6 py-5 text-sm font-medium text-gray-900 dark:text-white">#ORD-7841</td>
-                            <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">Wayne Murphy</td>
-                            <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">Smart Watch Series 8</td>
-                            <td class="px-6 py-5 text-sm text-gray-500 dark:text-gray-400">26 Mar 2026</td>
-                            <td class="px-6 py-5 text-sm font-medium text-right text-gray-900 dark:text-white">Rp 790.060</td>
-                            <td class="px-6 py-5 text-center">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-400">Proses</span>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                            <td class="px-6 py-5 text-sm font-medium text-gray-900 dark:text-white">#ORD-7840</td>
-                            <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">Iriam Mahfedza</td>
-                            <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">Mechanical Keyboard</td>
-                            <td class="px-6 py-5 text-sm text-gray-500 dark:text-gray-400">25 Mar 2026</td>
-                            <td class="px-6 py-5 text-sm font-medium text-right text-gray-900 dark:text-white">Rp 80.270</td>
-                            <td class="px-6 py-5 text-center">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-400">Batal</span>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                            <td class="px-6 py-5 text-sm font-medium text-gray-900 dark:text-white">#ORD-7839</td>
-                            <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">Eman Subagja</td>
-                            <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">Monitor Xiaomi G24i 144Hz</td>
-                            <td class="px-6 py-5 text-sm text-gray-500 dark:text-gray-400">27 Mar 2026</td>
-                            <td class="px-6 py-5 text-sm font-medium text-right text-gray-900 dark:text-white">Rp 1.619.900</td>
-                            <td class="px-6 py-5 text-center">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-400">Draft</span>
-                            </td>
-                        </tr>
+                        @forelse ($recentTransactions as $trx)
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                                <td class="px-6 py-5 text-sm font-medium text-gray-900 dark:text-white">{{ $trx->code }}</td>
+                                <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">{{ $trx->branch->name }}</td>
+                                <td class="px-6 py-5 text-sm text-gray-600 dark:text-gray-300">{{ $trx->items->first()?->product_name ?? '-' }}</td>
+                                <td class="px-6 py-5 text-sm text-gray-500 dark:text-gray-400">{{ $trx->transaction_date->format('d M Y') }}</td>
+                                <td class="px-6 py-5 text-sm font-medium text-right text-gray-900 dark:text-white">Rp {{ number_format($trx->total, 0, ',', '.') }}</td>
+                                <td class="px-6 py-5 text-center">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
+                                        @switch($trx->status->value)
+                                            @case('completed') bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-400 @break
+                                            @case('pending') bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-400 @break
+                                            @case('cancelled') bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-400 @break
+                                            @default bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400
+                                        @endswitch
+                                    ">{{ $trx->status->label() }}</span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-500 dark:text-gray-400">Belum ada transaksi.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
