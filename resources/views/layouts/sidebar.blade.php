@@ -90,14 +90,6 @@
                     <span class="menu-text">Laporan</span>
                 </a>
             @endif
-
-            @if ($role->canManageSettings())
-                <div class="sidebar-section-label text-xs font-semibold text-gray-400 uppercase mt-4 mb-2 whitespace-nowrap">Pengaturan</div>
-                <a href="{{ route('settings.index') }}" data-page="settings" class="admin-menu-item" title="Pengaturan">
-                    <i class="fas fa-cog"></i>
-                    <span class="menu-text">Pengaturan</span>
-                </a>
-            @endif
         </nav>
     </div>
 

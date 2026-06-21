@@ -45,34 +45,6 @@
                 <i id="theme-toggle-icon" class="fas fa-sun text-xl"></i>
             </button>
 
-            <!-- Notification -->
-            <div class="relative">
-                <button id="notification-btn" class="relative text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                    <i class="fas fa-bell text-xl"></i>
-                    <span id="notif-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-medium min-w-[18px] h-[18px] flex items-center justify-center rounded-full">5</span>
-                </button>
-
-                <!-- Notification Dropdown -->
-                <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700 py-2 z-50 overflow-hidden">
-                    <div class="px-5 py-4 border-b border-gray-200 dark:border-gray-700">
-                        <p class="font-semibold text-gray-800 dark:text-white">Notifikasi</p>
-                    </div>
-                    <div class="max-h-80 overflow-y-auto">
-                        <div class="px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
-                            <p class="text-sm text-gray-700 dark:text-gray-300">Order #ORD-7842 telah selesai</p>
-                            <p class="text-xs text-gray-500 mt-1">2 menit yang lalu</p>
-                        </div>
-                        <div class="px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
-                            <p class="text-sm text-gray-700 dark:text-gray-300">Stok produk Wireless Headphone hampir habis</p>
-                            <p class="text-xs text-gray-500 mt-1">1 jam yang lalu</p>
-                        </div>
-                    </div>
-                    <div class="p-4 text-center">
-                        <a href="#" class="text-blue-500 text-sm font-medium">Lihat semua notifikasi</a>
-                    </div>
-                </div>
-            </div>
-
             <!-- User Profile -->
             <div class="relative">
                 <div id="user-menu-btn" 
@@ -95,12 +67,6 @@
                         <i class="fas fa-user w-5"></i>
                         Profil Saya
                     </a>
-                    @if ($user->role->canManageSettings())
-                        <a href="{{ route('settings.index') }}" class="dropdown-item flex items-center gap-x-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-                            <i class="fas fa-cog w-5"></i>
-                            Pengaturan
-                        </a>
-                    @endif
                     <div class="border-t border-gray-200 dark:border-gray-700 my-2"></div>
                     <form action="{{ route('logout') }}" method="POST" id="logout-form">
                         @csrf
