@@ -76,7 +76,7 @@
                         <i class="fas fa-truck-loading"></i>
                         <span class="menu-text">Stok Masuk</span>
                     </a>
-                    <a href="#" data-page="stock-out" class="admin-menu-item" title="Stok Keluar">
+                    <a href="{{ route('stock-out.index') }}" data-page="stock-out" class="admin-menu-item" title="Stok Keluar">
                         <i class="fas fa-dolly"></i>
                         <span class="menu-text">Stok Keluar</span>
                     </a>

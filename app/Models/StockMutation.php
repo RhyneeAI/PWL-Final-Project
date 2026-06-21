@@ -63,6 +63,21 @@ class StockMutation extends Model
         return $prefix . '-' . str_pad((string) ($lastNumber + 1), 3, '0', STR_PAD_LEFT);
     }
 
+    public static function generateNextReferenceCodeForOut(int $branchId): string
+    {
+        $branch = Branch::findOrFail($branchId);
+        $prefix = $branch->stockOutCodePrefix();
+
+        $lastNumber = static::query()
+            ->where('branch_id', $branchId)
+            ->where('reference_code', 'like', $prefix . '-%')
+            ->pluck('reference_code')
+            ->map(fn (string $code) => (int) substr($code, strlen($prefix) + 1))
+            ->max() ?? 0;
+
+        return $prefix . '-' . str_pad((string) ($lastNumber + 1), 3, '0', STR_PAD_LEFT);
+    }
+
     public function subtotal(): float
     {
         return (float) $this->buy_price * abs($this->quantity_change);
