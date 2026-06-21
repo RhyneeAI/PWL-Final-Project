@@ -7,6 +7,7 @@ use App\Models\Branch;
 use App\Models\Transaction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ReportController extends Controller
 {
@@ -21,15 +22,33 @@ class ReportController extends Controller
 
         $transactions = $this->filteredTransactions($startDate, $endDate, $branchId);
 
+        $perPage = 50;
+        $page = LengthAwarePaginator::resolveCurrentPage();
+        $total = $transactions->count();
+        $paginated = new LengthAwarePaginator(
+            $transactions->forPage($page, $perPage)->values(),
+            $total,
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()],
+        );
+
+        $grandTotal = $transactions->sum('total');
+        $groupByBranch = $canSelectBranch && ! $branchId;
+
+        if ($groupByBranch) {
+            $grouped = $paginated->groupBy(fn (Transaction $trx) => $trx->branch?->name ?? 'Tanpa Cabang');
+        } else {
+            $grouped = null;
+        }
+
         $branches = $canSelectBranch
             ? Branch::query()->where('is_active', true)->orderBy('name')->get()
             : collect();
 
-        $grandTotal = $transactions->sum('total');
-
         return view('reports.index', compact(
-            'transactions', 'branches', 'canSelectBranch',
-            'startDate', 'endDate', 'branchId', 'grandTotal',
+            'transactions', 'paginated', 'branches', 'canSelectBranch',
+            'startDate', 'endDate', 'branchId', 'grandTotal', 'groupByBranch', 'grouped',
         ));
     }
 

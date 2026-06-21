@@ -56,74 +56,29 @@
         </form>
     </div>
 
-    {{-- Table --}}
-    <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-        <div class="overflow-x-auto">
-            <table class="w-full min-w-full">
-                <thead>
-                    <tr class="bg-gray-50 dark:bg-gray-800 text-left text-xs text-gray-500 uppercase">
-                        <th class="px-4 py-3">No</th>
-                        <th class="px-4 py-3">No Transaksi</th>
-                        <th class="px-4 py-3">Tanggal</th>
-                        @if ($canSelectBranch)
-                            <th class="px-4 py-3">Cabang</th>
-                        @endif
-                        <th class="px-4 py-3">Kasir</th>
-                        <th class="px-4 py-3">Produk</th>
-                        <th class="px-4 py-3 text-right">Harga Jual</th>
-                        <th class="px-4 py-3 text-right">Qty</th>
-                        <th class="px-4 py-3 text-right">Subtotal</th>
-                        <th class="px-4 py-3 text-right">Total</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-                    @forelse ($transactions as $trx)
-                        <tr class="bg-gray-50/50 dark:bg-gray-800/50 font-medium">
-                            <td class="px-4 py-3">{{ $loop->iteration }}</td>
-                            <td class="px-4 py-3">{{ $trx->code }}</td>
-                            <td class="px-4 py-3">{{ $trx->transaction_date->format('d/m/Y') }}</td>
-                            @if ($canSelectBranch)
-                                <td class="px-4 py-3">{{ $trx->branch?->name ?? '-' }}</td>
-                            @endif
-                            <td class="px-4 py-3">{{ $trx->user?->name ?? '-' }}</td>
-                            <td class="px-4 py-3"></td>
-                            <td class="px-4 py-3"></td>
-                            <td class="px-4 py-3"></td>
-                            <td class="px-4 py-3"></td>
-                            <td class="px-4 py-3 text-right font-semibold">Rp {{ number_format($trx->total, 0, ',', '.') }}</td>
-                        </tr>
-                        @foreach ($trx->items as $item)
-                            <tr class="text-sm">
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                @if ($canSelectBranch)
-                                    <td></td>
-                                @endif
-                                <td></td>
-                                <td class="px-4 py-2">{{ $item->product_name }}</td>
-                                <td class="px-4 py-2 text-right">Rp {{ number_format($item->product_price, 0, ',', '.') }}</td>
-                                <td class="px-4 py-2 text-right">{{ $item->quantity }}</td>
-                                <td class="px-4 py-2 text-right">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
-                                <td></td>
-                            </tr>
-                        @endforeach
-                    @empty
-                        <tr>
-                            <td colspan="{{ $canSelectBranch ? 10 : 9 }}" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                                Tidak ada transaksi pada periode ini.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-                <tfoot>
-                    <tr class="bg-gray-50 dark:bg-gray-800 font-semibold">
-                        <td colspan="{{ $canSelectBranch ? 9 : 8 }}" class="px-4 py-3 text-right">Grand Total</td>
-                        <td class="px-4 py-3 text-right">Rp {{ number_format($grandTotal, 0, ',', '.') }}</td>
-                    </tr>
-                </tfoot>
-            </table>
+    {{-- Table(s) --}}
+    @if ($groupByBranch && $grouped)
+        @foreach ($grouped as $branchName => $branchTransactions)
+            <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4 px-1">
+                    <i class="fas fa-store mr-2 text-blue-500"></i>
+                    {{ $branchName }}
+                </h2>
+                @include('reports._table', ['transactions' => $branchTransactions, 'canSelectBranch' => false, 'grandTotal' => null])
+            </div>
+        @endforeach
+    @else
+        <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+            @include('reports._table', ['transactions' => $paginated, 'canSelectBranch' => $canSelectBranch, 'grandTotal' => $grandTotal])
         </div>
+    @endif
+
+    {{-- Pagination --}}
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+            Menampilkan {{ $paginated->firstItem() }}–{{ $paginated->lastItem() }} dari {{ $paginated->total() }} transaksi
+        </p>
+        @include('partials.pagination', ['paginator' => $paginated])
     </div>
 </div>
 @endsection
