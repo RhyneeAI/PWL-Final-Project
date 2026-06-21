@@ -52,27 +52,25 @@ Route::middleware(['auth', 'active'])->group(function () {
         })->name('settings.index');
     });
 
-    // Produk — index & detail untuk semua role operasional
-    Route::middleware('role:owner,supervisor,cashier,warehouse')->group(function () {
-        Route::resource('products', ProductController::class)->only(['index', 'show']);
-    });
+    // Produk
+    Route::get('products', [ProductController::class, 'index'])->name('products.index')->middleware('role:owner,supervisor,cashier,warehouse');
+    Route::get('products/create', [ProductController::class, 'create'])->name('products.create')->middleware('role:owner,supervisor');
+    Route::post('products', [ProductController::class, 'store'])->name('products.store')->middleware('role:owner,supervisor');
+    Route::get('products/{product}', [ProductController::class, 'show'])->name('products.show')->middleware('role:owner,supervisor,cashier,warehouse');
+    Route::get('products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit')->middleware('role:owner,supervisor');
+    Route::patch('products/{product}', [ProductController::class, 'update'])->name('products.update')->middleware('role:owner,supervisor');
+    Route::delete('products/{product}', [ProductController::class, 'destroy'])->name('products.destroy')->middleware('role:owner,supervisor');
+    Route::patch('products/{product}/active', [ProductController::class, 'updateActive'])->name('products.update-active')->middleware('role:owner,supervisor');
 
-    // Produk — CRUD untuk owner & manager
-    Route::middleware('role:owner,supervisor')->group(function () {
-        Route::patch('products/{product}/active', [ProductController::class, 'updateActive'])->name('products.update-active');
-        Route::resource('products', ProductController::class)->except(['index', 'show']);
-    });
-
-    // Supplier — index untuk owner, manager & gudang
-    Route::middleware('role:owner,supervisor,warehouse')->group(function () {
-        Route::resource('suppliers', SupplierController::class)->only(['index']);
-    });
-
-    // Supplier — CRUD untuk owner & manager
-    Route::middleware('role:owner,supervisor')->group(function () {
-        Route::patch('suppliers/{supplier}/active', [SupplierController::class, 'updateActive'])->name('suppliers.update-active');
-        Route::resource('suppliers', SupplierController::class)->except(['index', 'show']);
-    });
+    // Supplier
+    Route::get('suppliers', [SupplierController::class, 'index'])->name('suppliers.index')->middleware('role:owner,supervisor,warehouse');
+    Route::get('suppliers/create', [SupplierController::class, 'create'])->name('suppliers.create')->middleware('role:owner,supervisor');
+    Route::post('suppliers', [SupplierController::class, 'store'])->name('suppliers.store')->middleware('role:owner,supervisor');
+    Route::get('suppliers/{supplier}', [SupplierController::class, 'show'])->name('suppliers.show')->middleware('role:owner,supervisor');
+    Route::get('suppliers/{supplier}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit')->middleware('role:owner,supervisor');
+    Route::patch('suppliers/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update')->middleware('role:owner,supervisor');
+    Route::delete('suppliers/{supplier}', [SupplierController::class, 'destroy'])->name('suppliers.destroy')->middleware('role:owner,supervisor');
+    Route::patch('suppliers/{supplier}/active', [SupplierController::class, 'updateActive'])->name('suppliers.update-active')->middleware('role:owner,supervisor');
 
     // Stok — Stok Masuk
     Route::middleware('role:owner,supervisor,warehouse')->group(function () {

@@ -10,6 +10,7 @@ uses(RefreshDatabase::class);
 function makeUser(array $attributes = []): User
 {
     return User::factory()->create(array_merge([
+        'username'  => fake()->unique()->regexify('[a-z]{8}'),
         'password'  => bcrypt('password123'),
         'is_active' => true,
     ], $attributes));
@@ -37,7 +38,7 @@ it('owner dapat login dengan kredensial valid', function () {
     $this->post(route('login'), [
         'username' => $user->username,
         'password' => 'password123',
-    ])->assertRedirect(route('dashboard'));
+    ])->assertRedirectToRoute('dashboard');
 
     $this->assertAuthenticatedAs($user);
 });
@@ -48,7 +49,7 @@ it('supervisor dapat login dengan kredensial valid', function () {
     $this->post(route('login'), [
         'username' => $user->username,
         'password' => 'password123',
-    ])->assertRedirect(route('dashboard'));
+    ])->assertRedirectToRoute('dashboard');
 
     $this->assertAuthenticatedAs($user);
 });
@@ -59,7 +60,7 @@ it('kasir dapat login dengan kredensial valid', function () {
     $this->post(route('login'), [
         'username' => $user->username,
         'password' => 'password123',
-    ])->assertRedirect(route('dashboard'));
+    ])->assertRedirectToRoute('dashboard');
 
     $this->assertAuthenticatedAs($user);
 });
